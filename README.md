@@ -1,2 +1,3 @@
-# unamed_game
-WIP
+# unamed game project 
+
+we'll see what becomes of it...
