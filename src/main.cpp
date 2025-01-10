@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <raylib.h>
 #include <stdint.h>
+#include <vector>
 
-#define WORLD_W 10
-#define WORLD_H 10
 
+#define WORLD_W 256
+#define WORLD_H 256
 
 enum GameFlags {
 	PAUSED = 1 << 0,
@@ -21,7 +22,6 @@ enum GameFlags {
 
 enum TileType {
 	GRASS,
-	ROCK,
 };
 
 
@@ -41,46 +41,81 @@ struct TileMap {
 
 struct Player {
 	Rectangle hitbox;
+	float speed;
 
-	Player() : hitbox{(Rectangle){0, 0, 20, 40}} {}
+	Player() : hitbox{(Rectangle){0, 0, 20, 40}}, speed{1.0f} {}
+};
+
+
+enum EntityType {
+	TREE,
+	ROCK,
+};
+
+
+struct Entity {
+	//entity ID?
+	Rectangle hitbox;
+	Vector2 moveVec;
+	int entityFlags;
+	EntityType entityType;
 };
 
 
 void move(Player& player)
 {
-	//normalize movement speed at some point in the future
+	//normalize movement speed at some point in the future?
+	
 	if (IsKeyDown(KEY_W))
 	{
-		player.hitbox.y -= 1;
+		player.hitbox.y -= player.speed;
 	}
 	if (IsKeyDown(KEY_A))
 	{
-		player.hitbox.x -= 1;
+		player.hitbox.x -= player.speed;
 	}
 	if (IsKeyDown(KEY_S))
 	{
-		player.hitbox.y += 1;
+		player.hitbox.y += player.speed;
 	}
 	if (IsKeyDown(KEY_D))
 	{
-		player.hitbox.x += 1;
+		player.hitbox.x += player.speed;
 	}
 }
 
 
 int main(){
-	// Make raylib not poop all over the terminal
-	// TraceLogLevel enum in raylib.h
-	SetTraceLogLevel(LOG_NONE);
-
 	const int WINDOW_W = 1280;
 	const int WINDOW_H = 720;
 	
+	// Make raylib not poop all over the terminal
+	// TraceLogLevel enum in raylib.h
+	SetTraceLogLevel(LOG_NONE);
 	InitWindow(WINDOW_W, WINDOW_H, "GAME");
 	SetTargetFPS(60); //won't have to think about delta-time unless we do advances physics
 
 	Player player;
 	TileMap world;
+	std::vector<Entity> entities;
+
+	entities.push_back(
+		Entity {
+			(Rectangle) {50, 40, 10, 80},
+			(Vector2) {0, 0},
+			0,
+			TREE
+		}
+	);
+	entities.push_back(
+		Entity {
+			(Rectangle) {90, 110, 10, 10},
+			(Vector2) {0, 0},
+			0,
+			ROCK	
+		}
+	);
+
 	// used as a bitset alongside GameFlags enum
 	// usage: if (flags & SOME_FLAG), note the bitwise and
 	// perhaps it's possible to bundle this bitset with the enum in a struct?
@@ -121,8 +156,23 @@ int main(){
 
 		// RENDER
 		BeginDrawing();
-		
 		ClearBackground(BLACK);
+		
+		for (Entity entity : entities)
+		{	
+			switch (entity.entityType)
+			{
+				case TREE: {
+					DrawRectangleRec(entity.hitbox, GREEN); 
+					break;
+				}
+				case ROCK: {
+					DrawRectangleRec(entity.hitbox, GRAY); 
+					break;
+				} 
+			}
+		}
+
 		DrawRectangleRec(player.hitbox, RED);
 
 		EndDrawing();
