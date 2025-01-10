@@ -8,7 +8,14 @@
 
 enum GameFlags {
 	PAUSED = 1 << 0,
-	MAPEDITOR = 1 << 1,
+	MAPEDITOR = 1 << 1, //TODO
+	//current bitset is 8bit, so there are more possible flags
+	UNUSEDFLAG = 1 << 2,	
+	UNUSEDFLAG1 = 1 << 3,
+	UNUSEDFLAG2 = 1 << 4,
+	UNUSEDFLAG3 = 1 << 5,
+	UNUSEDFLAG4 = 1 << 6,
+	UNUSEDFLAG5 = 1 << 7,
 };
 
 
@@ -41,6 +48,7 @@ struct Player {
 
 void move(Player& player)
 {
+	//normalize movement speed at some point in the future
 	if (IsKeyDown(KEY_W))
 	{
 		player.hitbox.y -= 1;
@@ -75,14 +83,35 @@ int main(){
 	TileMap world;
 	// used as a bitset alongside GameFlags enum
 	// usage: if (flags & SOME_FLAG), note the bitwise and
+	// perhaps it's possible to bundle this bitset with the enum in a struct?
 	uint8_t flags = 0; 
+	
+	const char* PAUSED_TEXT = "GAME IS PAUSED";
+	const int FONT_SIZE = 30;
+	const int TEXT_OFFSET = MeasureText(PAUSED_TEXT, FONT_SIZE);
 
 	while (!WindowShouldClose())
 	{
 		// believe it or not... it works
 		if (IsKeyPressed(KEY_P)) flags ^= PAUSED;
-		if (flags & PAUSED) printf("Game is paused\n");	
-		if (!(flags & PAUSED)) printf("Game is running\n");	
+		
+		while (flags & PAUSED)
+		{
+			BeginDrawing();
+			ClearBackground(BLACK);
+			
+			DrawText(
+				PAUSED_TEXT, 
+				WINDOW_W / 2 - TEXT_OFFSET / 2, 
+				WINDOW_H / 2 - FONT_SIZE / 2, 
+				FONT_SIZE, 
+				RED
+			);
+
+			EndDrawing();
+
+			if (IsKeyPressed(KEY_P)) flags ^= PAUSED;
+		}
 
 		// INPUT
 		move(player);
