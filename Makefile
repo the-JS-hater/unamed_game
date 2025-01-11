@@ -16,12 +16,12 @@ OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 $(ODIR)/%.o: $(SDIR)/%.cpp $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-game: $(OBJ)
+game.exe: $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
 run:
 	make
-	./game
+	./game.exe
 
 .PHONY: clean
 
