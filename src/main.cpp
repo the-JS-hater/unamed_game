@@ -1,8 +1,9 @@
+#include <cstdlib>
+#include <ctime>
 #include <stdio.h>
 #include <raylib.h>
 #include <stdint.h>
 #include <vector>
-
 
 #define WORLD_W 256
 #define WORLD_H 256
@@ -22,8 +23,8 @@ enum GameFlags {
 
 enum TileType {
 	GRASS,
+  DIRT,
 };
-
 
 struct TileMap {
 	TileType map[WORLD_H][WORLD_W];
@@ -32,7 +33,13 @@ struct TileMap {
 	{
 		for (int y = 0; y < WORLD_H; y++) {
 			for (int x = 0; x < WORLD_W; x++) {
-				map[y][x] = GRASS;
+        if (x % 2 == 0 && y % 2 == 1) {
+          map[y][x] = DIRT;
+        } else if (x % 2 == 1 && y % 2 == 0) {
+          map[y][x] = DIRT;
+        } else {
+				  map[y][x] = GRASS;
+        }
 			}
 		}
 	}
@@ -62,6 +69,74 @@ struct Entity {
 };
 
 
+struct TreeNode {
+  int x;
+  int y;
+  int width;
+  int height;
+
+  Color color;
+
+  TreeNode* left;
+  TreeNode* right;
+};
+
+
+void generate_tree(TreeNode *root) {
+  TreeNode *left, *right;
+  int cut;
+  // Vertical or horizontal cut.
+  if (rand() % 2 == 0) {
+    // Random cut along the x axis.
+    cut = rand() % root->width;
+    left = new TreeNode {root->x, root->y, cut, root->height, RED};  
+    right = new TreeNode {cut, root->y, root->width, root->height, GREEN};  
+  } else {
+    // Random cut along the y axis.
+    cut = rand() % root->height;
+    left = new TreeNode {root->x, root->y, root->width, cut, BLUE};  
+    right = new TreeNode {root->x, cut, root->width, root->height, GRAY};
+  }
+
+  if (rand() % 100 < 40) {
+    generate_tree(left);
+  } else {
+    left->left = nullptr;
+    left->right = nullptr;
+  }
+
+
+  if (rand() % 100 < 40) {
+    generate_tree(right);
+  } else {
+    right->left = nullptr;
+    right->right = nullptr;
+  }
+
+  root->left = left;
+  root->right = right;
+}
+
+
+void draw_tree(TreeNode *root) {
+  // Draw bg color.
+  DrawRectangle(root->x, root->y, root->width, root->height, root->color);
+  // Draw border.
+  DrawRectangleLines(root->x, root->y, root->width, root->height, BLACK);
+
+  if (root->left != nullptr) draw_tree(root->left);
+  if (root->right != nullptr) draw_tree(root->right);
+}
+
+
+void delete_tree(TreeNode *root) {
+  if (root->left != nullptr) delete_tree(root->left);
+  if (root->right != nullptr) delete_tree(root->right);
+
+  delete root;
+};
+
+
 void move(Player& player)
 {
 	//normalize movement speed at some point in the future?
@@ -85,6 +160,24 @@ void move(Player& player)
 }
 
 
+void draw_map(TileMap& tileMap) {
+  int x, y;
+
+  for (y = 0; y < WORLD_H; y++) {
+    for (x = 0; x < WORLD_W; x++) {
+      switch (tileMap.map[y][x]) {
+        case GRASS: 
+          DrawRectangle(x * 16, y * 16, 16, 16, GREEN);
+          break;
+        case DIRT:
+          DrawRectangle(x * 16, y * 16, 16, 16, BROWN);
+          break;
+      }
+    }
+  }
+}
+
+
 int main(){
 	const int WINDOW_W = 1280;
 	const int WINDOW_H = 720;
@@ -98,6 +191,11 @@ int main(){
 	Player player;
 	TileMap world;
 	std::vector<Entity> entities;
+
+  srand(time(0));
+  // What are memory leaks?
+  TreeNode *root = new TreeNode{0, 0, WINDOW_W, WINDOW_H};
+  generate_tree(root);
 
 	entities.push_back(
 		Entity {
@@ -157,6 +255,8 @@ int main(){
 		// RENDER
 		BeginDrawing();
 		ClearBackground(BLACK);
+
+    draw_tree(root);
 		
 		for (Entity entity : entities)
 		{	
@@ -178,5 +278,6 @@ int main(){
 		EndDrawing();
 	}
 
+  delete_tree(root);
 	CloseWindow();
 }
