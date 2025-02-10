@@ -4,11 +4,20 @@
 #include <raylib.h>
 #include <stdint.h>
 #include <vector>
+#include <cstdlib>
+#include "../inc/ecs.hpp"
 
-#define WORLD_W 256
-#define WORLD_H 256
 
-enum GameFlags {
+using std::vector;
+using std::rand;
+
+
+#define WINDOW_W 1280
+#define WINDOW_H 720
+
+
+enum GameFlags 
+{
 	PAUSED = 1 << 0,
 	MAPEDITOR = 1 << 1, //TODO
 	//current bitset is 8bit, so there are more possible flags
@@ -18,54 +27,6 @@ enum GameFlags {
 	UNUSEDFLAG3 = 1 << 5,
 	UNUSEDFLAG4 = 1 << 6,
 	UNUSEDFLAG5 = 1 << 7,
-};
-
-
-enum TileType {
-	GRASS,
-  DIRT,
-};
-
-struct TileMap {
-	TileType map[WORLD_H][WORLD_W];
-
-	TileMap() 
-	{
-		for (int y = 0; y < WORLD_H; y++) {
-			for (int x = 0; x < WORLD_W; x++) {
-        if (x % 2 == 0 && y % 2 == 1) {
-          map[y][x] = DIRT;
-        } else if (x % 2 == 1 && y % 2 == 0) {
-          map[y][x] = DIRT;
-        } else {
-				  map[y][x] = GRASS;
-        }
-			}
-		}
-	}
-};
-
-
-struct Player {
-	Rectangle hitbox;
-	float speed;
-
-	Player() : hitbox{(Rectangle){0, 0, 20, 40}}, speed{1.0f} {}
-};
-
-
-enum EntityType {
-	TREE,
-	ROCK,
-};
-
-
-struct Entity {
-	//entity ID?
-	Rectangle hitbox;
-	Vector2 moveVec;
-	int entityFlags;
-	EntityType entityType;
 };
 
 
@@ -137,117 +98,96 @@ void delete_tree(TreeNode *root) {
 };
 
 
-void move(Player& player)
+void render_pause_screen()
 {
-	//normalize movement speed at some point in the future?
-	
-	if (IsKeyDown(KEY_W))
-	{
-		player.hitbox.y -= player.speed;
-	}
-	if (IsKeyDown(KEY_A))
-	{
-		player.hitbox.x -= player.speed;
-	}
-	if (IsKeyDown(KEY_S))
-	{
-		player.hitbox.y += player.speed;
-	}
-	if (IsKeyDown(KEY_D))
-	{
-		player.hitbox.x += player.speed;
-	}
-}
-
-
-void draw_map(TileMap& tileMap) {
-  int x, y;
-
-  for (y = 0; y < WORLD_H; y++) {
-    for (x = 0; x < WORLD_W; x++) {
-      switch (tileMap.map[y][x]) {
-        case GRASS: 
-          DrawRectangle(x * 16, y * 16, 16, 16, GREEN);
-          break;
-        case DIRT:
-          DrawRectangle(x * 16, y * 16, 16, 16, BROWN);
-          break;
-      }
-    }
-  }
-}
-
-
-int main(){
-	const int WINDOW_W = 1280;
-	const int WINDOW_H = 720;
-	
-	// Make raylib not poop all over the terminal
-	// TraceLogLevel enum in raylib.h
-	SetTraceLogLevel(LOG_NONE);
-	InitWindow(WINDOW_W, WINDOW_H, "GAME");
-	SetTargetFPS(60); //won't have to think about delta-time unless we do advances physics
-
-	Player player;
-	TileMap world;
-	std::vector<Entity> entities;
-
-  srand(time(0));
-  // What are memory leaks?
-  TreeNode *root = new TreeNode{0, 0, WINDOW_W, WINDOW_H};
-  generate_tree(root);
-
-	entities.push_back(
-		Entity {
-			(Rectangle) {50, 40, 10, 80},
-			(Vector2) {0, 0},
-			0,
-			TREE
-		}
-	);
-	entities.push_back(
-		Entity {
-			(Rectangle) {90, 110, 10, 10},
-			(Vector2) {0, 0},
-			0,
-			ROCK	
-		}
-	);
-
-	// used as a bitset alongside GameFlags enum
-	// usage: if (flags & SOME_FLAG), note the bitwise and
-	// perhaps it's possible to bundle this bitset with the enum in a struct?
-	uint8_t flags = 0; 
-	
 	const char* PAUSED_TEXT = "GAME IS PAUSED";
 	const int FONT_SIZE = 30;
 	const int TEXT_OFFSET = MeasureText(PAUSED_TEXT, FONT_SIZE);
 
+	DrawText(
+		PAUSED_TEXT, 
+		WINDOW_W / 2 - TEXT_OFFSET / 2, 
+		WINDOW_H / 2 - FONT_SIZE / 2, 
+		FONT_SIZE, 
+		RED
+	);
+}
+
+
+void render_sprites(ECS const& ecs)
+{
+	for (Entity id: ecs.entities)
+	{
+		if (ecs.entities[id] == -1) continue;
+		
+		DrawTextureV(
+			ecs.sprites[id].texture,
+			ecs.positions[id].position,
+			ecs.sprites[id].tint
+		);
+	}
+}
+
+
+void init(uint8_t& flags, ECS& ecs)
+{
+	// Make raylib not poop all over the terminal
+	// TraceLogLevel enum in raylib.h
+	SetTraceLogLevel(LOG_NONE);
+	InitWindow(WINDOW_W, WINDOW_H, "GAME");
+	//won't have to think about delta-time unless we do advances physics
+	SetTargetFPS(60); 
+
+	flags = 0;
+	ecs = *new ECS();
+}
+
+
+int main()
+{
+  srand(time(0));
+  // What are memory leaks?
+  TreeNode *root = new TreeNode{0, 0, WINDOW_W, WINDOW_H};
+  generate_tree(root);
+	
+	// used as a bitset alongside GameFlags enum
+	// usage: if (flags & SOME_FLAG), note the bitwise and
+	// perhaps it's possible to bundle this bitset with the enum in a struct?
+	uint8_t flags;
+	ECS ecs;
+	init(flags, ecs);
+		
+	Texture2D test_tex = LoadTexture("resources/sprites/Spam.png");
+		
+	for (int i {0}; i < 1000; i++) {
+		Entity id = ecs.allocate_entity();
+		float rand_x = rand()%WINDOW_W;
+		float rand_y = rand()%WINDOW_H;
+
+		ecs.set_position(id, (Vector2){rand_x, rand_y});
+		ecs.set_sprite(id, test_tex, WHITE);
+	}
+
 	while (!WindowShouldClose())
 	{
 		// believe it or not... it works
+		// XOR compound assignment
 		if (IsKeyPressed(KEY_P)) flags ^= PAUSED;
 		
 		while (flags & PAUSED)
 		{
 			BeginDrawing();
 			ClearBackground(BLACK);
-			
-			DrawText(
-				PAUSED_TEXT, 
-				WINDOW_W / 2 - TEXT_OFFSET / 2, 
-				WINDOW_H / 2 - FONT_SIZE / 2, 
-				FONT_SIZE, 
-				RED
-			);
 
+			render_pause_screen();
+			
 			EndDrawing();
 
 			if (IsKeyPressed(KEY_P)) flags ^= PAUSED;
 		}
 
 		// INPUT
-		move(player);
+		// todo...
 		
 		// UPDATE
 		// todo...
@@ -258,23 +198,8 @@ int main(){
 
     draw_tree(root);
 		
-		for (Entity entity : entities)
-		{	
-			switch (entity.entityType)
-			{
-				case TREE: {
-					DrawRectangleRec(entity.hitbox, GREEN); 
-					break;
-				}
-				case ROCK: {
-					DrawRectangleRec(entity.hitbox, GRAY); 
-					break;
-				} 
-			}
-		}
-
-		DrawRectangleRec(player.hitbox, RED);
-
+		render_sprites(ecs);
+	
 		EndDrawing();
 	}
 

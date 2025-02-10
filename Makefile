@@ -7,10 +7,10 @@ IDIR =inc
 
 LIBS=-lraylib
 
-_DEPS = 
+_DEPS = ecs.hpp 
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o 
+_OBJ = main.o ecs.o 
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: $(SDIR)/%.cpp $(DEPS)
