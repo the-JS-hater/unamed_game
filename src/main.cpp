@@ -114,21 +114,6 @@ void render_pause_screen()
 }
 
 
-void render_sprites(ECS const& ecs)
-{
-	for (Entity id: ecs.entities)
-	{
-		if (ecs.entities[id] == -1) continue;
-		
-		DrawTextureV(
-			ecs.sprites[id].texture,
-			ecs.positions[id].position,
-			ecs.sprites[id].tint
-		);
-	}
-}
-
-
 void init(uint8_t& flags, ECS& ecs)
 {
 	// Make raylib not poop all over the terminal
@@ -166,6 +151,10 @@ int main()
 
 		ecs.set_position(id, (Vector2){rand_x, rand_y});
 		ecs.set_sprite(id, test_tex, WHITE);
+	
+		float rand_vx = rand()%2 - 1;
+		float rand_vy = rand()%2 - 1;
+		ecs.set_velocity(id, (Vector2){rand_vx, rand_vy});
 	}
 
 	while (!WindowShouldClose())
@@ -190,7 +179,7 @@ int main()
 		// todo...
 		
 		// UPDATE
-		// todo...
+		update_positions(ecs);
 
 		// RENDER
 		BeginDrawing();

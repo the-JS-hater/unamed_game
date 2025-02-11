@@ -34,11 +34,21 @@ struct SpriteComponent
 };
 
 
+struct VelocityComponent
+{
+	Vector2 deltaV;
+
+	VelocityComponent(Vector2 v) : deltaV {v} {};
+};
+
+
 struct ECS {
 	long long entity_count;
 	vector<Entity> entities; 
 	vector<PositionComponent> positions; 
 	vector<SpriteComponent> sprites;
+	vector<VelocityComponent> velocities;
+
 
 	ECS();
 
@@ -49,4 +59,11 @@ struct ECS {
 	void set_position(Entity id, Vector2 pos);
 
 	void set_sprite(Entity id, Texture2D tex, Color tint);
+	
+	void set_velocity(Entity id, Vector2 vec);
 };
+
+
+void render_sprites(ECS const&);
+
+void update_positions(ECS& ecs);
