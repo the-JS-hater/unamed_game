@@ -144,17 +144,20 @@ int main()
 		
 	Texture2D test_tex = LoadTexture("resources/sprites/Spam.png");
 		
-	for (int i {0}; i < 1000; i++) {
+	for (int i {0}; i < 100000; i++) {
 		Entity id = ecs.allocate_entity();
 		float rand_x = rand()%WINDOW_W;
 		float rand_y = rand()%WINDOW_H;
 
 		ecs.set_position(id, (Vector2){rand_x, rand_y});
 		ecs.set_sprite(id, test_tex, WHITE);
-	
-		float rand_vx = rand()%2 - 1;
-		float rand_vy = rand()%2 - 1;
-		ecs.set_velocity(id, (Vector2){rand_vx, rand_vy});
+		
+		if (i > 50000)
+		{
+			float rand_vx = rand()%20 - 10;
+			float rand_vy = rand()%20 - 10;
+			ecs.set_velocity(id, (Vector2){rand_vx, rand_vy});
+		}
 	}
 
 	while (!WindowShouldClose())
@@ -188,7 +191,8 @@ int main()
     draw_tree(root);
 		
 		render_sprites(ecs);
-	
+		
+		DrawFPS(10, 10);
 		EndDrawing();
 	}
 

@@ -11,6 +11,13 @@ using std::vector;
 //specific components
 using Entity = long long;
 
+enum ComponentType 
+{
+	POSITION 	= 1 << 0,
+	SPRITE 		= 1 << 1,
+	VELOCITY 	= 1 << 2,
+};
+
 
 struct PositionComponent 
 {
@@ -45,6 +52,7 @@ struct VelocityComponent
 struct ECS {
 	long long entity_count;
 	vector<Entity> entities; 
+	vector<unsigned> flag_sets;
 	vector<PositionComponent> positions; 
 	vector<SpriteComponent> sprites;
 	vector<VelocityComponent> velocities;
@@ -55,6 +63,8 @@ struct ECS {
 	Entity allocate_entity();
 
 	void deallocate_entity(Entity id);
+
+	void set_flag(Entity id, ComponentType flag);
 
 	void set_position(Entity id, Vector2 pos);
 
