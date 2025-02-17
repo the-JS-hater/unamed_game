@@ -141,10 +141,10 @@ int main()
 	uint8_t flags;
 	ECS ecs;
 	init(flags, ecs);
-		
+	
+	//THIS IS JUST FOR TESTING
 	Texture2D test_tex = LoadTexture("resources/sprites/Spam.png");
-		
-	for (int i {0}; i < 100000; i++) {
+	for (int i {0}; i < 100; i++) {
 		Entity id = ecs.allocate_entity();
 		float rand_x = rand()%WINDOW_W;
 		float rand_y = rand()%WINDOW_H;
@@ -152,7 +152,8 @@ int main()
 		ecs.set_position(id, (Vector2){rand_x, rand_y});
 		ecs.set_sprite(id, test_tex, WHITE);
 		
-		if (i > 50000)
+		// 50% chance
+		if ((rand() % 2) + 1 == 2)
 		{
 			float rand_vx = rand()%20 - 10;
 			float rand_vy = rand()%20 - 10;

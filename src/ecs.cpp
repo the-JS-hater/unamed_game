@@ -1,7 +1,7 @@
 #include "../inc/ecs.hpp"
 
 
-#define MAX_ENTITIES 1000000
+#define MAX_ENTITIES 100000
 
 
 /* ECS STRUCT STUFF */
@@ -73,5 +73,12 @@ void update_positions(ECS& ecs)
 		
 		ecs.positions[id].position.x += ecs.velocities[id].deltaV.x;
 		ecs.positions[id].position.y += ecs.velocities[id].deltaV.y;
+	
+		if (ecs.positions[id].position.x < 0) ecs.velocities[id].deltaV.x *= -1;
+		if (ecs.positions[id].position.y < 0) ecs.velocities[id].deltaV.y *= -1;
+		
+		//NOTE: Window size hardcoded for testing. Should be changed later on
+		if (ecs.positions[id].position.x > 1280) ecs.velocities[id].deltaV.x *= -1;
+		if (ecs.positions[id].position.y > 720) ecs.velocities[id].deltaV.y *= -1;
 	}
 }
