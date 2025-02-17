@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-I$(IDIR)
+CFLAGS=-I$(IDIR) -Wall
 
 SDIR=src
 ODIR=obj
@@ -7,10 +7,10 @@ IDIR =inc
 
 LIBS=-lraylib
 
-_DEPS = ecs.hpp 
+_DEPS = ecs.hpp dungeonGen.hpp 
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o ecs.o 
+_OBJ = main.o ecs.o dungeonGen.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: $(SDIR)/%.cpp $(DEPS)

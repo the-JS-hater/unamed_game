@@ -6,6 +6,7 @@
 #include <vector>
 #include <cstdlib>
 #include "../inc/ecs.hpp"
+#include "../inc/dungeonGen.hpp"
 
 
 using std::vector;
@@ -144,7 +145,7 @@ int main()
 	
 	//THIS IS JUST FOR TESTING
 	Texture2D test_tex = LoadTexture("resources/sprites/Spam.png");
-	for (int i {0}; i < 10000; i++) {
+	for (int i {0}; i < 1000; i++) {
 		Entity id = ecs.allocate_entity();
 		float rand_x = rand()%WINDOW_W;
 		float rand_y = rand()%WINDOW_H;
@@ -153,7 +154,7 @@ int main()
 		ecs.set_sprite(id, test_tex, WHITE);
 		
 		// 50% chance
-		if ((rand() % 2) + 1 == 2)
+		if ((rand() % 2) + 1 <= 2)
 		{
 			float rand_vx = rand()%20 - 10;
 			float rand_vy = rand()%20 - 10;
