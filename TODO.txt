@@ -1,0 +1,16 @@
+IMPORTANT
+- Collision between entities (Quadtree)
+	- https://en.wikipedia.org/wiki/Quadtree
+	- https://en.wikipedia.org/wiki/Bounding_interval_hierarchy
+- Rewrtie rendering to account for a 2D camera
+
+SORT OF IMPORTANT
+- World/Dungeon generation
+- A player character, or something
+
+OPTIMIZATION STUFF
+- 'cache' relevant entities on a per-system:s basis
+
+OTHER
+- like... actual gameplay n' stuff
+- Audio
