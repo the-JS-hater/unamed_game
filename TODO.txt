@@ -6,7 +6,10 @@ IMPORTANT
 
 SORT OF IMPORTANT
 - World/Dungeon generation
+	- https://gamedev.stackexchange.com/questions/82059/algorithm-for-procedural-2d-map-with-connected-paths
 - A player character, or something
+	- controls, have the camera following it and so on
+- A* to use for path finding in entitites
 
 OPTIMIZATION STUFF
 - 'cache' relevant entities on a per-system:s basis
