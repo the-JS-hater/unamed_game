@@ -17,3 +17,6 @@ OPTIMIZATION STUFF
 OTHER
 - like... actual gameplay n' stuff
 - Audio
+
+KNOWN BUGS
+- Double free error when closing the game
