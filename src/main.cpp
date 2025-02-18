@@ -91,18 +91,6 @@ void draw_tree(TreeNode *root) {
 }
 
 
-void draw_map(TileMap const& tile_map) 
-{
-	for (int y = 0; y < tile_map.height; y++)
-	{
-		for (int x = 0; x < tile_map.width; x++)
-		{
-			if (tile_map.map[y][x] == WALL) DrawRectangle(x*10,y*10,10,10,BLACK);
-		}
-	}
-}
-
-
 void delete_tree(TreeNode *root) {
   if (root->left != nullptr) delete_tree(root->left);
   if (root->right != nullptr) delete_tree(root->right);
@@ -205,7 +193,8 @@ int main()
 		ClearBackground(WHITE);
 
     //draw_tree(root);
-		draw_map(test_map);
+		
+		debug_draw_dungeon(test_map);
 		
 		render_sprites(ecs);
 		

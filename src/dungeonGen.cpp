@@ -130,3 +130,17 @@ void create_cooridor(TileMap& tile_map, int x1, int y1, int x2, int y2)
     create_cooridor(tile_map, x1, y2, x2, y2); 
   }
 };
+
+
+void debug_draw_dungeon(TileMap const& tile_map)
+{
+	for (int y = 0; y < tile_map.height; y++)
+	{
+		for (int x = 0; x < tile_map.width; x++)
+		{
+			if (tile_map.map[y][x] == WALL) DrawRectangle(x*10,y*10,10,10,BLACK);
+		}
+	}
+};
+
+

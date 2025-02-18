@@ -1,7 +1,10 @@
+#pragma once
+
 #include <vector>
 #include <cstdlib>
 #include <algorithm>
 #include <cstdio>
+#include <raylib.h>
 
 
 using std::vector;
@@ -54,5 +57,7 @@ bool can_split_hor(int, int, int);
 
 void create_cooridor(TileMap&, int, int, int, int); 
 
-void create_room(TileMap&, BSPnode*); 
+void create_room(TileMap&, BSPnode*);
+
+void debug_draw_dungeon(TileMap const&);
 
