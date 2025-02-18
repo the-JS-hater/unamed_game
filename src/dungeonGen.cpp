@@ -1,7 +1,7 @@
 #include "../inc/dungeonGen.hpp"
 
 
-TileMap::TileMap(unsigned w, unsigned h) : 
+TileMap::TileMap(int w, int h) : 
 height{h}, width{w}
 {
 	this -> map = matrix<Tiles>(h, vector<Tiles>(w, WALL));
@@ -14,61 +14,93 @@ x{x}, y{y}, w{w}, h{h}, left{nullptr}, right{nullptr} {};
 
 void generate_BSP(BSPnode* root, int min_size) 
 {
-  if (!can_split(root->w, root->h, min_size)) {
-    return; 
-  }
+	if (root == nullptr) return;
 
   int cut;
-  if (rand() % 2 == 0) {
+  if ((rand()%100 > 50) && can_split_vert(root->w, root->h, min_size))
+	{
 		// Cut along Y-axis
     cut = min_size + rand() % (root->w - min_size * 2);
     root->left = new BSPnode(root->x, root->y, cut, root->h);
     root->right = new BSPnode(root->x + cut, root->y, root->w - cut, root->h);
-  } else {	
+  } 
+	else if (can_split_hor(root->w, root->h, min_size)) 
+	{	
 		// Cut along X-axis
 		cut = min_size + rand() % (root->h - min_size * 2);
 		root->left = new BSPnode(root->x, root->y, root->w, cut);
 		root->right = new BSPnode(root->x, root->y + cut, root->w, root->h - cut);
-  }
+  }	
+	else 
+	{
+		// Can't make any cut
+		return;
+	}
 
   generate_BSP(root->left, min_size);
   generate_BSP(root->right, min_size);
 }
 
 
-bool can_split(int w, int h, int min_size) 
+bool can_split_vert(int w, int h, int min_size) 
 {
-  return 
-		(w > min_size * 2 && h > min_size) || 
-		(h > min_size * 2 && w > min_size);
+  return (w > min_size * 2 && h > min_size);
 };
 
 
-TileMap generate_dungeon(unsigned w, unsigned h, unsigned min_size)
+bool can_split_hor(int w, int h, int min_size)
+{
+	return (h > min_size * 2 && w > min_size);
+};
+
+
+TileMap generate_dungeon(int w, int h, int min_size)
 {
 	BSPnode* root = new BSPnode(0, 0, w, h);
 	generate_BSP(root, min_size);
-	
 	TileMap dungeon = TileMap(w, h);
-	// TODO: USE THE BSP TREE to fill in the TileMap here
+	generate_dungeon(root, dungeon);
 	
-
-	return TileMap(w, h); 
+	return dungeon;
 };
 
 
-void create_room(TileMap& map, int x, int y, int w, int h) 
-{
-  for (int i {y}; i < y + h; i++) 
+void generate_dungeon(BSPnode* bsp_tree, TileMap& map)
+{	
+	//Non-leaf:s should always have both left and right child nodes
+	if (bsp_tree->left == nullptr)
+	{	
+		create_room(map, bsp_tree);
+		return;
+	}
+		
+	generate_dungeon(bsp_tree->left, map);
+	generate_dungeon(bsp_tree->right, map);
+	
+	//TODO: figure out how to connect the cooridors
+};
+
+
+void create_room(TileMap& tile_map, BSPnode* leaf) 
+{	
+	int random_offset_x = (rand()%(leaf->w)) / 5 + 1;
+	int random_offset_y = (rand()%(leaf->h)) / 5 + 1;
+	int start_x = max(leaf->x, 0);
+	int start_y = max(leaf->y, 0);
+	int end_x = min(leaf->x + leaf->w, tile_map.width);
+	int end_y = min(leaf->y + leaf->h, tile_map.height);
+
+  for (int i {start_y + random_offset_y}; i < end_y - random_offset_y; i++) 
 	{
-    for (int j {x}; j < x + w; j++) 
+    for (int j {start_x + random_offset_x}; j < end_x - random_offset_y; j++) 
 		{
-      map.map[i][j] = EMPTY; 
+      tile_map.map[i][j] = EMPTY; 
     }
   }
-}
+};
 
 
+//NOTE: Def needs a rewrite
 void create_cooridor(TileMap& map, int x1, int y1, int x2, int y2) {
   if (x1 == x2) 
 	{ 
@@ -85,5 +117,5 @@ void create_cooridor(TileMap& map, int x1, int y1, int x2, int y2) {
     create_cooridor(map, x1, y1, x1, y2); 
     create_cooridor(map, x1, y2, x2, y2); 
   }
-}
+};
 

@@ -1,5 +1,6 @@
 CC=g++
-CFLAGS=-I$(IDIR) -Wall
+CFLAGS=-I$(IDIR) 
+DEGUB_FLAGS=-Wall -g
 
 SDIR=src
 ODIR=obj
@@ -22,6 +23,10 @@ game.exe: $(OBJ)
 run:
 	make
 	./game.exe
+
+debug: $(OBJ)
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS) $(DEGUB_FLAGS)
+	gdb ./game.exe
 
 .PHONY: clean
 

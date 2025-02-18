@@ -91,6 +91,18 @@ void draw_tree(TreeNode *root) {
 }
 
 
+void draw_map(TileMap const& tile_map) 
+{
+	for (int y = 0; y < tile_map.height; y++)
+	{
+		for (int x = 0; x < tile_map.width; x++)
+		{
+			if (tile_map.map[y][x] == WALL) DrawRectangle(x*10,y*10,10,10,BLACK);
+		}
+	}
+}
+
+
 void delete_tree(TreeNode *root) {
   if (root->left != nullptr) delete_tree(root->left);
   if (root->right != nullptr) delete_tree(root->right);
@@ -145,7 +157,7 @@ int main()
 	
 	//THIS IS JUST FOR TESTING
 	Texture2D test_tex = LoadTexture("resources/sprites/Spam.png");
-	for (int i {0}; i < 1000; i++) {
+	for (int i {0}; i < 1; i++) {
 		Entity id = ecs.allocate_entity();
 		float rand_x = rand()%WINDOW_W;
 		float rand_y = rand()%WINDOW_H;
@@ -161,6 +173,8 @@ int main()
 			ecs.set_velocity(id, (Vector2){rand_vx, rand_vy});
 		}
 	}
+
+	TileMap test_map = generate_dungeon(128, 72, 15);
 
 	while (!WindowShouldClose())
 	{
@@ -188,9 +202,10 @@ int main()
 
 		// RENDER
 		BeginDrawing();
-		ClearBackground(BLACK);
+		ClearBackground(WHITE);
 
-    draw_tree(root);
+    //draw_tree(root);
+		draw_map(test_map);
 		
 		render_sprites(ecs);
 		

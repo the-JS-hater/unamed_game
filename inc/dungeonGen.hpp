@@ -1,6 +1,7 @@
 #include <vector>
 #include <cstdlib>
 #include <algorithm>
+#include <cstdio>
 
 
 using std::vector;
@@ -21,11 +22,11 @@ enum Tiles
 
 struct TileMap
 {
-	size_t height;
-	size_t width;	
+	int height;
+	int width;	
 	matrix<Tiles> map;
 
-	TileMap(unsigned, unsigned);
+	TileMap(int, int);
 };
 
 
@@ -43,11 +44,15 @@ struct BSPnode
 
 void generate_BSP(BSPnode*, int);
 
-TileMap generate_dungeon(unsigned, unsigned, unsigned);
+TileMap generate_dungeon(int, int, int);
 
-bool can_split(int, int, int);
+void generate_dungeon(BSPnode*, TileMap&);
+
+bool can_split_vert(int, int, int); 
+
+bool can_split_hor(int, int, int);
 
 void create_cooridor(TileMap&, int, int, int, int);
 
-void create_room(TileMap&, unsigned, unsigned, int, int); 
+void create_room(TileMap&, BSPnode*); 
 
