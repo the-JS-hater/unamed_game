@@ -14,6 +14,7 @@ ECS::ECS() :
 	positions.reserve(MAX_ENTITIES);
 	sprites.reserve(MAX_ENTITIES);
 	velocities.reserve(MAX_ENTITIES);
+	box_colliders.reserve(MAX_ENTITIES);
 }
 
 // Need to figure out a way to recycle deallocated entities
@@ -52,6 +53,11 @@ void ECS::set_velocity(Entity id, Vector2 vec)
 	set_flag(id, VELOCITY);
 }
 
+void ECS::set_boxCollider(Entity id, Rectangle rec) 
+{
+	box_colliders[id] = BoxCollider(rec);
+	set_flag(id, BOX_COLLIDER);
+}
 
 /* SYSTEMS */
 
@@ -88,3 +94,18 @@ void update_positions(ECS& ecs)
 		if (ecs.positions[id].position.y > 720) ecs.velocities[id].deltaV.y *= -1;
 	}
 }
+
+
+/* COMPONENTS */
+
+PositionComponent::PositionComponent(Vector2 pos) : position {pos} {};
+
+SpriteComponent::SpriteComponent(Entity pos_id, Texture2D tex, Color tint) : 
+		texture {tex}, 
+		position_id {pos_id},
+		tint {tint}
+		{};
+
+VelocityComponent::VelocityComponent(Vector2 v) : deltaV {v} {};
+
+BoxCollider::BoxCollider(Rectangle rec) : hitbox {rec} {};

@@ -17,17 +17,11 @@ using std::rand;
 #define WINDOW_H 720
 
 
+// Will we ever had more here? WHO KNOWS!?
+// prolly would be neat with some debug features idk
 enum GameFlags 
 {
 	PAUSED = 1 << 0,
-	MAPEDITOR = 1 << 1, //TODO
-	//current bitset is 8bit, so there are more possible flags
-	UNUSEDFLAG = 1 << 2,	
-	UNUSEDFLAG1 = 1 << 3,
-	UNUSEDFLAG2 = 1 << 4,
-	UNUSEDFLAG3 = 1 << 5,
-	UNUSEDFLAG4 = 1 << 6,
-	UNUSEDFLAG5 = 1 << 7,
 };
 
 
@@ -127,6 +121,15 @@ void init(uint8_t& flags, ECS& ecs)
 	flags = 0;
 	ecs = *new ECS();
 }
+	
+
+void temp_move_camera(Camera2D& camera)
+{
+	if (IsKeyDown(KEY_W)) camera.target.y -= 2.0f;
+	if (IsKeyDown(KEY_A)) camera.target.x -= 2.0f;
+	if (IsKeyDown(KEY_S)) camera.target.y += 2.0f;
+	if (IsKeyDown(KEY_D)) camera.target.x += 2.0f;
+}
 
 
 int main()
@@ -141,6 +144,16 @@ int main()
 	// perhaps it's possible to bundle this bitset with the enum in a struct?
 	uint8_t flags;
 	ECS ecs;
+	Camera2D camera = {(Vector2){0.0f,0.0f}, (Vector2){200.0f, 200.0f}, 0.0f, 1.0f};
+	
+	// Camera2D, defines position/orientation in 2d space
+	//typedef struct Camera2D {
+	//    Vector2 offset;         // Camera offset (displacement from target)
+	//    Vector2 target;         // Camera target (rotation and zoom origin)
+	//    float rotation;         // Camera rotation in degrees
+	//    float zoom;             // Camera zoom (scaling), should be 1.0f by default
+	//} Camera2D;
+
 	init(flags, ecs);
 	
 	//THIS IS JUST FOR TESTING
@@ -183,22 +196,26 @@ int main()
 		}
 
 		// INPUT
-		// todo...
+		temp_move_camera(camera);
 		
 		// UPDATE
 		update_positions(ecs);
 
 		// RENDER
 		BeginDrawing();
+		BeginMode2D(camera);
 		ClearBackground(WHITE);
 
     //draw_tree(root);
-		
 		debug_draw_dungeon(test_map);
 		
 		render_sprites(ecs);
 		
+		EndMode2D();
+		// Draw things that are relative to screen coordinates, and not world
+		// coordinates i.e GUI stuff
 		DrawFPS(10, 10);
+
 		EndDrawing();
 	}
 

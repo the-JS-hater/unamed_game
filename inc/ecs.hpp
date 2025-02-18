@@ -13,19 +13,25 @@ using Entity = long long;
 
 enum ComponentType 
 {
-	POSITION 	= 1 << 0,
-	SPRITE 		= 1 << 1,
-	VELOCITY 	= 1 << 2,
+	POSITION 			= 1 << 0,
+	SPRITE 				= 1 << 1,
+	VELOCITY 			= 1 << 2,
+	BOX_COLLIDER 	= 1 << 3,
 };
 
+struct BoxCollider 
+{
+	Rectangle hitbox;
+
+	BoxCollider(Rectangle);
+};
 
 struct PositionComponent 
 {
     Vector2 position;
 
-    PositionComponent(Vector2 pos) : position {pos} {}; 
+    PositionComponent(Vector2); 
 };
-
 
 struct SpriteComponent 
 {
@@ -33,21 +39,15 @@ struct SpriteComponent
 	Entity position_id;
 	Color tint;
 
-	SpriteComponent(Entity pos_id, Texture2D tex, Color tint) : 
-		texture {tex}, 
-		position_id {pos_id},
-		tint {tint}
-		{};
+	SpriteComponent(Entity, Texture2D, Color); 
 };
-
 
 struct VelocityComponent
 {
 	Vector2 deltaV;
 
-	VelocityComponent(Vector2 v) : deltaV {v} {};
+	VelocityComponent(Vector2);
 };
-
 
 struct ECS {
 	long long entity_count;
@@ -56,24 +56,27 @@ struct ECS {
 	vector<PositionComponent> positions; 
 	vector<SpriteComponent> sprites;
 	vector<VelocityComponent> velocities;
+	vector<BoxCollider> box_colliders;
 
 
 	ECS();
 
 	Entity allocate_entity();
 
-	void deallocate_entity(Entity id);
+	void deallocate_entity(Entity);
 
-	void set_flag(Entity id, ComponentType flag);
+	void set_flag(Entity, ComponentType);
 
-	void set_position(Entity id, Vector2 pos);
+	void set_position(Entity, Vector2);
 
-	void set_sprite(Entity id, Texture2D tex, Color tint);
+	void set_sprite(Entity, Texture2D, Color);
 	
-	void set_velocity(Entity id, Vector2 vec);
+	void set_velocity(Entity, Vector2);
+	
+	void set_boxCollider(Entity, Rectangle);
 };
 
 
 void render_sprites(ECS const&);
 
-void update_positions(ECS& ecs);
+void update_positions(ECS&);

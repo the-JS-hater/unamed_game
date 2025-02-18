@@ -3,6 +3,7 @@ IMPORTANT
 	- https://en.wikipedia.org/wiki/Quadtree
 	- https://en.wikipedia.org/wiki/Bounding_interval_hierarchy
 - Rewrtie rendering to account for a 2D camera
+	- Sort of done, but needs a player character to follow
 
 SORT OF IMPORTANT
 - A player character, or something
@@ -21,3 +22,5 @@ KNOWN BUGS
 
 NICE THINGS
 - tweak dungeon generation
+	- If h:w ratios is wacky, prefer to cut it appropriatley, and only use random
+		in other cases
