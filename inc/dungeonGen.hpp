@@ -52,7 +52,7 @@ bool can_split_vert(int, int, int);
 
 bool can_split_hor(int, int, int);
 
-void create_cooridor(TileMap&, int, int, int, int);
+void create_cooridor(TileMap&, int, int, int, int); 
 
 void create_room(TileMap&, BSPnode*); 
 

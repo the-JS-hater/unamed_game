@@ -65,19 +65,27 @@ TileMap generate_dungeon(int w, int h, int min_size)
 };
 
 
-void generate_dungeon(BSPnode* bsp_tree, TileMap& map)
+void generate_dungeon(BSPnode* bsp_tree, TileMap& tile_map)
 {	
 	//Non-leaf:s should always have both left and right child nodes
 	if (bsp_tree->left == nullptr)
 	{	
-		create_room(map, bsp_tree);
+		create_room(tile_map, bsp_tree);
 		return;
 	}
 		
-	generate_dungeon(bsp_tree->left, map);
-	generate_dungeon(bsp_tree->right, map);
+	generate_dungeon(bsp_tree->left, tile_map);
+	generate_dungeon(bsp_tree->right, tile_map);
 	
-	//TODO: figure out how to connect the cooridors
+	BSPnode* left = bsp_tree->left;
+	BSPnode* right = bsp_tree->right;
+
+	int x1 = left->x + left->w / 2; 
+	int y1 = left->y + left->h / 2;
+	int x2 = right->x + right->w / 2;
+	int y2 = right->y + right->h / 2;
+
+	create_cooridor(tile_map, x1, y1, x2, y2);
 };
 
 
@@ -100,22 +108,25 @@ void create_room(TileMap& tile_map, BSPnode* leaf)
 };
 
 
-//NOTE: Def needs a rewrite
-void create_cooridor(TileMap& map, int x1, int y1, int x2, int y2) {
+void create_cooridor(TileMap& tile_map, int x1, int y1, int x2, int y2) 
+{
   if (x1 == x2) 
 	{ 
-    for (int y = min(y1, y2); y <= max(y1, y2); ++y) 
+    for (int y = min(y1, y2); y <= max(y1, y2); y++) 
 		{
-      map.map[y][x1] = EMPTY; 
+      tile_map.map[y][x1] = EMPTY; 
     }
-  } else if (y1 == y2) { 
+  } 
+	else if (y1 == y2) 
+	{ 
     for (int x = min(x1, x2); x <= max(x1, x2); ++x) 
 		{
-      map.map[y1][x] = EMPTY; 
+      tile_map.map[y1][x] = EMPTY; 
     }
-  } else { 
-    create_cooridor(map, x1, y1, x1, y2); 
-    create_cooridor(map, x1, y2, x2, y2); 
+  } 
+	else 
+	{ 
+    create_cooridor(tile_map, x1, y1, x1, y2); 
+    create_cooridor(tile_map, x1, y2, x2, y2); 
   }
 };
-
