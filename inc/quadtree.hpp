@@ -3,11 +3,13 @@
 
 #include <vector>
 #include <cstdlib>
+#include <utility>
 #include <raylib.h>
 #include "../inc/ecs.hpp"
 
 
 using std::vector;
+using std::pair;
 
 struct Quadtree {
     static const int MAX_ENTITIES = 20; 

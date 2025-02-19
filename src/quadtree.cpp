@@ -133,5 +133,13 @@ void debug_render_quadtree(Quadtree* tree)
 }
 
 
+void find_all_intersections(
+	Quadtree const* tree, 
+	vector<pair<Entity, Entity>>& vec
+)
+{
+	
 
+	return;
+}
 

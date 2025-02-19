@@ -21,7 +21,8 @@ using std::rand;
 // prolly would be neat with some debug features idk
 enum GameFlags 
 {
-	PAUSED = 1 << 0,
+	PAUSED 			= 1 << 0,
+	FPS_VISIBLE	= 1 << 1,
 };
 
 
@@ -119,6 +120,7 @@ void init(uint8_t& flags, ECS& ecs)
 	SetTargetFPS(60); 
 
 	flags = 0;
+	flags |= FPS_VISIBLE;
 	ecs = *new ECS();
 }
 	
@@ -146,7 +148,6 @@ int main()
 	Camera2D camera = {(Vector2){0.0f,0.0f}, (Vector2){200.0f, 200.0f}, 0.0f, 1.0f};
 	ECS ecs;
 	Quadtree quadtree = Quadtree(0, (Rectangle){0, 0, WINDOW_W, WINDOW_H});
-
 	init(flags, ecs);
 	
 	//THIS IS JUST FOR TESTING
@@ -220,7 +221,7 @@ int main()
 		EndMode2D();
 		// Draw things that are relative to screen coordinates, and not world
 		// coordinates i.e GUI stuff
-		DrawFPS(10, 10);
+		if (flags & FPS_VISIBLE) DrawFPS(10, 10);
 
 		EndDrawing();
 	}
