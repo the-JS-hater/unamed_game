@@ -32,7 +32,8 @@ void Quadtree::split()
   float y = bounds.y;
   float offset_x = bounds.width / 2;
   float offset_y = bounds.height / 2;
-	
+		
+	//this->nodes
   nodes[0] = new Quadtree(level + 1, (Rectangle){x, y, offset_x, offset_y}); 
   nodes[1] = new Quadtree(level + 1, (Rectangle){x + offset_x, y, offset_x, offset_y}); 
   nodes[2] = new Quadtree(level + 1, (Rectangle){x, y + offset_y, offset_x, offset_y}); 
@@ -59,7 +60,8 @@ int Quadtree::getIndex(ECS const& ecs, Entity const& id) const
 
 void Quadtree::insert(ECS const& ecs, Entity const& id) 
 {
-  if (nodes[0] != nullptr) 
+	//NOTE: rewrite as to make sure to insert id into ALL nodes that accept it?
+  if (nodes[0]) 
 	{
     int index = getIndex(ecs, id);
     if (index != -1) 
@@ -77,7 +79,7 @@ void Quadtree::insert(ECS const& ecs, Entity const& id)
 		{
       split();
     }
-
+		//NOTE: double check this logic
     for (int i {0}; i < entities.size(); ) 
 		{
       int index = getIndex(ecs, entities[i]);
@@ -85,7 +87,7 @@ void Quadtree::insert(ECS const& ecs, Entity const& id)
 			{
         nodes[index]->insert(ecs, entities[i]);
         entities.erase(entities.begin() + i);
-      } else ++i; 
+      } else i++; 
     }
   }
 }
@@ -106,7 +108,7 @@ vector<Entity> Quadtree::retrieve(Rectangle const& range) const
   }
 	
 	// Any given node either has 4 child nodes, or 0 child nodes
-  if (nodes[0] != nullptr) 
+  if (nodes[0]) 
 	{
     for (int i {0}; i < 4; i++) 
 		{
@@ -114,6 +116,22 @@ vector<Entity> Quadtree::retrieve(Rectangle const& range) const
       result.insert(result.end(), child_results.begin(), child_results.end());
     }
   }
-
   return result; 
 }
+
+
+void debug_render_quadtree(Quadtree* tree)
+{
+	if (!tree) return;
+	
+	DrawRectangleLinesEx(tree->bounds, 1, RED);
+	
+	for (auto child : tree->nodes)
+	{
+		debug_render_quadtree(child);
+	}
+}
+
+
+
+

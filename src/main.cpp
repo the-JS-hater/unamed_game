@@ -4,9 +4,9 @@
 #include <raylib.h>
 #include <stdint.h>
 #include <vector>
-#include <cstdlib>
 #include "../inc/ecs.hpp"
 #include "../inc/dungeonGen.hpp"
+#include "../inc/quadtree.hpp"
 
 
 using std::vector;
@@ -143,22 +143,25 @@ int main()
 	// usage: if (flags & SOME_FLAG), note the bitwise and
 	// perhaps it's possible to bundle this bitset with the enum in a struct?
 	uint8_t flags;
-	ECS ecs;
 	Camera2D camera = {(Vector2){0.0f,0.0f}, (Vector2){200.0f, 200.0f}, 0.0f, 1.0f};
+	ECS ecs;
+	Quadtree quadtree = Quadtree(0, (Rectangle){0, 0, WINDOW_W, WINDOW_H});
 
 	init(flags, ecs);
 	
 	//THIS IS JUST FOR TESTING
 	Texture2D test_tex = LoadTexture("resources/sprites/Spam.png");
-	for (int i {0}; i < 100; i++) {
+	for (int i {0}; i < 20000; i++) {
 		Entity id = ecs.allocate_entity();
 		float rand_x = rand()%WINDOW_W;
 		float rand_y = rand()%WINDOW_H;
 
 		ecs.set_position(id, (Vector2){rand_x, rand_y});
 		ecs.set_sprite(id, test_tex, WHITE);
+		ecs.set_boxCollider(id, (Rectangle){rand_x, rand_y, 32, 32});
 		
-		// 50% chance
+		quadtree.insert(ecs, id);
+		//50% chance
 		if ((rand() % 2) + 1 <= 2)
 		{
 			float rand_vx = rand()%20 - 10;
@@ -167,6 +170,7 @@ int main()
 		}
 	}
 
+	
 	TileMap test_map = generate_dungeon(128, 72, 8);
 
 	while (!WindowShouldClose())
@@ -192,6 +196,14 @@ int main()
 		
 		// UPDATE
 		update_positions(ecs);
+		update_box_colliders(ecs);
+		quadtree.clear();
+		for (auto id: ecs.entities) 
+		{	
+			if (id == -1) continue;
+			quadtree.insert(ecs, id);
+		}
+		
 
 		// RENDER
 		BeginDrawing();
@@ -199,7 +211,9 @@ int main()
 		ClearBackground(WHITE);
 
     //draw_tree(root);
-		debug_draw_dungeon(test_map);
+		//debug_draw_dungeon(test_map);
+		debug_render_quadtree(&quadtree);
+		//debug_draw_hitboxes(ecs);
 		
 		render_sprites(ecs);
 		

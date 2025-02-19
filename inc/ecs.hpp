@@ -80,3 +80,7 @@ struct ECS {
 void render_sprites(ECS const&);
 
 void update_positions(ECS&);
+
+void update_box_colliders(ECS&);
+
+void debug_draw_hitboxes(ECS const&);

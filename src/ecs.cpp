@@ -94,6 +94,19 @@ void update_positions(ECS& ecs)
 }
 
 
+void update_box_colliders(ECS& ecs)
+{
+	for (Entity id: ecs.entities)
+	{
+		if (ecs.entities[id] == -1) continue;
+		if (ecs.flag_sets[id] == (POSITION | BOX_COLLIDER)) continue;
+
+		ecs.box_colliders[id].hitbox.x = ecs.positions[id].position.x;
+		ecs.box_colliders[id].hitbox.y = ecs.positions[id].position.y;
+	}
+}
+
+
 /* COMPONENTS */
 
 PositionComponent::PositionComponent(Vector2 pos) : position {pos} {};
@@ -104,3 +117,17 @@ SpriteComponent::SpriteComponent(Entity pos_id, Texture2D tex, Color tint) :
 VelocityComponent::VelocityComponent(Vector2 v) : deltaV {v} {};
 
 BoxCollider::BoxCollider(Rectangle rec) : hitbox {rec} {};
+
+
+/* DEBUG FUNCTIONS */
+
+void debug_draw_hitboxes(ECS const& ecs)
+{
+	for (Entity id: ecs.entities)
+	{
+		if (ecs.entities[id] == -1) continue;
+		if (ecs.flag_sets[id] == (POSITION | BOX_COLLIDER)) continue;
+		
+		DrawRectangleLinesEx(ecs.box_colliders[id].hitbox, 5, RED);
+	}
+}
