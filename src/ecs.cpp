@@ -7,9 +7,7 @@
 /* ECS STRUCT STUFF */
 
 ECS::ECS() : 
-	entity_count {0}, 
-	entities(MAX_ENTITIES, -1),
-	flag_sets(MAX_ENTITIES, 0)
+	entity_count {0}, entities(MAX_ENTITIES, -1), flag_sets(MAX_ENTITIES, 0)
 {
 	positions.reserve(MAX_ENTITIES);
 	sprites.reserve(MAX_ENTITIES);
@@ -101,10 +99,7 @@ void update_positions(ECS& ecs)
 PositionComponent::PositionComponent(Vector2 pos) : position {pos} {};
 
 SpriteComponent::SpriteComponent(Entity pos_id, Texture2D tex, Color tint) : 
-		texture {tex}, 
-		position_id {pos_id},
-		tint {tint}
-		{};
+		texture {tex}, position_id {pos_id}, tint {tint} {};
 
 VelocityComponent::VelocityComponent(Vector2 v) : deltaV {v} {};
 

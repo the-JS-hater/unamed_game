@@ -8,10 +8,10 @@ IDIR =inc
 
 LIBS=-lraylib
 
-_DEPS = ecs.hpp dungeonGen.hpp 
+_DEPS = ecs.hpp dungeonGen.hpp quadtree.hpp 
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o ecs.o dungeonGen.o
+_OBJ = main.o ecs.o dungeonGen.o quadtree.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: $(SDIR)/%.cpp $(DEPS)
@@ -26,7 +26,7 @@ run:
 
 debug: $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS) $(DEGUB_FLAGS)
-	gdb ./game.exe
+	gdb ./debug
 
 .PHONY: clean
 

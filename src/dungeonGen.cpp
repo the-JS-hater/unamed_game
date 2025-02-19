@@ -13,45 +13,47 @@ x{x}, y{y}, w{w}, h{h}, left{nullptr}, right{nullptr} {};
 
 
 void generate_BSP(BSPnode* root, int min_size) 
-{
+{		
 	if (root == nullptr) return;
+	int cut;
+	float ratio = (float)root->h / (float)root->w;
 
-  int cut;
-  if ((rand()%100 > 50) && can_split_vert(root->w, root->h, min_size))
+	// Beutiful C++ lambdas!
+	auto cut_y_axis = [root, &cut, &min_size]()
 	{
 		// Cut along Y-axis
     cut = min_size + rand() % (root->w - min_size * 2);
     root->left = new BSPnode(root->x, root->y, cut, root->h);
     root->right = new BSPnode(root->x + cut, root->y, root->w - cut, root->h);
-  } 
-	else if (can_split_hor(root->w, root->h, min_size)) 
-	{	
+	};
+
+	auto cut_x_axis = [root, &cut, &min_size]() 
+	{
 		// Cut along X-axis
 		cut = min_size + rand() % (root->h - min_size * 2);
 		root->left = new BSPnode(root->x, root->y, root->w, cut);
 		root->right = new BSPnode(root->x, root->y + cut, root->w, root->h - cut);
-  }	
+	};
+
+	auto can_split = [root, min_size]() 
+	{
+	  return 	(root->w > min_size * 2 && root->h > min_size) && // make it OR? 
+						(root->h > min_size * 2 && root->w > min_size);
+	};
+	
+	if (!can_split()) return;
+	
+	if (ratio > 1.5f) cut_x_axis();
+	else if (ratio < 0.75f) cut_y_axis();
 	else 
 	{
-		// Can't make any cut
-		return;
+		if (rand()%100 > 50) cut_x_axis();
+		else cut_y_axis();
 	}
-
+	
   generate_BSP(root->left, min_size);
   generate_BSP(root->right, min_size);
 }
-
-
-bool can_split_vert(int w, int h, int min_size) 
-{
-  return (w > min_size * 2 && h > min_size);
-};
-
-
-bool can_split_hor(int w, int h, int min_size)
-{
-	return (h > min_size * 2 && w > min_size);
-};
 
 
 TileMap generate_dungeon(int w, int h, int min_size)
@@ -91,8 +93,9 @@ void generate_dungeon(BSPnode* bsp_tree, TileMap& tile_map)
 
 void create_room(TileMap& tile_map, BSPnode* leaf) 
 {	
-	int random_offset_x = (rand()%(leaf->w)) / 5 + 1;
-	int random_offset_y = (rand()%(leaf->h)) / 5 + 1;
+	int room_density_factor = 6; //Lower -> more space between rooms
+	int random_offset_x = (rand()%(leaf->w)) / room_density_factor + 1;
+	int random_offset_y = (rand()%(leaf->h)) / room_density_factor + 1;
 	int start_x = max(leaf->x, 0);
 	int start_y = max(leaf->y, 0);
 	int end_x = min(leaf->x + leaf->w, tile_map.width);

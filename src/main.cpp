@@ -145,20 +145,12 @@ int main()
 	uint8_t flags;
 	ECS ecs;
 	Camera2D camera = {(Vector2){0.0f,0.0f}, (Vector2){200.0f, 200.0f}, 0.0f, 1.0f};
-	
-	// Camera2D, defines position/orientation in 2d space
-	//typedef struct Camera2D {
-	//    Vector2 offset;         // Camera offset (displacement from target)
-	//    Vector2 target;         // Camera target (rotation and zoom origin)
-	//    float rotation;         // Camera rotation in degrees
-	//    float zoom;             // Camera zoom (scaling), should be 1.0f by default
-	//} Camera2D;
 
 	init(flags, ecs);
 	
 	//THIS IS JUST FOR TESTING
 	Texture2D test_tex = LoadTexture("resources/sprites/Spam.png");
-	for (int i {0}; i < 1; i++) {
+	for (int i {0}; i < 100; i++) {
 		Entity id = ecs.allocate_entity();
 		float rand_x = rand()%WINDOW_W;
 		float rand_y = rand()%WINDOW_H;
@@ -175,7 +167,7 @@ int main()
 		}
 	}
 
-	TileMap test_map = generate_dungeon(128, 72, 15);
+	TileMap test_map = generate_dungeon(128, 72, 8);
 
 	while (!WindowShouldClose())
 	{
