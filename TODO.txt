@@ -1,7 +1,7 @@
 IMPORTANT
 - Collision between entities (Quadtree)
 	- https://en.wikipedia.org/wiki/Quadtree
-	- https://en.wikipedia.org/wiki/Bounding_interval_hierarchy
+	- integrate into an actual collision system
 - Rewrtie rendering to account for a 2D camera
 	- Sort of done, but needs a player character to follow
 
@@ -12,6 +12,7 @@ SORT OF IMPORTANT
 
 OPTIMIZATION STUFF
 - 'cache' relevant entities on a per-system:s basis
+- find a way to not regenerate the quadtree each tick
 
 OTHER
 - like... actual gameplay n' stuff

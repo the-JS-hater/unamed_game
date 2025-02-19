@@ -215,7 +215,7 @@ int main()
 		debug_render_quadtree(&quadtree);
 		//debug_draw_hitboxes(ecs);
 		
-		render_sprites(ecs);
+		//render_sprites(ecs);
 		
 		EndMode2D();
 		// Draw things that are relative to screen coordinates, and not world
