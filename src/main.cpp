@@ -4,6 +4,7 @@
 #include <raylib.h>
 #include <stdint.h>
 #include <vector>
+#include <utility>
 #include "../inc/ecs.hpp"
 #include "../inc/dungeonGen.hpp"
 #include "../inc/quadtree.hpp"
@@ -148,11 +149,12 @@ int main()
 	Camera2D camera = {(Vector2){0.0f,0.0f}, (Vector2){200.0f, 200.0f}, 0.0f, 1.0f};
 	ECS ecs;
 	Quadtree quadtree = Quadtree(0, (Rectangle){0, 0, WINDOW_W, WINDOW_H});
+	vector<pair<Entity, Entity>> collisions;
 	init(flags, ecs);
 	
 	//THIS IS JUST FOR TESTING
 	Texture2D test_tex = LoadTexture("resources/sprites/Spam.png");
-	for (int i {0}; i < 20000; i++) {
+	for (int i {0}; i < 100; i++) {
 		Entity id = ecs.allocate_entity();
 		float rand_x = rand()%WINDOW_W;
 		float rand_y = rand()%WINDOW_H;
@@ -205,6 +207,9 @@ int main()
 			quadtree.insert(ecs, id);
 		}
 		
+		//NOTE: O(n) complexity, idk if there's a sensible way to avoid doing it
+		collisions.clear();
+		find_all_intersections(&quadtree, collisions, ecs);
 
 		// RENDER
 		BeginDrawing();
@@ -215,9 +220,10 @@ int main()
 		//debug_draw_dungeon(test_map);
 		debug_render_quadtree(&quadtree);
 		//debug_draw_hitboxes(ecs);
+		render_sprites(ecs);
+		debug_render_collisions(collisions, ecs);
 		
-		//render_sprites(ecs);
-		
+
 		EndMode2D();
 		// Draw things that are relative to screen coordinates, and not world
 		// coordinates i.e GUI stuff

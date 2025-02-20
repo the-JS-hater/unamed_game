@@ -120,7 +120,7 @@ vector<Entity> Quadtree::retrieve(Rectangle const& range) const
 }
 
 
-void debug_render_quadtree(Quadtree* tree)
+void debug_render_quadtree(Quadtree const* tree)
 {
 	if (!tree) return;
 	
@@ -134,12 +134,53 @@ void debug_render_quadtree(Quadtree* tree)
 
 
 void find_all_intersections(
-	Quadtree const* tree, 
-	vector<pair<Entity, Entity>>& vec
+    Quadtree const* tree, 
+    vector<pair<Entity, Entity>>& vec,
+    ECS const& ecs
 )
 {
-	
+  if (!tree) return;
 
-	return;
+  for (int i = 0; i < tree->entities.size(); ++i) 
+	{
+    for (int j = i + 1; j < tree->entities.size(); ++j) 
+		{
+      Entity entity_a = tree->entities[i];
+      Entity entity_b = tree->entities[j];
+
+      Rectangle bounds_a = ecs.box_colliders[entity_a].hitbox;
+      Rectangle bounds_b = ecs.box_colliders[entity_b].hitbox;
+
+      if (CheckCollisionRecs(bounds_a, bounds_b)) 
+			{
+        vec.emplace_back(entity_a, entity_b); 
+      }
+    }
+  }
+
+  for (int i = 0; i < 4; ++i) 
+	{
+    if (tree->nodes[i]) 
+		{
+      find_all_intersections(tree->nodes[i], vec, ecs);
+    }
+  }
+}
+
+
+void debug_render_collisions(
+	vector<pair<Entity, Entity>> const& collisions, ECS const& ecs
+)
+{
+	for (auto collision : collisions)
+	{
+		int x1 = ecs.positions[collision.first].position.x;
+		int y1 = ecs.positions[collision.first].position.y;
+		int x2 = ecs.positions[collision.second].position.x;
+		int y2 = ecs.positions[collision.second].position.y;
+
+		DrawRectangle(x1,y1,32,32,PINK);
+		DrawRectangle(x2,y2,32,32,PINK);
+	}
 }
 

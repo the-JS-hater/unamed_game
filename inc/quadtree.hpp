@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <vector>
 #include <cstdlib>
 #include <utility>
@@ -12,7 +11,7 @@ using std::vector;
 using std::pair;
 
 struct Quadtree {
-    static const int MAX_ENTITIES = 20; 
+    static const int MAX_ENTITIES = 2; 
     static const int MAX_LEVELS = 8; 
 
     int level;
@@ -34,4 +33,12 @@ struct Quadtree {
 };
 
 
-void debug_render_quadtree(Quadtree*);
+void find_all_intersections(
+	Quadtree const*, vector<pair<Entity, Entity>>&, ECS const&
+);
+
+
+void debug_render_quadtree(Quadtree const*);
+
+
+void debug_render_collisions(vector<pair<Entity, Entity>> const&, ECS const&);
