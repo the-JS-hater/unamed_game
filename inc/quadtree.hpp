@@ -34,7 +34,7 @@ struct Quadtree {
 };
 
 
-void handle_collisions(vector<pair<Entity, Entity>> const&, ECS const&);
+void handle_collisions(vector<pair<Entity, Entity>> const&, ECS&);
 
 
 void find_all_intersections(

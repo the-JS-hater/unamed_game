@@ -157,19 +157,27 @@ void find_all_intersections(
 // also possibly rename to make it clear this is only elastic collision
 // between entitites
 void handle_collisions(
-	vector<pair<Entity, Entity>> const& collisions, ECS const& ecs
+	vector<pair<Entity, Entity>> const& collisions, ECS& ecs
 )
 {
 	for (auto collision : collisions)
 	{
-		Vector2 p1 = ecs.positions[collision.first].position;
-		Vector2 p2 = ecs.positions[collision.first].position;
+		//Vector2 p1 = ecs.positions[collision.first].position;
+		//Vector2 p2 = ecs.positions[collision.first].position;
+		//float m1 = 10.0f;
+		//float m2 = 10.0f;
 		//float m1 = ecs.box_colliders[collision.first].mass; 
 		//float m2 = ecs.box_colliders[collision.second].mass; 
-		Vector2 v1 = ecs.velocities[collision.first].deltaV;
-		Vector2 v2 = ecs.velocities[collision.second].deltaV;
+		//Vector2 v2 = ecs.velocities[collision.second].deltaV;
 
-		//elastic_collision(m1, v1, p1, m2, v2, p2);
+		elastic_collision(
+			1000.0f, 
+			ecs.velocities[collision.first].deltaV,
+			ecs.positions[collision.first].position, 
+			1000.0f, 
+			ecs.velocities[collision.second].deltaV,
+			ecs.positions[collision.second].position
+		);
 	}
 }
 

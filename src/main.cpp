@@ -157,7 +157,7 @@ int main()
 	
 	//THIS IS JUST FOR TESTING
 	Texture2D test_tex = LoadTexture("resources/sprites/Spam.png");
-	for (int i {0}; i < 100; i++) {
+	for (int i {0}; i < 10; i++) {
 		Entity id = ecs.allocate_entity();
 		float rand_x = rand()%WINDOW_W;
 		float rand_y = rand()%WINDOW_H;
@@ -211,6 +211,7 @@ int main()
 		//NOTE: O(n) complexity, idk if there's a sensible way to avoid doing it
 		collisions.clear();
 		find_all_intersections(&quadtree, collisions, ecs);
+		handle_collisions(collisions, ecs);
 
 		// RENDER
 		BeginDrawing();
@@ -223,7 +224,6 @@ int main()
 		//debug_draw_hitboxes(ecs);
 		render_sprites(ecs);
 		debug_render_collisions(collisions, ecs);
-		
 
 		EndMode2D();
 		// Draw things that are relative to screen coordinates, and not world
