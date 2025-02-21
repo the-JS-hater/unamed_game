@@ -32,74 +32,6 @@ enum GameFlags
 };
 
 
-struct TreeNode {
-  int x;
-  int y;
-  int width;
-  int height;
-
-  Color color;
-
-  TreeNode* left;
-  TreeNode* right;
-};
-
-
-void generate_tree(TreeNode *root) {
-  TreeNode *left, *right;
-  int cut;
-  // Vertical or horizontal cut.
-  if (rand() % 2 == 0) {
-    // Random cut along the x axis.
-    cut = rand() % root->width;
-    left = new TreeNode {root->x, root->y, cut, root->height, RED};  
-    right = new TreeNode {cut, root->y, root->width, root->height, GREEN};  
-  } else {
-    // Random cut along the y axis.
-    cut = rand() % root->height;
-    left = new TreeNode {root->x, root->y, root->width, cut, BLUE};  
-    right = new TreeNode {root->x, cut, root->width, root->height, GRAY};
-  }
-
-  if (rand() % 100 < 40) {
-    generate_tree(left);
-  } else {
-    left->left = nullptr;
-    left->right = nullptr;
-  }
-
-
-  if (rand() % 100 < 40) {
-    generate_tree(right);
-  } else {
-    right->left = nullptr;
-    right->right = nullptr;
-  }
-
-  root->left = left;
-  root->right = right;
-}
-
-
-void draw_tree(TreeNode *root) {
-  // Draw bg color.
-  DrawRectangle(root->x, root->y, root->width, root->height, root->color);
-  // Draw border.
-  DrawRectangleLines(root->x, root->y, root->width, root->height, BLACK);
-
-  if (root->left != nullptr) draw_tree(root->left);
-  if (root->right != nullptr) draw_tree(root->right);
-}
-
-
-void delete_tree(TreeNode *root) {
-  if (root->left != nullptr) delete_tree(root->left);
-  if (root->right != nullptr) delete_tree(root->right);
-
-  delete root;
-};
-
-
 void render_pause_screen()
 {
 	const char* PAUSED_TEXT = "GAME IS PAUSED";
@@ -192,11 +124,6 @@ void move_player(Camera2D& camera, ECS& ecs)
 
 int main()
 {
-  srand(time(0));
-  // What are memory leaks?
-  TreeNode *root = new TreeNode{0, 0, WINDOW_W, WINDOW_H};
-  generate_tree(root);
-	
 	// used as a bitset alongside GameFlags enum
 	// usage: if (flags & SOME_FLAG), note the bitwise and
 	// perhaps it's possible to bundle this bitset with the enum in a struct?
@@ -268,6 +195,5 @@ int main()
 		EndDrawing();
 	}
 
-  delete_tree(root);
 	CloseWindow();
 }

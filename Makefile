@@ -1,6 +1,6 @@
 CC=g++
 CFLAGS=-I$(IDIR) 
-DEGUB_FLAGS=-Wall -g
+DEGUB_FLAGS=-Wall -Wextra -g
 
 SDIR=src
 ODIR=obj
