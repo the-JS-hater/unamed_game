@@ -19,7 +19,7 @@ ECS::ECS() :
 Entity ECS::allocate_entity() 
 {
 	if (entity_count >= MAX_ENTITIES) return -1;
-	else entities[entity_count] = entity_count;
+	else entities[entity_count] = entity_count; 
 	return entity_count++;
 }
 

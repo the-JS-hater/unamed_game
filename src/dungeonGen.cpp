@@ -93,7 +93,7 @@ void generate_dungeon(BSPnode* bsp_tree, TileMap& tile_map)
 
 void create_room(TileMap& tile_map, BSPnode* leaf) 
 {	
-	int room_density_factor = 6; //Lower -> more space between rooms
+	int room_density_factor = 5; //Lower -> more space between rooms
 	int random_offset_x = (rand()%(leaf->w)) / room_density_factor + 1;
 	int random_offset_y = (rand()%(leaf->h)) / room_density_factor + 1;
 	int start_x = max(leaf->x, 0);

@@ -18,7 +18,9 @@ using std::rand;
 #define WINDOW_H 720
 #define WORLD_W 2000 
 #define WORLD_H 2000
-#define NR_OF_TEST_ENTITIES 10000
+#define NR_OF_TEST_ENTITIES 100
+#define PLAYER_SPEED 5.0f
+
 
 // Will we ever had more here? WHO KNOWS!?
 // prolly would be neat with some debug features idk
@@ -128,9 +130,27 @@ void init(uint8_t& flags, ECS& ecs)
 }
 	
 	
+void init_player(ECS& ecs)
+{
+	Entity player_id;
+	if (ecs.entity_count == 0) player_id = ecs.allocate_entity();
+	else player_id = 0;
+
+	Texture2D player_tex = LoadTexture("resources/sprites/DuckHead.png");
+
+	ecs.set_position(player_id, (Vector2){WORLD_W / 2, WORLD_H / 2});
+	ecs.set_sprite(player_id, player_tex, WHITE);
+	ecs.set_boxCollider(player_id, (Rectangle){WORLD_W / 2, WORLD_H / 2, 32, 32});
+	
+	//NOTE: touching the flag sets directly like this is probably a pretty bad
+	//idea...
+	ecs.flag_sets[0] = (POSITION & SPRITE & BOX_COLLIDER);
+}
+	
+	
 //THIS IS JUST FOR TESTING
 void gen_test_entities(ECS& ecs, Quadtree& quadtree)
-{
+{	
 	Texture2D test_tex = LoadTexture("resources/sprites/Spam.png");
 	for (int i {0}; i < NR_OF_TEST_ENTITIES; i++) {
 		Entity id = ecs.allocate_entity();
@@ -140,7 +160,6 @@ void gen_test_entities(ECS& ecs, Quadtree& quadtree)
 		ecs.set_position(id, (Vector2){rand_x, rand_y});
 		ecs.set_sprite(id, test_tex, WHITE);
 		ecs.set_boxCollider(id, (Rectangle){rand_x, rand_y, 32, 32});
-		quadtree.insert(ecs, id);
 		
 		//50% chance
 		if ((rand() % 2) + 1 <= 2)
@@ -152,13 +171,21 @@ void gen_test_entities(ECS& ecs, Quadtree& quadtree)
 	}
 }
 
-	
-void temp_move_camera(Camera2D& camera)
+
+void move_player(Camera2D& camera, ECS& ecs)
 {
-	if (IsKeyDown(KEY_W)) camera.target.y -= 2.0f;
-	if (IsKeyDown(KEY_A)) camera.target.x -= 2.0f;
-	if (IsKeyDown(KEY_S)) camera.target.y += 2.0f;
-	if (IsKeyDown(KEY_D)) camera.target.x += 2.0f;
+	//NOTE: id 0 is assumed to be the player
+	Vector2* vec = &ecs.positions[0].position;
+
+	ecs.velocities[0].deltaV.x=0.0f;
+	ecs.velocities[0].deltaV.y=0.0f;
+
+	if (IsKeyDown(KEY_W)) vec->y -= PLAYER_SPEED;
+	if (IsKeyDown(KEY_A)) vec->x -= PLAYER_SPEED;
+	if (IsKeyDown(KEY_S)) vec->y += PLAYER_SPEED;
+	if (IsKeyDown(KEY_D)) vec->x += PLAYER_SPEED;
+
+	camera.target = *vec;
 }
 
 
@@ -173,13 +200,15 @@ int main()
 	// usage: if (flags & SOME_FLAG), note the bitwise and
 	// perhaps it's possible to bundle this bitset with the enum in a struct?
 	uint8_t flags;
-	Camera2D camera = {(Vector2){0.0f,0.0f}, (Vector2){0.0f, 0.0f}, 0.0f, 0.9f};
-	TileMap test_map = generate_dungeon(128, 72, 8);
+	Camera2D camera = {(Vector2){WINDOW_W / 2,WINDOW_H / 2}, (Vector2){0.0f, 0.0f}, 0.0f, 1.0f};
+	TileMap test_map = generate_dungeon(WORLD_W / 10, WORLD_H/ 10, 8);
 	ECS ecs;
 	Quadtree quadtree = Quadtree(0, (Rectangle){0, 0, WORLD_W, WORLD_H});
 	vector<pair<Entity, Entity>> collisions;
 	
 	init(flags, ecs);
+	init_player(ecs);
+	
 	gen_test_entities(ecs, quadtree);
 
 	while (!WindowShouldClose())
@@ -201,7 +230,7 @@ int main()
 		}
 
 		// INPUT
-		temp_move_camera(camera);
+		move_player(camera, ecs);
 		
 		// UPDATE
 		update_positions(ecs);
@@ -224,8 +253,8 @@ int main()
 		ClearBackground(WHITE);
 
     //draw_tree(root);
-		//debug_draw_dungeon(test_map);
-		debug_render_quadtree(&quadtree);
+		debug_draw_dungeon(test_map);
+		//debug_render_quadtree(&quadtree);
 		//debug_draw_hitboxes(ecs);
 		render_sprites(ecs);
 		debug_render_collisions(collisions, ecs);
