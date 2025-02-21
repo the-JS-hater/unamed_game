@@ -120,19 +120,6 @@ vector<Entity> Quadtree::retrieve(Rectangle const& range) const
 }
 
 
-void debug_render_quadtree(Quadtree const* tree)
-{
-	if (!tree) return;
-	
-	DrawRectangleLinesEx(tree->bounds, 1, RED);
-	
-	for (auto child : tree->nodes)
-	{
-		debug_render_quadtree(child);
-	}
-}
-
-
 void find_all_intersections(
     Quadtree const* tree, 
     vector<pair<Entity, Entity>>& vec,
@@ -168,19 +155,29 @@ void find_all_intersections(
 }
 
 
+/* DEBUG FUNCTIONS */
+
+void debug_render_quadtree(Quadtree const* tree)
+{
+	if (!tree) return;
+	
+	DrawRectangleLinesEx(tree->bounds, 1, RED);
+	
+	for (auto child : tree->nodes)
+	{
+		debug_render_quadtree(child);
+	}
+}
+
+
 void debug_render_collisions(
 	vector<pair<Entity, Entity>> const& collisions, ECS const& ecs
 )
 {
 	for (auto collision : collisions)
 	{
-		int x1 = ecs.positions[collision.first].position.x;
-		int y1 = ecs.positions[collision.first].position.y;
-		int x2 = ecs.positions[collision.second].position.x;
-		int y2 = ecs.positions[collision.second].position.y;
-
-		DrawRectangle(x1,y1,32,32,PINK);
-		DrawRectangle(x2,y2,32,32,PINK);
+		DrawRectangleRec(ecs.box_colliders[collision.first].hitbox, PINK);
+		DrawRectangleRec(ecs.box_colliders[collision.second].hitbox, PINK);
 	}
 }
 
