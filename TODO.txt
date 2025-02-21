@@ -1,24 +1,33 @@
-IMPORTANT
-- Rewrtie rendering to account for a 2D camera
-	- Sort of done, but needs a player character to follow
+ENGINE FEATURES
+- non-elastic collision
+	- notably geometry collision
 
 SORT OF IMPORTANT
-- A player character, or something
-	- controls, have the camera following it and so on
 - A* to use for path finding in entitites
 
 OPTIMIZATION STUFF
+- probably ALOT of ways to optimize the quadtree/collision
 - 'cache' relevant entities on a per-system:s basis
 - find a way to not regenerate the quadtree each tick
 
-OTHER
-- like... actual gameplay n' stuff
+GAMEPLAY FEATURES
+- Weapons
+	- Bullets
+	- grenades
+	- HealthComponent & System
+- A* pathfinding for AI
+- GameOver & Restart
 - Audio
+- Levels with increasing difficulty, somehow
 
 KNOWN BUGS
-- Double free error when closing the game
+- Double free error when closing the game? do we care???
 - Colliding entities sometimes get stuck inside each other
+	- maybe sort of fixed, fingers crossed?
 
-NICE THINGS
+NICE THINGS & TECH DEBT
+- Start Menu
+	- Options Menu?
 - tweak dungeon generation
 - refactor collision code into a sensible (ECS) system
+- music & graphical assets
