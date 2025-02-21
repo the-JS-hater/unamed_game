@@ -116,7 +116,7 @@ SpriteComponent::SpriteComponent(Entity pos_id, Texture2D tex, Color tint) :
 
 VelocityComponent::VelocityComponent(Vector2 v) : deltaV {v} {};
 
-BoxCollider::BoxCollider(Rectangle rec) : hitbox {rec} {};
+BoxCollider::BoxCollider(Rectangle rec) : hitbox {rec}/*, mass{10.0f}*/ {};
 
 
 /* DEBUG FUNCTIONS */

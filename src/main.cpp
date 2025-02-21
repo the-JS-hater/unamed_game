@@ -147,9 +147,12 @@ int main()
 	// perhaps it's possible to bundle this bitset with the enum in a struct?
 	uint8_t flags;
 	Camera2D camera = {(Vector2){0.0f,0.0f}, (Vector2){200.0f, 200.0f}, 0.0f, 1.0f};
+	TileMap test_map = generate_dungeon(128, 72, 8);
 	ECS ecs;
 	Quadtree quadtree = Quadtree(0, (Rectangle){0, 0, WINDOW_W, WINDOW_H});
 	vector<pair<Entity, Entity>> collisions;
+	
+
 	init(flags, ecs);
 	
 	//THIS IS JUST FOR TESTING
@@ -173,8 +176,6 @@ int main()
 		}
 	}
 
-	
-	TileMap test_map = generate_dungeon(128, 72, 8);
 
 	while (!WindowShouldClose())
 	{

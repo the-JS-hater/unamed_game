@@ -22,7 +22,7 @@ enum ComponentType
 struct BoxCollider 
 {
 	Rectangle hitbox;
-
+	//float mass; //NOTE: maybe make into own component later ?
 	BoxCollider(Rectangle);
 };
 

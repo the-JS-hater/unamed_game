@@ -5,6 +5,7 @@
 #include <utility>
 #include <raylib.h>
 #include "../inc/ecs.hpp"
+#include "../inc/vecUtils.hpp"
 
 
 using std::vector;
@@ -31,6 +32,9 @@ struct Quadtree {
 
     vector<Entity> retrieve(Rectangle const&) const;
 };
+
+
+void handle_collisions(vector<pair<Entity, Entity>> const&, ECS const&);
 
 
 void find_all_intersections(

@@ -60,7 +60,6 @@ int Quadtree::getIndex(ECS const& ecs, Entity const& id) const
 
 void Quadtree::insert(ECS const& ecs, Entity const& id) 
 {
-	//NOTE: rewrite as to make sure to insert id into ALL nodes that accept it?
   if (nodes[0]) 
 	{
     int index = getIndex(ecs, id);
@@ -79,7 +78,6 @@ void Quadtree::insert(ECS const& ecs, Entity const& id)
 		{
       split();
     }
-		//NOTE: double check this logic
     for (int i {0}; i < entities.size(); ) 
 		{
       int index = getIndex(ecs, entities[i]);
@@ -152,6 +150,27 @@ void find_all_intersections(
       find_all_intersections(tree->nodes[i], vec, ecs);
     }
   }
+}
+	
+
+// NOTE: this shoould probably be moved to systems section in ecs.cpp ?
+// also possibly rename to make it clear this is only elastic collision
+// between entitites
+void handle_collisions(
+	vector<pair<Entity, Entity>> const& collisions, ECS const& ecs
+)
+{
+	for (auto collision : collisions)
+	{
+		Vector2 p1 = ecs.positions[collision.first].position;
+		Vector2 p2 = ecs.positions[collision.first].position;
+		//float m1 = ecs.box_colliders[collision.first].mass; 
+		//float m2 = ecs.box_colliders[collision.second].mass; 
+		Vector2 v1 = ecs.velocities[collision.first].deltaV;
+		Vector2 v2 = ecs.velocities[collision.second].deltaV;
+
+		//elastic_collision(m1, v1, p1, m2, v2, p2);
+	}
 }
 
 
