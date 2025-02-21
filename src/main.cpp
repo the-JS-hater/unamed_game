@@ -16,7 +16,9 @@ using std::rand;
 
 #define WINDOW_W 1280
 #define WINDOW_H 720
-
+#define WORLD_W 2000 
+#define WORLD_H 2000
+#define NR_OF_TEST_ENTITIES 10000
 
 // Will we ever had more here? WHO KNOWS!?
 // prolly would be neat with some debug features idk
@@ -125,7 +127,32 @@ void init(uint8_t& flags, ECS& ecs)
 	ecs = *new ECS();
 }
 	
+	
+//THIS IS JUST FOR TESTING
+void gen_test_entities(ECS& ecs, Quadtree& quadtree)
+{
+	Texture2D test_tex = LoadTexture("resources/sprites/Spam.png");
+	for (int i {0}; i < NR_OF_TEST_ENTITIES; i++) {
+		Entity id = ecs.allocate_entity();
+		float rand_x = rand()%WINDOW_W;
+		float rand_y = rand()%WINDOW_H;
 
+		ecs.set_position(id, (Vector2){rand_x, rand_y});
+		ecs.set_sprite(id, test_tex, WHITE);
+		ecs.set_boxCollider(id, (Rectangle){rand_x, rand_y, 32, 32});
+		quadtree.insert(ecs, id);
+		
+		//50% chance
+		if ((rand() % 2) + 1 <= 2)
+		{
+			float rand_vx = rand()%20 - 10;
+			float rand_vy = rand()%20 - 10;
+			ecs.set_velocity(id, (Vector2){rand_vx, rand_vy});
+		}
+	}
+}
+
+	
 void temp_move_camera(Camera2D& camera)
 {
 	if (IsKeyDown(KEY_W)) camera.target.y -= 2.0f;
@@ -146,36 +173,14 @@ int main()
 	// usage: if (flags & SOME_FLAG), note the bitwise and
 	// perhaps it's possible to bundle this bitset with the enum in a struct?
 	uint8_t flags;
-	Camera2D camera = {(Vector2){0.0f,0.0f}, (Vector2){200.0f, 200.0f}, 0.0f, 0.9f};
+	Camera2D camera = {(Vector2){0.0f,0.0f}, (Vector2){0.0f, 0.0f}, 0.0f, 0.9f};
 	TileMap test_map = generate_dungeon(128, 72, 8);
 	ECS ecs;
-	Quadtree quadtree = Quadtree(0, (Rectangle){0, 0, WINDOW_W, WINDOW_H});
+	Quadtree quadtree = Quadtree(0, (Rectangle){0, 0, WORLD_W, WORLD_H});
 	vector<pair<Entity, Entity>> collisions;
 	
-
 	init(flags, ecs);
-	
-	//THIS IS JUST FOR TESTING
-	Texture2D test_tex = LoadTexture("resources/sprites/Spam.png");
-	for (int i {0}; i < 20; i++) {
-		Entity id = ecs.allocate_entity();
-		float rand_x = rand()%WINDOW_W;
-		float rand_y = rand()%WINDOW_H;
-
-		ecs.set_position(id, (Vector2){rand_x, rand_y});
-		ecs.set_sprite(id, test_tex, WHITE);
-		ecs.set_boxCollider(id, (Rectangle){rand_x, rand_y, 32, 32});
-		
-		quadtree.insert(ecs, id);
-		//50% chance
-		if ((rand() % 2) + 1 <= 2)
-		{
-			float rand_vx = rand()%20 - 10;
-			float rand_vy = rand()%20 - 10;
-			ecs.set_velocity(id, (Vector2){rand_vx, rand_vy});
-		}
-	}
-
+	gen_test_entities(ecs, quadtree);
 
 	while (!WindowShouldClose())
 	{

@@ -1,7 +1,4 @@
 IMPORTANT
-- Collision between entities (Quadtree)
-	- https://en.wikipedia.org/wiki/Quadtree
-	- integrate into an actual collision system
 - Rewrtie rendering to account for a 2D camera
 	- Sort of done, but needs a player character to follow
 
@@ -20,8 +17,8 @@ OTHER
 
 KNOWN BUGS
 - Double free error when closing the game
+- Colliding entities sometimes get stuck inside each other
 
 NICE THINGS
 - tweak dungeon generation
-	- If h:w ratios is wacky, prefer to cut it appropriatley, and only use random
-		in other cases
+- refactor collision code into a sensible (ECS) system
