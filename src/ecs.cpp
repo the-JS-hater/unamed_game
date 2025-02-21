@@ -84,12 +84,12 @@ void update_positions(ECS& ecs)
 		ecs.positions[id].position.x += ecs.velocities[id].deltaV.x;
 		ecs.positions[id].position.y += ecs.velocities[id].deltaV.y;
 	
-		if (ecs.positions[id].position.x < 0) ecs.velocities[id].deltaV.x *= -1;
-		if (ecs.positions[id].position.y < 0) ecs.velocities[id].deltaV.y *= -1;
+		if (ecs.positions[id].position.x < 0) ecs.velocities[id].deltaV.x = 1;
+		if (ecs.positions[id].position.y < 0) ecs.velocities[id].deltaV.y = 1;
 		
 		//NOTE: Wolrd size hardcoded for testing. Should be changed later on
-		if (ecs.positions[id].position.x > 2000) ecs.velocities[id].deltaV.x *= -1;
-		if (ecs.positions[id].position.y > 2000) ecs.velocities[id].deltaV.y *= -1;
+		if (ecs.positions[id].position.x > 200 * 32) ecs.velocities[id].deltaV.x = -1;
+		if (ecs.positions[id].position.y > 200 * 32) ecs.velocities[id].deltaV.y = -1;
 	}
 }
 

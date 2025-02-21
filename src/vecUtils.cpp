@@ -3,7 +3,7 @@
 
 //NOTE: prolly move this somewhere else, or rename this module
 void elastic_collision(
-	float m1, Vector2& v1, Vector2 p1, float m2, Vector2& v2, Vector2 p2
+	float m1, Vector2& v1, Vector2& p1, float m2, Vector2& v2, Vector2& p2
 ) 
 {
 	//TODO: refactor to avoid this retarded shift to the center
@@ -27,6 +27,12 @@ void elastic_collision(
   // Apply impulse with correct direction (add to v1, subtract from v2)
   v1 = add(v1, scale(n_hat, J / m1));
   v2 = sub(v2, scale(n_hat, J / m2));
+	
+	Vector2 norm_v1 = normalize(v1);
+	Vector2 norm_v2 = normalize(v1);
+
+	p1 = add(p1, scale(norm_v1, 16.0f));
+	p2 = sub(p2, scale(norm_v2, 16.0f));
 }
 
 

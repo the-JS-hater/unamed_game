@@ -135,13 +135,19 @@ void create_cooridor(TileMap& tile_map, int x1, int y1, int x2, int y2)
 };
 
 
-void debug_draw_dungeon(TileMap const& tile_map)
+void debug_draw_dungeon(TileMap const& tile_map, int const tile_size)
 {
 	for (int y = 0; y < tile_map.height; y++)
 	{
 		for (int x = 0; x < tile_map.width; x++)
 		{
-			if (tile_map.map[y][x] == WALL) DrawRectangle(x*10,y*10,10,10,BLACK);
+			if (tile_map.map[y][x] == WALL) DrawRectangle(
+				x * tile_size,
+				y * tile_size,
+				tile_size,
+				tile_size,
+				BLACK
+			);
 		}
 	}
 };

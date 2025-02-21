@@ -16,10 +16,11 @@ using std::rand;
 
 #define WINDOW_W 1280
 #define WINDOW_H 720
-#define WORLD_W 2000 
+#define WORLD_W 2000
 #define WORLD_H 2000
-#define NR_OF_TEST_ENTITIES 100
+#define NR_OF_TEST_ENTITIES 1000
 #define PLAYER_SPEED 5.0f
+#define TILE_SIZE 32
 
 
 // Will we ever had more here? WHO KNOWS!?
@@ -177,8 +178,8 @@ void move_player(Camera2D& camera, ECS& ecs)
 	//NOTE: id 0 is assumed to be the player
 	Vector2* vec = &ecs.positions[0].position;
 
-	ecs.velocities[0].deltaV.x=0.0f;
-	ecs.velocities[0].deltaV.y=0.0f;
+	//ecs.velocities[0].deltaV.x=0.0f;
+	//ecs.velocities[0].deltaV.y=0.0f;
 
 	if (IsKeyDown(KEY_W)) vec->y -= PLAYER_SPEED;
 	if (IsKeyDown(KEY_A)) vec->x -= PLAYER_SPEED;
@@ -253,7 +254,7 @@ int main()
 		ClearBackground(WHITE);
 
     //draw_tree(root);
-		debug_draw_dungeon(test_map);
+		debug_draw_dungeon(test_map, TILE_SIZE);
 		//debug_render_quadtree(&quadtree);
 		//debug_draw_hitboxes(ecs);
 		render_sprites(ecs);

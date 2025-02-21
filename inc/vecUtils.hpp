@@ -5,7 +5,7 @@
 #include <cmath>
 
 void elastic_collision(
-	float, Vector2&, Vector2, float, Vector2&, Vector2 
+	float, Vector2&, Vector2&, float, Vector2&, Vector2&
 ); 
 
 Vector2 normalize(Vector2); 

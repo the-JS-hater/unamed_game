@@ -59,5 +59,5 @@ void create_cooridor(TileMap&, int, int, int, int);
 
 void create_room(TileMap&, BSPnode*);
 
-void debug_draw_dungeon(TileMap const&);
+void debug_draw_dungeon(TileMap const&, int const);
 
