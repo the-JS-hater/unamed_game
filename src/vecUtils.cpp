@@ -6,22 +6,27 @@ void elastic_collision(
 	float m1, Vector2& v1, Vector2 p1, float m2, Vector2& v2, Vector2 p2
 ) 
 {
-	// normal vector
-  Vector2 n = sub(p2, p1);
+	//TODO: refactor to avoid this retarded shift to the center
+	Vector2 center1 = add(p1, (Vector2){16.0f, 16.0f});
+	Vector2 center2 = add(p2, (Vector2){16.0f, 16.0f});
+
+
+	// Normal vector between centers
+  Vector2 n = sub(center2, center1);
   Vector2 n_hat = normalize(n); 
 
-  // relative velocity
+  // Relative velocity
   Vector2 v_rel = sub(v1, v2);
 
-  // velocity along the normal
+  // Velocity along the normal
   float v_rel_n = dot(v_rel, n_hat);
 
-  // calculate impulse (for perfectly elastic collision, e = 1)
-  float J = -2 * v_rel_n / (1/m1 + 1/m2);
+  // Calculate impulse (elastic collision with e=1)
+  float J = (-2 * v_rel_n) / (1/m1 + 1/m2);
 
-  // update velocities
-  v1 = sub(v1, scale(n_hat, J / m1));
-  v2 = add(v2, scale(n_hat, J / m2));
+  // Apply impulse with correct direction (add to v1, subtract from v2)
+  v1 = add(v1, scale(n_hat, J / m1));
+  v2 = sub(v2, scale(n_hat, J / m2));
 }
 
 

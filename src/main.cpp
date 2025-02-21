@@ -146,7 +146,7 @@ int main()
 	// usage: if (flags & SOME_FLAG), note the bitwise and
 	// perhaps it's possible to bundle this bitset with the enum in a struct?
 	uint8_t flags;
-	Camera2D camera = {(Vector2){0.0f,0.0f}, (Vector2){200.0f, 200.0f}, 0.0f, 1.0f};
+	Camera2D camera = {(Vector2){0.0f,0.0f}, (Vector2){200.0f, 200.0f}, 0.0f, 0.9f};
 	TileMap test_map = generate_dungeon(128, 72, 8);
 	ECS ecs;
 	Quadtree quadtree = Quadtree(0, (Rectangle){0, 0, WINDOW_W, WINDOW_H});
@@ -157,7 +157,7 @@ int main()
 	
 	//THIS IS JUST FOR TESTING
 	Texture2D test_tex = LoadTexture("resources/sprites/Spam.png");
-	for (int i {0}; i < 10; i++) {
+	for (int i {0}; i < 20; i++) {
 		Entity id = ecs.allocate_entity();
 		float rand_x = rand()%WINDOW_W;
 		float rand_y = rand()%WINDOW_H;
