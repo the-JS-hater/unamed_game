@@ -20,13 +20,11 @@ $(ODIR)/%.o: $(SDIR)/%.cpp $(DEPS)
 game.exe: $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
-run:
-	make
+run: game.exe
 	./game.exe
 
-debug: $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS) $(DEGUB_FLAGS)
-	gdb ./debug
+debug: game.exe
+	gdb ./game.exe
 
 .PHONY: clean
 
