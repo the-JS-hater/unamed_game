@@ -18,7 +18,7 @@ using std::rand;
 #define WINDOW_H 720
 #define WORLD_W 2000
 #define WORLD_H 2000
-#define NR_OF_TEST_ENTITIES 20000
+#define NR_OF_TEST_ENTITIES 100
 #define PLAYER_SPEED 5.0f
 #define TILE_SIZE 32
 
@@ -71,13 +71,14 @@ void init_player(ECS& ecs)
 
 	Texture2D player_tex = LoadTexture("resources/sprites/DuckHead.png");
 
-	ecs.set_position(player_id, (Vector2){WORLD_W / 2, WORLD_H / 2});
+	ecs.set_position(player_id, (Vector2){TILE_SIZE * 15, TILE_SIZE * 15});
 	ecs.set_sprite(player_id, player_tex, WHITE);
 	ecs.set_boxCollider(player_id, (Rectangle){WORLD_W / 2, WORLD_H / 2, 32, 32});
-	
+	ecs.set_velocity(player_id, (Vector2){0.0f, 0.0f});
+
 	//NOTE: touching the flag sets directly like this is probably a pretty bad
 	//idea...
-	ecs.flag_sets[0] = (POSITION | SPRITE | BOX_COLLIDER);
+	ecs.flag_sets[0] = (POSITION | SPRITE | BOX_COLLIDER | VELOCITY);
 }
 	
 	
@@ -108,17 +109,17 @@ void gen_test_entities(ECS& ecs, Quadtree& quadtree)
 void move_player(Camera2D& camera, ECS& ecs)
 {
 	//NOTE: id 0 is assumed to be the player
-	Vector2* vec = &ecs.positions[0].position;
+	Vector2* vec = &ecs.velocities[0].deltaV;
 
-	//ecs.velocities[0].deltaV.x=0.0f;
-	//ecs.velocities[0].deltaV.y=0.0f;
+	ecs.velocities[0].deltaV.x=0.0f;
+	ecs.velocities[0].deltaV.y=0.0f;
 
-	if (IsKeyDown(KEY_W)) vec->y -= PLAYER_SPEED;
-	if (IsKeyDown(KEY_A)) vec->x -= PLAYER_SPEED;
-	if (IsKeyDown(KEY_S)) vec->y += PLAYER_SPEED;
-	if (IsKeyDown(KEY_D)) vec->x += PLAYER_SPEED;
+	if (IsKeyDown(KEY_W)) vec->y = -PLAYER_SPEED;
+	if (IsKeyDown(KEY_A)) vec->x = -PLAYER_SPEED;
+	if (IsKeyDown(KEY_S)) vec->y = +PLAYER_SPEED;
+	if (IsKeyDown(KEY_D)) vec->x = +PLAYER_SPEED;
 
-	camera.target = *vec;
+	camera.target = ecs.positions[0].position;
 }
 
 
@@ -190,7 +191,7 @@ int main()
 		//fucking nuke my lapptop
 		debug_draw_dungeon(test_map, TILE_SIZE);
 		//debug_render_quadtree(&quadtree);
-		//debug_draw_hitboxes(ecs);
+		debug_draw_hitboxes(ecs);
 		render_sprites(ecs);
 		//debug_render_collisions(collisions, ecs);
 

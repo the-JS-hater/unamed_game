@@ -118,6 +118,7 @@ void create_cooridor(TileMap& tile_map, int x1, int y1, int x2, int y2)
     for (int y = min(y1, y2); y <= max(y1, y2); y++) 
 		{
       tile_map.map[y][x1] = EMPTY; 
+      tile_map.map[y][x1+1] = EMPTY; 
     }
   } 
 	else if (y1 == y2) 
@@ -125,12 +126,13 @@ void create_cooridor(TileMap& tile_map, int x1, int y1, int x2, int y2)
     for (int x = min(x1, x2); x <= max(x1, x2); ++x) 
 		{
       tile_map.map[y1][x] = EMPTY; 
+      tile_map.map[y1+1][x] = EMPTY; 
     }
   } 
 	else 
 	{ 
     create_cooridor(tile_map, x1, y1, x1, y2); 
-    create_cooridor(tile_map, x1, y2, x2, y2); 
+    create_cooridor(tile_map, x1, y1, x1, y2); 
   }
 };
 

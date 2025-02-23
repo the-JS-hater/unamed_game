@@ -198,6 +198,6 @@ void debug_draw_hitboxes(ECS const& ecs)
 		if (ecs.entities[id] == -1) continue;
 		if (ecs.flag_sets[id] == (POSITION | BOX_COLLIDER)) continue;
 		
-		DrawRectangleLinesEx(ecs.box_colliders[id].hitbox, 5, RED);
+		DrawRectangleRec(ecs.box_colliders[id].hitbox, RED);
 	}
 }
