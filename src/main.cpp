@@ -77,7 +77,7 @@ void init_player(ECS& ecs)
 	
 	//NOTE: touching the flag sets directly like this is probably a pretty bad
 	//idea...
-	ecs.flag_sets[0] = (POSITION & SPRITE & BOX_COLLIDER);
+	ecs.flag_sets[0] = (POSITION | SPRITE | BOX_COLLIDER);
 }
 	
 	

@@ -64,7 +64,7 @@ void render_sprites(ECS const& ecs)
 	for (Entity id: ecs.entities)
 	{
 		if (ecs.entities[id] == -1) continue;
-		if (ecs.flag_sets[id] == (POSITION | SPRITE)) continue;
+		if ((ecs.flag_sets[id] & (POSITION | SPRITE)) != (POSITION | SPRITE)) continue;
 			
 		DrawTextureV(
 			ecs.sprites[id].texture,
@@ -79,7 +79,7 @@ void update_positions(ECS& ecs)
 	for (Entity id: ecs.entities)
 	{
 		if (ecs.entities[id] == -1) continue;
-		if (ecs.flag_sets[id] == (POSITION | VELOCITY)) continue;
+		if ((ecs.flag_sets[id] & (POSITION | VELOCITY)) != (POSITION | VELOCITY)) continue;
 		
 		ecs.positions[id].position.x += ecs.velocities[id].deltaV.x;
 		ecs.positions[id].position.y += ecs.velocities[id].deltaV.y;
@@ -99,12 +99,13 @@ void update_box_colliders(ECS& ecs)
 	for (Entity id: ecs.entities)
 	{
 		if (ecs.entities[id] == -1) continue;
-		if (ecs.flag_sets[id] == (POSITION | BOX_COLLIDER)) continue;
+		if ((ecs.flag_sets[id] & (POSITION | BOX_COLLIDER)) != (POSITION | BOX_COLLIDER)) continue;
 
 		ecs.box_colliders[id].hitbox.x = ecs.positions[id].position.x;
 		ecs.box_colliders[id].hitbox.y = ecs.positions[id].position.y;
 	}
 }
+
 
 
 /* COMPONENTS */
