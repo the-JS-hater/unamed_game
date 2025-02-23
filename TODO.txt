@@ -1,6 +1,5 @@
 ENGINE FEATURES
-- non-elastic collision
-	- notably geometry collision
+- ...
 
 SORT OF IMPORTANT
 - A* to use for path finding in entitites
@@ -22,6 +21,7 @@ GAMEPLAY FEATURES
 
 KNOWN BUGS
 - Double free error when closing the game? do we care???
+- Entities spawned inside walls can never get out
 - Colliding entities sometimes get stuck inside each other
 	- maybe sort of fixed, fingers crossed?
 - vsync/tearing issues
