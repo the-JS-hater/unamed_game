@@ -24,6 +24,7 @@ KNOWN BUGS
 - Entities spawned inside walls can never get out
 - Colliding entities sometimes get stuck inside each other
 	- maybe sort of fixed, fingers crossed?
+		- yes that's fixed, now the only issue is getting stuck in walls...
 - vsync/tearing issues
 
 NICE THINGS & TECH DEBT
