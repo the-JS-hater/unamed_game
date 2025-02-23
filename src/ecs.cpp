@@ -30,7 +30,7 @@ void ECS::deallocate_entity(Entity id)
 
 void ECS::set_flag(Entity id, ComponentType flag) 
 {
-	flag_sets[id] &= flag;
+	flag_sets[id] |= flag;
 }
 
 void ECS::set_position(Entity id, Vector2 pos) 

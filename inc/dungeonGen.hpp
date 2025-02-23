@@ -25,8 +25,9 @@ enum Tiles
 
 struct TileMap
 {
+	int const tileSize = 32;
 	int height;
-	int width;	
+	int width;
 	matrix<Tiles> map;
 
 	TileMap(int, int);

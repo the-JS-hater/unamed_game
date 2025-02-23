@@ -2,6 +2,10 @@
 
 #include <raylib.h>
 #include <vector>
+//Hopefully map realted structs will be refactored to a more sensible module in
+//the future
+#include "../inc/dungeonGen.hpp" 
+
 
 using std::vector;
 

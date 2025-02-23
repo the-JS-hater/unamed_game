@@ -18,7 +18,7 @@ using std::rand;
 #define WINDOW_H 720
 #define WORLD_W 2000
 #define WORLD_H 2000
-#define NR_OF_TEST_ENTITIES 1000
+#define NR_OF_TEST_ENTITIES 100
 #define PLAYER_SPEED 5.0f
 #define TILE_SIZE 32
 
