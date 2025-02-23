@@ -129,7 +129,7 @@ int main()
 	// perhaps it's possible to bundle this bitset with the enum in a struct?
 	uint8_t flags;
 	Camera2D camera = {(Vector2){WINDOW_W / 2,WINDOW_H / 2}, (Vector2){0.0f, 0.0f}, 0.0f, 1.0f};
-	TileMap test_map = generate_dungeon(WORLD_W / 10, WORLD_H/ 10, 8);
+	TileMap test_map = generate_dungeon(WORLD_W / TILE_SIZE, WORLD_H/ TILE_SIZE, 10);
 	ECS ecs;
 	Quadtree quadtree = Quadtree(0, (Rectangle){0, 0, WORLD_W, WORLD_H});
 	vector<pair<Entity, Entity>> collisions;
@@ -161,8 +161,12 @@ int main()
 		move_player(camera, ecs);
 		
 		// UPDATE
+		handle_wall_collisions(ecs, test_map);
 		update_positions(ecs);
 		update_box_colliders(ecs);
+		
+		//NOTE: could be optimized in such a way as to not having to regenerate the
+		//whole quadtree every update
 		quadtree.clear();
 		for (auto id: ecs.entities) 
 		{	
@@ -183,8 +187,8 @@ int main()
     //draw_tree(root);
 		debug_draw_dungeon(test_map, TILE_SIZE);
 		//debug_render_quadtree(&quadtree);
-		//debug_draw_hitboxes(ecs);
-		render_sprites(ecs);
+		debug_draw_hitboxes(ecs);
+		//render_sprites(ecs);
 		debug_render_collisions(collisions, ecs);
 
 		EndMode2D();
