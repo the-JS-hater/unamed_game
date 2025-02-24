@@ -115,7 +115,8 @@ void handle_wall_collisions(ECS& ecs, TileMap const& world_map)
 		if ((ecs.flag_sets[id] & (POSITION | VELOCITY | BOX_COLLIDER)) != (POSITION | VELOCITY | BOX_COLLIDER)) continue;
 
     VelocityComponent& velocity = ecs.velocities[id];
-    BoxCollider const& collider = ecs.box_colliders[id];
+    PositionComponent& pos = ecs.positions[id];
+    BoxCollider& collider = ecs.box_colliders[id];
     
     Rectangle moved_x = {
       collider.hitbox.x + velocity.deltaV.x,
@@ -124,7 +125,12 @@ void handle_wall_collisions(ECS& ecs, TileMap const& world_map)
       collider.hitbox.height
     };
     
-    if (has_wall_collision(moved_x, world_map)) velocity.deltaV.x = 0;
+    if (has_wall_collision(moved_x, world_map)) 
+		{
+			pos.position.x -= velocity.deltaV.x;
+			collider.hitbox.x -= velocity.deltaV.x;
+			velocity.deltaV.x = 0;
+		}
 
     Rectangle moved_y = {
       collider.hitbox.x + velocity.deltaV.x,
@@ -133,7 +139,12 @@ void handle_wall_collisions(ECS& ecs, TileMap const& world_map)
       collider.hitbox.height
     };
     
-    if (has_wall_collision(moved_y, world_map)) velocity.deltaV.y = 0;
+    if (has_wall_collision(moved_y, world_map)) 
+		{
+			pos.position.y -= velocity.deltaV.y;
+			collider.hitbox.y -= velocity.deltaV.y;
+			velocity.deltaV.y = 0;
+		}
   }
 }
 
