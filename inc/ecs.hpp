@@ -89,6 +89,3 @@ void update_box_colliders(ECS&);
 
 void debug_draw_hitboxes(ECS const&);
 
-void handle_wall_collisions(ECS&, TileMap const&);
-
-bool has_wall_collision(Rectangle const&, TileMap const&);

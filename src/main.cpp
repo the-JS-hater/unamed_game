@@ -8,6 +8,7 @@
 #include "../inc/ecs.hpp"
 #include "../inc/dungeonGen.hpp"
 #include "../inc/quadtree.hpp"
+#include "../inc/collisionSystem.hpp"
 
 
 using std::vector;
