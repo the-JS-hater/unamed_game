@@ -72,7 +72,7 @@ void Quadtree::insert(ECS const& ecs, Entity const& id)
 
   entities.push_back(id);
 
-  if (entities.size() > MAX_ENTITIES && level < MAX_LEVELS) 
+  if (entities.size() > MAX_ENTITIES and level < MAX_LEVELS) 
 	{
     if (nodes[0] == nullptr) 
 		{
@@ -95,7 +95,7 @@ vector<Entity> Quadtree::retrieve(Rectangle const& range) const
 {
   vector<Entity> result;
 
-  if (!CheckCollisionRecs(bounds, range))
+  if (not CheckCollisionRecs(bounds, range))
 	{
     return result; 
   }
@@ -124,7 +124,7 @@ void find_all_intersections(
     ECS const& ecs
 )
 {
-  if (!tree) return;
+  if (not tree) return;
 
   for (int i = 0; i < tree->entities.size(); ++i) 
 	{
@@ -186,7 +186,7 @@ void handle_collisions(
 
 void debug_render_quadtree(Quadtree const* tree)
 {
-	if (!tree) return;
+	if (not tree) return;
 	
 	DrawRectangleLinesEx(tree->bounds, 1, RED);
 	

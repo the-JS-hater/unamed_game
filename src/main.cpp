@@ -111,8 +111,8 @@ void move_player(Camera2D& camera, ECS& ecs)
 	//NOTE: id 0 is assumed to be the player
 	Vector2* vec = &ecs.velocities[0].deltaV;
 
-	ecs.velocities[0].deltaV.x=0.0f;
-	ecs.velocities[0].deltaV.y=0.0f;
+	ecs.velocities[0].deltaV.x = 0.0f;
+	ecs.velocities[0].deltaV.y = 0.0f;
 
 	if (IsKeyDown(KEY_W)) vec->y = -PLAYER_SPEED;
 	if (IsKeyDown(KEY_A)) vec->x = -PLAYER_SPEED;
@@ -140,7 +140,7 @@ int main()
 	
 	gen_test_entities(ecs, quadtree);
 
-	while (!WindowShouldClose())
+	while (not WindowShouldClose())
 	{
 		// believe it or not... it works
 		// XOR compound assignment

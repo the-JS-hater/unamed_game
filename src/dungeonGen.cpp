@@ -41,7 +41,7 @@ void generate_BSP(BSPnode* root, int min_size)
 						(root->h > min_size * 2 && root->w > min_size);
 	};
 	
-	if (!can_split()) return;
+	if (not can_split()) return;
 	
 	if (ratio > 1.5f) cut_x_axis();
 	else if (ratio < 0.75f) cut_y_axis();
