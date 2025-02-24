@@ -9,6 +9,7 @@
 #include "../inc/dungeonGen.hpp"
 #include "../inc/quadtree.hpp"
 #include "../inc/collisionSystem.hpp"
+#include "../inc/tileMap.hpp"
 
 
 using std::vector;

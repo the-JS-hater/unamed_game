@@ -4,34 +4,11 @@
 #include <cstdlib>
 #include <algorithm>
 #include <cstdio>
-#include <raylib.h>
-
+#include "tileMap.hpp"
 
 using std::vector;
 using std::min;
 using std::max;
-
-
-template <typename T> 
-using matrix = vector<vector<T>>;
-
-
-enum Tiles
-{
-	EMPTY,
-	WALL
-};
-
-
-struct TileMap
-{
-	int const tile_size = 32;
-	int height;
-	int width;
-	matrix<Tiles> map;
-
-	TileMap(int, int);
-};
 
 
 struct BSPnode	
@@ -60,5 +37,4 @@ void create_cooridor(TileMap&, int, int, int, int);
 
 void create_room(TileMap&, BSPnode*);
 
-void debug_draw_dungeon(TileMap const&, int const);
 

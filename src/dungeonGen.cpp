@@ -1,13 +1,6 @@
 #include "../inc/dungeonGen.hpp"
 
 
-TileMap::TileMap(int w, int h) : 
-height{h}, width{w}
-{
-	this -> map = matrix<Tiles>(h, vector<Tiles>(w, WALL));
-};
-
-
 BSPnode::BSPnode(int x, int y, int w, int h) :
 x{x}, y{y}, w{w}, h{h}, left{nullptr}, right{nullptr} {};
 
@@ -137,21 +130,5 @@ void create_cooridor(TileMap& tile_map, int x1, int y1, int x2, int y2)
 };
 
 
-void debug_draw_dungeon(TileMap const& tile_map, int const tile_size)
-{
-	for (int y = 0; y < tile_map.height; y++)
-	{
-		for (int x = 0; x < tile_map.width; x++)
-		{
-			if (tile_map.map[y][x] == WALL) DrawRectangle(
-				x * tile_size,
-				y * tile_size,
-				tile_size,
-				tile_size,
-				BLACK
-			);
-		}
-	}
-};
 
 
