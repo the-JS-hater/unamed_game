@@ -12,8 +12,8 @@ using std::vector;
 using std::pair;
 
 struct Quadtree {
-    static const int MAX_ENTITIES = 2; 
-    static const int MAX_LEVELS = 8; 
+    static const int MAX_ENTITIES = 1000; 
+    static const int MAX_LEVELS = 6; 
 
     int level;
     Rectangle bounds; 

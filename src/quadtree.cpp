@@ -128,8 +128,10 @@ void find_all_intersections(
 
   for (int i = 0; i < tree->entities.size(); ++i) 
 	{
-    for (int j = i + 1; j < tree->entities.size(); ++j) 
+    for (int j = 0; j < tree->entities.size(); ++j) 
 		{
+			if (i == j) continue;
+
       Entity entity_a = tree->entities[i];
       Entity entity_b = tree->entities[j];
 
@@ -138,7 +140,7 @@ void find_all_intersections(
 
       if (CheckCollisionRecs(bounds_a, bounds_b)) 
 			{
-        vec.emplace_back(entity_a, entity_b); 
+        vec.push_back(std::make_pair(entity_a, entity_b)); 
       }
     }
   }
@@ -153,9 +155,6 @@ void find_all_intersections(
 }
 	
 
-// NOTE: this shoould probably be moved to systems section in ecs.cpp ?
-// also possibly rename to make it clear this is only elastic collision
-// between entitites
 void handle_collisions(
 	vector<pair<Entity, Entity>> const& collisions, ECS& ecs
 )
