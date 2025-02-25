@@ -4,9 +4,6 @@
 #include "raylib.h"
 #include <cmath>
 
-void elastic_collision(
-	float, Vector2&, Rectangle&, float, Vector2&, Rectangle&
-); 
 
 Vector2 normalize(Vector2); 
 

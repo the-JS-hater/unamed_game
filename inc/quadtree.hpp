@@ -4,8 +4,8 @@
 #include <cstdlib>
 #include <utility>
 #include <raylib.h>
-#include "../inc/ecs.hpp"
-#include "../inc/vecUtils.hpp"
+#include "ecs.hpp"
+#include "collisionSystem.hpp"
 
 
 using std::vector;

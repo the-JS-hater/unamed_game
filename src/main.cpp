@@ -20,7 +20,7 @@ using std::rand;
 #define WINDOW_H 720
 #define WORLD_W 2000
 #define WORLD_H 2000
-#define NR_OF_TEST_ENTITIES 100
+#define NR_OF_TEST_ENTITIES 10000
 #define PLAYER_SPEED 5.0f
 #define TILE_SIZE 32
 
@@ -187,16 +187,11 @@ int main()
 		BeginMode2D(camera);
 		ClearBackground(WHITE);
 	
-		//NOTE: alot of the debug rendering functions are very SLOW. I suspect the
-		//simple drawRectangle functions do the drawing on the CPU and not the GPU
-		//and thus, trying to renders 10000+ entities like that will absolutley
-		//fucking nuke my lapptop
-
 		debug_draw_dungeon(test_map, TILE_SIZE);
 		//debug_render_quadtree(&quadtree);
-		debug_draw_hitboxes(ecs);
-		//render_sprites(ecs);
-		debug_render_collisions(collisions, ecs);
+		//debug_draw_hitboxes(ecs);
+		render_sprites(ecs);
+		//debug_render_collisions(collisions, ecs);
 
 		EndMode2D();
 		// Draw things that are relative to screen coordinates, and not world
