@@ -74,7 +74,7 @@ void init_player(ECS& ecs)
 	Texture2D player_tex = LoadTexture("resources/sprites/DuckHead.png");
 
 	ecs.set_sprite(player_id, player_tex, WHITE);
-	ecs.set_boxCollider(player_id, (Rectangle){WORLD_W / 2, WORLD_H / 2, 32, 32});
+	ecs.set_boxCollider(player_id, (Rectangle){WORLD_W / 2, WORLD_H / 2, 32.0f, 32.0f});
 	ecs.set_velocity(player_id, (Vector2){0.0f, 0.0f});
 
 	//NOTE: touching the flag sets directly like this is probably a pretty bad
@@ -83,25 +83,20 @@ void init_player(ECS& ecs)
 }
 	
 	
-//THIS IS JUST FOR TESTING
-void gen_test_entities(ECS& ecs, Quadtree& quadtree)
+void gen_test_entities(ECS& ecs, Quadtree& quadtree, TileMap const& tile_map)
 {	
 	Texture2D test_tex = LoadTexture("resources/sprites/Spam.png");
 	for (int i {0}; i < NR_OF_TEST_ENTITIES; i++) {
 		Entity id = ecs.allocate_entity();
-		float rand_x = rand()%WINDOW_W;
-		float rand_y = rand()%WINDOW_H;
+			
+		Vector2 pos = get_random_spawn_location(tile_map);
 
 		ecs.set_sprite(id, test_tex, WHITE);
-		ecs.set_boxCollider(id, (Rectangle){rand_x, rand_y, 32, 32});
+		ecs.set_boxCollider(id, (Rectangle){pos.x * TILE_SIZE - 16.0f, pos.y * TILE_SIZE - 16.0f, 32.0f, 32});
 		
-		//50% chance
-		if ((rand() % 2) + 1 <= 2)
-		{
-			float rand_vx = rand()%20 - 10;
-			float rand_vy = rand()%20 - 10;
-			ecs.set_velocity(id, (Vector2){rand_vx, rand_vy});
-		}
+		float rand_vx = rand()%20 - 10;
+		float rand_vy = rand()%20 - 10;
+		ecs.set_velocity(id, (Vector2){rand_vx, rand_vy});
 	}
 }
 
@@ -145,7 +140,7 @@ int main()
 	init(flags, ecs);
 	init_player(ecs);
 	
-	gen_test_entities(ecs, quadtree);
+	gen_test_entities(ecs, quadtree, test_map);
 
 	while (not WindowShouldClose())
 	{
@@ -169,8 +164,6 @@ int main()
 		move_player(ecs);
 		
 		// UPDATE
-		//handle_wall_collisions(ecs, test_map);
-		
 		//NOTE: could be optimized in such a way as to not having to regenerate the
 		//whole quadtree every update
 		quadtree.clear();
@@ -179,12 +172,13 @@ int main()
 			if (id == -1) continue;
 			quadtree.insert(ecs, id);
 		}
-		
 		//NOTE: O(n) complexity, idk if there's a sensible way to avoid doing it
 		collisions.clear();
 		find_all_intersections(&quadtree, collisions, ecs);
+		
 		handle_collisions(collisions, ecs);
-
+		handle_wall_collisions(ecs, test_map);
+		
 		update_box_colliders(ecs);
 		update_camera(camera, ecs);
 

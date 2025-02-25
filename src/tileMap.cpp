@@ -6,6 +6,20 @@ TileMap::TileMap(int w, int h)
 {
 	this -> map = matrix<Tiles>(h, vector<Tiles>(w, WALL));
 };
+	
+
+Vector2 get_random_spawn_location(TileMap const& tile_map)
+{
+	while (true)
+	{
+		int idx_x = rand()%tile_map.width;
+		int idx_y = rand()%tile_map.height;
+
+		if (tile_map.map[idx_y][idx_x] == WALL) continue;
+		
+		return (Vector2){idx_x, idx_y};
+	}
+}
 
 
 void debug_draw_dungeon(TileMap const& tile_map, int const tile_size)
