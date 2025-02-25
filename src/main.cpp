@@ -20,7 +20,7 @@ using std::rand;
 #define WINDOW_H 720
 #define WORLD_W 2000
 #define WORLD_H 2000
-#define NR_OF_TEST_ENTITIES 10000
+#define NR_OF_TEST_ENTITIES 100
 #define PLAYER_SPEED 5.0f
 #define TILE_SIZE 32
 
@@ -92,7 +92,7 @@ void gen_test_entities(ECS& ecs, Quadtree& quadtree, TileMap const& tile_map)
 		Vector2 pos = get_random_spawn_location(tile_map);
 
 		ecs.set_sprite(id, test_tex, WHITE);
-		ecs.set_boxCollider(id, (Rectangle){pos.x * TILE_SIZE - 16.0f, pos.y * TILE_SIZE - 16.0f, 32.0f, 32});
+		ecs.set_boxCollider(id, (Rectangle){pos.x * TILE_SIZE - 15.9f, pos.y * TILE_SIZE - 15.9f, 32.0f, 32});
 		
 		float rand_vx = rand()%20 - 10;
 		float rand_vy = rand()%20 - 10;
@@ -131,7 +131,7 @@ int main()
 	// usage: if (flags & SOME_FLAG), note the bitwise and
 	// perhaps it's possible to bundle this bitset with the enum in a struct?
 	uint8_t flags;
-	Camera2D camera = {(Vector2){WINDOW_W / 2,WINDOW_H / 2}, (Vector2){0.0f, 0.0f}, 0.0f, 1.0f};
+	Camera2D camera = {(Vector2){WINDOW_W / 2,WINDOW_H / 2}, (Vector2){0.0f, 0.0f}, 0.0f, 2.0f};
 	TileMap test_map = generate_dungeon(WORLD_W / TILE_SIZE, WORLD_H/ TILE_SIZE, 10);
 	ECS ecs;
 	Quadtree quadtree = Quadtree(0, (Rectangle){0, 0, WORLD_W, WORLD_H});

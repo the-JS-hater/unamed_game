@@ -20,12 +20,12 @@ GAMEPLAY FEATURES
 - Levels with increasing difficulty, somehow
 
 KNOWN BUGS
-- Double free error when closing the game? do we care???
 - Entities spawned inside walls can never get out
 - Colliding entities sometimes get stuck inside each other
 	- maybe sort of fixed, fingers crossed?
-		- yes that's fixed, now the only issue is getting stuck in walls...
-- vsync/tearing issues
+		- yes that's (surely)fixed, now the only issue is getting stuck in walls...
+			- still a problem
+- vsync/tearing issues? only my machine?
 
 NICE THINGS & TECH DEBT
 - Start Menu

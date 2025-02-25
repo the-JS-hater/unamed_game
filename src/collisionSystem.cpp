@@ -14,6 +14,9 @@ void elastic_collision(
 	// Normal vector between centers
   Vector2 n = sub(center2, center1);
   Vector2 n_hat = normalize(n); 
+	
+	// Entities are already moving away from each other
+	if (dot(v1, n) < 0.0f) return; 
 
   // Relative velocity
   Vector2 v_rel = sub(v1, v2);
@@ -27,17 +30,6 @@ void elastic_collision(
   // Apply impulse with correct direction (add to v1, subtract from v2)
   v1 = add(v1, scale(n_hat, J / m1));
   v2 = sub(v2, scale(n_hat, J / m2));
-	
-	Vector2 norm_v1 = normalize(v1);
-	Vector2 norm_v2 = normalize(v1);
-
-	p1 = add(p1, scale(norm_v1, length(n) / 2.0f));
-	p2 = sub(p2, scale(norm_v2, length(n) / 2.0f));
-
-	r1.x = p1.x;
-	r1.y = p1.y;
-	r2.x = p2.x;
-	r2.y = p2.y;
 }
 
 
@@ -62,7 +54,7 @@ void handle_wall_collisions(ECS& ecs, TileMap const& world_map)
     if (has_wall_collision(moved_x, world_map)) 
 		{
 			collider.hitbox.x -= velocity.deltaV.x;
-			velocity.deltaV.x *= -1;
+			velocity.deltaV.x = 0;
 		}
 
     Rectangle moved_y = {
@@ -75,7 +67,7 @@ void handle_wall_collisions(ECS& ecs, TileMap const& world_map)
     if (has_wall_collision(moved_y, world_map)) 
 		{
 			collider.hitbox.y -= velocity.deltaV.y;
-			velocity.deltaV.y *= -1;
+			velocity.deltaV.y = 0;
 		}
   }
 }
