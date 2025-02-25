@@ -162,21 +162,13 @@ void handle_collisions(
 {
 	for (auto collision : collisions)
 	{
-		//Vector2 p1 = ecs.positions[collision.first].position;
-		//Vector2 p2 = ecs.positions[collision.first].position;
-		//float m1 = 10.0f;
-		//float m2 = 10.0f;
-		//float m1 = ecs.box_colliders[collision.first].mass; 
-		//float m2 = ecs.box_colliders[collision.second].mass; 
-		//Vector2 v2 = ecs.velocities[collision.second].deltaV;
-
 		elastic_collision(
 			1000.0f, 
 			ecs.velocities[collision.first].deltaV,
-			ecs.positions[collision.first].position, 
+			ecs.box_colliders[collision.first].hitbox,
 			1000.0f, 
 			ecs.velocities[collision.second].deltaV,
-			ecs.positions[collision.second].position
+			ecs.box_colliders[collision.second].hitbox
 		);
 	}
 }

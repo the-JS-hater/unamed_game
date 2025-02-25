@@ -73,14 +73,13 @@ void init_player(ECS& ecs)
 
 	Texture2D player_tex = LoadTexture("resources/sprites/DuckHead.png");
 
-	ecs.set_position(player_id, (Vector2){TILE_SIZE * 15, TILE_SIZE * 15});
 	ecs.set_sprite(player_id, player_tex, WHITE);
 	ecs.set_boxCollider(player_id, (Rectangle){WORLD_W / 2, WORLD_H / 2, 32, 32});
 	ecs.set_velocity(player_id, (Vector2){0.0f, 0.0f});
 
 	//NOTE: touching the flag sets directly like this is probably a pretty bad
 	//idea...
-	ecs.flag_sets[0] = (POSITION | SPRITE | BOX_COLLIDER | VELOCITY);
+	ecs.flag_sets[0] = (SPRITE | BOX_COLLIDER | VELOCITY);
 }
 	
 	
@@ -93,7 +92,6 @@ void gen_test_entities(ECS& ecs, Quadtree& quadtree)
 		float rand_x = rand()%WINDOW_W;
 		float rand_y = rand()%WINDOW_H;
 
-		ecs.set_position(id, (Vector2){rand_x, rand_y});
 		ecs.set_sprite(id, test_tex, WHITE);
 		ecs.set_boxCollider(id, (Rectangle){rand_x, rand_y, 32, 32});
 		
@@ -121,7 +119,10 @@ void move_player(Camera2D& camera, ECS& ecs)
 	if (IsKeyDown(KEY_S)) vec->y = +PLAYER_SPEED;
 	if (IsKeyDown(KEY_D)) vec->x = +PLAYER_SPEED;
 
-	camera.target = ecs.positions[0].position;
+	camera.target = (Vector2){
+		ecs.box_colliders[0].hitbox.x,
+		ecs.box_colliders[0].hitbox.y
+	};
 }
 
 
@@ -164,9 +165,7 @@ int main()
 		move_player(camera, ecs);
 		
 		// UPDATE
-		handle_wall_collisions(ecs, test_map);
-		update_positions(ecs);
-		update_box_colliders(ecs);
+		//handle_wall_collisions(ecs, test_map);
 		
 		//NOTE: could be optimized in such a way as to not having to regenerate the
 		//whole quadtree every update
@@ -182,6 +181,8 @@ int main()
 		find_all_intersections(&quadtree, collisions, ecs);
 		handle_collisions(collisions, ecs);
 
+		update_box_colliders(ecs);
+		
 		// RENDER
 		BeginDrawing();
 		BeginMode2D(camera);
@@ -191,11 +192,12 @@ int main()
 		//simple drawRectangle functions do the drawing on the CPU and not the GPU
 		//and thus, trying to renders 10000+ entities like that will absolutley
 		//fucking nuke my lapptop
-		debug_draw_dungeon(test_map, TILE_SIZE);
+
+		//debug_draw_dungeon(test_map, TILE_SIZE);
 		//debug_render_quadtree(&quadtree);
 		debug_draw_hitboxes(ecs);
-		render_sprites(ecs);
-		//debug_render_collisions(collisions, ecs);
+		//render_sprites(ecs);
+		debug_render_collisions(collisions, ecs);
 
 		EndMode2D();
 		// Draw things that are relative to screen coordinates, and not world

@@ -3,10 +3,12 @@
 
 //NOTE: prolly move this somewhere else, or rename this module
 void elastic_collision(
-	float m1, Vector2& v1, Vector2& p1, float m2, Vector2& v2, Vector2& p2
+	float m1, Vector2& v1, Rectangle& r1, float m2, Vector2& v2, Rectangle& r2
 ) 
 {
 	//TODO: refactor to avoid this retarded shift to the center
+	Vector2 p1 = (Vector2){r1.x, r1.y};
+	Vector2 p2 = (Vector2){r2.x, r2.y};
 	Vector2 center1 = add(p1, (Vector2){16.0f, 16.0f});
 	Vector2 center2 = add(p2, (Vector2){16.0f, 16.0f});
 
@@ -33,6 +35,11 @@ void elastic_collision(
 
 	p1 = add(p1, scale(norm_v1, 16.0f));
 	p2 = sub(p2, scale(norm_v2, 16.0f));
+
+	r1.x = p1.x;
+	r1.y = p1.y;
+	r2.x = p2.x;
+	r2.y = p2.y;
 }
 
 

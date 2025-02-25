@@ -7,10 +7,9 @@ void handle_wall_collisions(ECS& ecs, TileMap const& world_map)
   for (Entity id : ecs.entities)
   {
     if (ecs.entities[id] == -1) continue;
-		if ((ecs.flag_sets[id] & (POSITION | VELOCITY | BOX_COLLIDER)) != (POSITION | VELOCITY | BOX_COLLIDER)) continue;
+		if ((ecs.flag_sets[id] & (VELOCITY | BOX_COLLIDER)) != (VELOCITY | BOX_COLLIDER)) continue;
 
     VelocityComponent& velocity = ecs.velocities[id];
-    PositionComponent& pos = ecs.positions[id];
     BoxCollider& collider = ecs.box_colliders[id];
     
     Rectangle moved_x = {
@@ -22,7 +21,6 @@ void handle_wall_collisions(ECS& ecs, TileMap const& world_map)
     
     if (has_wall_collision(moved_x, world_map)) 
 		{
-			pos.position.x -= velocity.deltaV.x;
 			collider.hitbox.x -= velocity.deltaV.x;
 			velocity.deltaV.x = 0;
 		}
@@ -36,7 +34,6 @@ void handle_wall_collisions(ECS& ecs, TileMap const& world_map)
     
     if (has_wall_collision(moved_y, world_map)) 
 		{
-			pos.position.y -= velocity.deltaV.y;
 			collider.hitbox.y -= velocity.deltaV.y;
 			velocity.deltaV.y = 0;
 		}
