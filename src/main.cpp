@@ -106,20 +106,24 @@ void gen_test_entities(ECS& ecs, Quadtree& quadtree)
 }
 
 
-void move_player(Camera2D& camera, ECS& ecs)
+void move_player(ECS& ecs)
 {
 	//NOTE: id 0 is assumed to be the player
 	Vector2* vec = &ecs.velocities[0].deltaV;
 
-	ecs.velocities[0].deltaV.x = 0.0f;
-	ecs.velocities[0].deltaV.y = 0.0f;
+	//ecs.velocities[0].deltaV.x = 0.0f;
+	//ecs.velocities[0].deltaV.y = 0.0f;
 
 	if (IsKeyDown(KEY_W)) vec->y = -PLAYER_SPEED;
 	if (IsKeyDown(KEY_A)) vec->x = -PLAYER_SPEED;
 	if (IsKeyDown(KEY_S)) vec->y = +PLAYER_SPEED;
 	if (IsKeyDown(KEY_D)) vec->x = +PLAYER_SPEED;
+}
 
-	camera.target = (Vector2){
+
+void update_camera(Camera2D& cam, ECS const& ecs)
+{
+	cam.target = (Vector2){
 		ecs.box_colliders[0].hitbox.x,
 		ecs.box_colliders[0].hitbox.y
 	};
@@ -162,7 +166,7 @@ int main()
 		}
 
 		// INPUT
-		move_player(camera, ecs);
+		move_player(ecs);
 		
 		// UPDATE
 		//handle_wall_collisions(ecs, test_map);
@@ -182,7 +186,8 @@ int main()
 		handle_collisions(collisions, ecs);
 
 		update_box_colliders(ecs);
-		
+		update_camera(camera, ecs);
+
 		// RENDER
 		BeginDrawing();
 		BeginMode2D(camera);
@@ -193,7 +198,7 @@ int main()
 		//and thus, trying to renders 10000+ entities like that will absolutley
 		//fucking nuke my lapptop
 
-		//debug_draw_dungeon(test_map, TILE_SIZE);
+		debug_draw_dungeon(test_map, TILE_SIZE);
 		//debug_render_quadtree(&quadtree);
 		debug_draw_hitboxes(ecs);
 		//render_sprites(ecs);

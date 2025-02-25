@@ -6,11 +6,10 @@ void elastic_collision(
 	float m1, Vector2& v1, Rectangle& r1, float m2, Vector2& v2, Rectangle& r2
 ) 
 {
-	//TODO: refactor to avoid this retarded shift to the center
 	Vector2 p1 = (Vector2){r1.x, r1.y};
 	Vector2 p2 = (Vector2){r2.x, r2.y};
-	Vector2 center1 = add(p1, (Vector2){16.0f, 16.0f});
-	Vector2 center2 = add(p2, (Vector2){16.0f, 16.0f});
+	Vector2 center1 = add(p1, (Vector2){r1.width, r1.height});
+	Vector2 center2 = add(p2, (Vector2){r2.width, r2.height});
 
 
 	// Normal vector between centers
@@ -33,8 +32,8 @@ void elastic_collision(
 	Vector2 norm_v1 = normalize(v1);
 	Vector2 norm_v2 = normalize(v1);
 
-	p1 = add(p1, scale(norm_v1, 16.0f));
-	p2 = sub(p2, scale(norm_v2, 16.0f));
+	p1 = add(p1, scale(norm_v1, length(n) / 2.0f));
+	p2 = sub(p2, scale(norm_v2, length(n) / 2.0f));
 
 	r1.x = p1.x;
 	r1.y = p1.y;
@@ -45,13 +44,17 @@ void elastic_collision(
 
 Vector2 normalize(Vector2 v) 
 {
-	float length = sqrt(v.x * v.x + v.y * v.y);
+	float len = length(v);
 
-	if (length == 0) return {0, 0}; 
+	if (len == 0) return {0, 0}; 
 	
-	return (Vector2){v.x / length, v.y / length};
+	return (Vector2){v.x / len, v.y / len};
 }
 
+float length(Vector2 v)
+{
+	return sqrt(v.x * v.x + v.y * v.y);
+}
 
 float dot(Vector2 a, Vector2 b) 
 {
