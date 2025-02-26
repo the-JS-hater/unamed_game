@@ -129,11 +129,18 @@ void move_player(ECS& ecs, Player& player)
 	if (accV.x == 0.0f and velV.x < 0.0f) velV.x += PLAYER_ACC;
 	if (accV.y == 0.0f and velV.y > 0.0f) velV.y -= PLAYER_ACC;
 	if (accV.y == 0.0f and velV.y < 0.0f) velV.y += PLAYER_ACC;
-
+	
+	// Stop if your slow as fuck
+	if (0.0f <= velV.x and velV.x <= 0.9f) velV.x = 0.0f;
+	if (0.0f <= velV.y and velV.y <= 0.9f) velV.y = 0.0f;
+	if (0.0f >= velV.x and velV.x >= -0.9f) velV.x = 0.0f;
+	if (0.0f >= velV.y and velV.y >= -0.9f) velV.y = 0.0f;
+		
+	// woah, slow down there buckaroo
 	if (velV.x > player.max_speed) velV.x = player.max_speed; 
 	if (velV.y > player.max_speed) velV.y = player.max_speed; 
 	if (velV.x < -player.max_speed) velV.x = -player.max_speed; 
-	if (velV.y < -player.max_speed) velV.y = -player.max_speed; 
+	if (velV.y < -player.max_speed) velV.y = -player.max_speed;
 }
 
 
