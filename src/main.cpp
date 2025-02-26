@@ -185,7 +185,8 @@ int main()
 	gen_test_entities(ecs, quadtree, test_map);
 	
 	if (flags & FULLSCREEN) ToggleFullscreen();
-
+	HideCursor();
+	
 	while (not WindowShouldClose())
 	{
 		// believe it or not... it works
