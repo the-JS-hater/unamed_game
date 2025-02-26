@@ -19,9 +19,9 @@ using std::rand;
 
 #define WINDOW_W 1280
 #define WINDOW_H 720
-#define WORLD_W 2000
-#define WORLD_H 2000
-#define NR_OF_TEST_ENTITIES 20
+#define WORLD_W 10000
+#define WORLD_H 10000
+#define NR_OF_TEST_ENTITIES 2000
 #define PLAYER_ACC 1.0f
 #define PLAYER_SPEED 6.0f
 #define TILE_SIZE 32
@@ -31,8 +31,9 @@ using std::rand;
 // prolly would be neat with some debug features idk
 enum GameFlags 
 {
-	PAUSED 			= 1 << 0,
-	FPS_VISIBLE	= 1 << 1,
+	PAUSED 				= 1 << 0,
+	FPS_VISIBLE		= 1 << 1,
+	DEBUG_CAMERA 	= 1 << 2,
 };
 
 
@@ -75,6 +76,7 @@ void init(uint8_t& flags)
 	SetTargetFPS(60); 
 
 	flags |= FPS_VISIBLE;
+	flags |= DEBUG_CAMERA;
 }
 	
 	
@@ -159,7 +161,19 @@ int main()
 	// usage: if (flags & SOME_FLAG), note the bitwise and
 	// perhaps it's possible to bundle this bitset with the enum in a struct?
 	uint8_t flags;
-	Camera2D camera = {(Vector2){WINDOW_W / 2,WINDOW_H / 2}, (Vector2){0.0f, 0.0f}, 0.0f, 1.0f};
+	Camera2D camera = {
+		(Vector2){WINDOW_W / 2, WINDOW_H / 2}, 
+		(Vector2){0.0f, 0.0f}, 
+		0.0f, 
+		1.0f
+	};
+	// Wont follow the player
+	Camera2D debug_camera = {
+		(Vector2){WINDOW_W / 2, WINDOW_H / 2}, 
+		(Vector2){WORLD_W / 2, WORLD_H / 2}, 
+		0.0f, 
+		0.1f
+	};
 	TileMap test_map = generate_dungeon(WORLD_W / TILE_SIZE, WORLD_H/ TILE_SIZE, 10);
 	ECS ecs; //calls default constructor
 	Quadtree quadtree = Quadtree(0, (Rectangle){0, 0, WORLD_W, WORLD_H});
@@ -208,13 +222,14 @@ int main()
 		handle_wall_collisions(ecs, test_map);
 		
 		update_box_colliders(ecs);
-		update_camera(camera, ecs);
+		
+		if (!(flags & DEBUG_CAMERA)) update_camera(camera, ecs);
 
 		// RENDER
 		BeginDrawing();
-		BeginMode2D(camera);
+		(flags & DEBUG_CAMERA) ? BeginMode2D(debug_camera) : BeginMode2D(camera);
 		ClearBackground(WHITE);
-	
+
 		debug_draw_dungeon(test_map, TILE_SIZE);
 		//debug_render_quadtree(&quadtree);
 		//debug_draw_hitboxes(ecs);
