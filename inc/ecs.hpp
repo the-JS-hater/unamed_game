@@ -61,6 +61,8 @@ struct ECS {
 
 	void set_flag(Entity, ComponentType);
 
+	void clear_flag(Entity, ComponentType); 
+										 	
 	void set_sprite(Entity, Texture2D, Color);
 	
 	void set_velocity(Entity, Vector2);

@@ -11,6 +11,7 @@
 #include "../inc/quadtree.hpp"
 #include "../inc/collisionSystem.hpp"
 #include "../inc/tileMap.hpp"
+#include "../inc/vecUtils.hpp"
 
 
 using std::vector;
@@ -24,6 +25,7 @@ using std::rand;
 #define NR_OF_TEST_ENTITIES 2000
 #define PLAYER_ACC 1.0f
 #define PLAYER_SPEED 6.0f
+#define BULLET_SPEED 12.0f
 #define TILE_SIZE 32
 
 
@@ -78,7 +80,7 @@ void init(int& flags)
 
 	flags |= FPS_VISIBLE;
 	//flags |= DEBUG_CAMERA;
-	flags |= FULLSCREEN;
+	//flags |= FULLSCREEN;
 }
 	
 	
@@ -157,32 +159,75 @@ void update_camera(Camera2D& cam, ECS const& ecs)
 }
 
 
+void render_cursor(Texture2D& tex)
+{
+	Vector2 pos = GetMousePosition();
+	DrawTextureV(tex, pos, WHITE);
+}
+	
+
+void fire_gun(ECS& ecs, Texture2D& tex, Player& player)
+{	
+	if (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) return;
+	
+	Vector2 target_pos = GetMousePosition();
+  float pos_x = static_cast<float>(GetScreenWidth() / 2);
+  float pos_y = static_cast<float>(GetScreenHeight() / 2);
+	Vector2 pos = {pos_x, pos_y};
+	Vector2 target_dir = scale(normalize(sub(target_pos, pos)), BULLET_SPEED);
+
+	// Player position is in world coordinates, pos is in screen coordinates
+	Vector2 spawn_pos = {
+		ecs.box_colliders[player.id].hitbox.x,
+		ecs.box_colliders[player.id].hitbox.y
+	};
+	
+	Entity id = ecs.allocate_entity();
+	ecs.set_sprite(id, tex, WHITE);
+	ecs.set_velocity(id, target_dir);
+	ecs.set_boxCollider(id, (Rectangle){
+		spawn_pos.x + target_dir.x * 3.0f, 
+		spawn_pos.y + target_dir.y * 3.0f, 
+		16.0f, 
+		16.0f
+	});
+}
+
+
 int main()
 {
 	// usage: if (flags & SOME_FLAG), note the bitwise and
 	int flags;
+
+	// Regular player following camera
 	Camera2D camera = {
 		(Vector2){WINDOW_W / 2, WINDOW_H / 2}, 
 		(Vector2){0.0f, 0.0f}, 
 		0.0f, 
 		1.0f
 	};
-	// Wont follow the player
+
+	// Wont follow the player, centered at the middle of the world. Very zoomed
+	// out
 	Camera2D debug_camera = {
 		(Vector2){WINDOW_W / 2, WINDOW_H / 2}, 
 		(Vector2){WORLD_W / 2, WORLD_H / 2}, 
 		0.0f, 
 		0.1f
 	};
+
 	TileMap test_map = generate_dungeon(WORLD_W / TILE_SIZE, WORLD_H/ TILE_SIZE, 10);
 	ECS ecs; //calls default constructor
 	Quadtree quadtree = Quadtree(0, (Rectangle){0, 0, WORLD_W, WORLD_H});
 	vector<pair<Entity, Entity>> collisions;
 
 	init(flags);
-	Player player = init_player(ecs, test_map);
 	
-	gen_test_entities(ecs, quadtree, test_map);
+	Player player = init_player(ecs, test_map);
+	Texture2D cursor_tex = LoadTexture("resources/sprites/Crosshair.png");
+	Texture2D bullet_tex = LoadTexture("resources/sprites/Bullet.png");
+
+	//gen_test_entities(ecs, quadtree, test_map);
 	
 	if (flags & FULLSCREEN) ToggleFullscreen();
 	HideCursor();
@@ -207,6 +252,7 @@ int main()
 
 		// INPUT
 		move_player(ecs, player);
+		fire_gun(ecs, bullet_tex, player);
 		
 		// UPDATE
 		//NOTE: could be optimized in such a way as to not having to regenerate the
@@ -242,6 +288,7 @@ int main()
 		EndMode2D();
 		// Draw things that are relative to screen coordinates, and not world
 		// coordinates i.e GUI stuff
+		render_cursor(cursor_tex);
 		if (flags & FPS_VISIBLE) DrawFPS(10, 10);
 
 		EndDrawing();
