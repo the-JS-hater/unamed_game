@@ -34,6 +34,7 @@ enum GameFlags
 	PAUSED 				= 1 << 0,
 	FPS_VISIBLE		= 1 << 1,
 	DEBUG_CAMERA 	= 1 << 2,
+	FULLSCREEN 		= 1 << 3,
 };
 
 
@@ -66,7 +67,7 @@ void render_pause_screen()
 }
 
 
-void init(uint8_t& flags)
+void init(int& flags)
 {
 	// Make raylib not poop all over the terminal
 	// TraceLogLevel enum in raylib.h
@@ -76,7 +77,8 @@ void init(uint8_t& flags)
 	SetTargetFPS(60); 
 
 	flags |= FPS_VISIBLE;
-	flags |= DEBUG_CAMERA;
+	//flags |= DEBUG_CAMERA;
+	flags |= FULLSCREEN;
 }
 	
 	
@@ -157,10 +159,8 @@ void update_camera(Camera2D& cam, ECS const& ecs)
 
 int main()
 {
-	// used as a bitset alongside GameFlags enum
 	// usage: if (flags & SOME_FLAG), note the bitwise and
-	// perhaps it's possible to bundle this bitset with the enum in a struct?
-	uint8_t flags;
+	int flags;
 	Camera2D camera = {
 		(Vector2){WINDOW_W / 2, WINDOW_H / 2}, 
 		(Vector2){0.0f, 0.0f}, 
@@ -183,6 +183,8 @@ int main()
 	Player player = init_player(ecs, test_map);
 	
 	gen_test_entities(ecs, quadtree, test_map);
+	
+	if (flags & FULLSCREEN) ToggleFullscreen();
 
 	while (not WindowShouldClose())
 	{
