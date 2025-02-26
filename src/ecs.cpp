@@ -32,6 +32,11 @@ void ECS::set_flag(Entity id, ComponentType flag)
 	flag_sets[id] |= flag;
 }
 
+void ECS::clear_flag(Entity id, ComponentType flag) 
+{
+	flag_sets[id] &= ~flag;
+}
+
 void ECS::set_sprite(Entity id, Texture2D tex, Color tint) 
 {
 	sprites[id] = SpriteComponent(tex, tint);
