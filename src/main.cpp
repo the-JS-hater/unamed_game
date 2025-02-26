@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <ctime>
+#include <cmath>
 #include <stdio.h>
 #include <raylib.h>
 #include <stdint.h>
@@ -20,8 +21,9 @@ using std::rand;
 #define WINDOW_H 720
 #define WORLD_W 2000
 #define WORLD_H 2000
-#define NR_OF_TEST_ENTITIES 1000
-#define PLAYER_SPEED 5.0f
+#define NR_OF_TEST_ENTITIES 20
+#define PLAYER_ACC 1.0f
+#define PLAYER_SPEED 6.0f
 #define TILE_SIZE 32
 
 
@@ -31,6 +33,19 @@ enum GameFlags
 {
 	PAUSED 			= 1 << 0,
 	FPS_VISIBLE	= 1 << 1,
+};
+
+
+// This will hold a sort of refrence to the entity ID of the player, but also
+// hold auxilliary data that doesn't fit in, or belong to, the ECS
+struct Player
+{
+	Entity id;
+	float max_speed;
+	Vector2 acc_vec;
+
+	Player(Entity id, float x)
+		: id{id}, max_speed{x}, acc_vec{(Vector2){0.0f, 0.0f}} {};
 };
 
 
@@ -50,7 +65,7 @@ void render_pause_screen()
 }
 
 
-void init(uint8_t& flags, ECS& ecs)
+void init(uint8_t& flags)
 {
 	// Make raylib not poop all over the terminal
 	// TraceLogLevel enum in raylib.h
@@ -59,27 +74,21 @@ void init(uint8_t& flags, ECS& ecs)
 	//won't have to think about delta-time unless we do advances physics
 	SetTargetFPS(60); 
 
-	flags = 0;
 	flags |= FPS_VISIBLE;
-	ecs = *new ECS();
 }
 	
 	
-void init_player(ECS& ecs)
+Player init_player(ECS& ecs, TileMap const& tile_map)
 {
-	Entity player_id;
-	if (ecs.entity_count == 0) player_id = ecs.allocate_entity();
-	else player_id = 0;
-
+	Entity player_id = ecs.allocate_entity();
 	Texture2D player_tex = LoadTexture("resources/sprites/DuckHead.png");
 
 	ecs.set_sprite(player_id, player_tex, WHITE);
-	ecs.set_boxCollider(player_id, (Rectangle){WORLD_W / 2, WORLD_H / 2, 32.0f, 32.0f});
+	Vector2 pos = get_random_spawn_location(tile_map);
+	ecs.set_boxCollider(player_id, (Rectangle){pos.x * TILE_SIZE, pos.y * TILE_SIZE, 32.0f, 32.0f});
 	ecs.set_velocity(player_id, (Vector2){0.0f, 0.0f});
 
-	//NOTE: touching the flag sets directly like this is probably a pretty bad
-	//idea...
-	ecs.flag_sets[0] = (SPRITE | BOX_COLLIDER | VELOCITY);
+	return Player(player_id, PLAYER_SPEED);
 }
 	
 	
@@ -101,18 +110,30 @@ void gen_test_entities(ECS& ecs, Quadtree& quadtree, TileMap const& tile_map)
 }
 
 
-void move_player(ECS& ecs)
+void move_player(ECS& ecs, Player& player)
 {
-	//NOTE: id 0 is assumed to be the player
-	Vector2* vec = &ecs.velocities[0].deltaV;
+	Vector2& velV = ecs.velocities[player.id].deltaV; 
+	Vector2& accV = player.acc_vec;
+	
+	accV = {0.0f, 0.0f};
+	
+	if (IsKeyDown(KEY_W)) accV.y = -PLAYER_ACC;
+	if (IsKeyDown(KEY_A)) accV.x = -PLAYER_ACC;
+	if (IsKeyDown(KEY_S)) accV.y = +PLAYER_ACC;
+	if (IsKeyDown(KEY_D)) accV.x = +PLAYER_ACC;
+	
+	velV.x += accV.x;
+	velV.y += accV.y;
+	
+	if (accV.x == 0.0f and velV.x > 0.0f) velV.x -= PLAYER_ACC;
+	if (accV.x == 0.0f and velV.x < 0.0f) velV.x += PLAYER_ACC;
+	if (accV.y == 0.0f and velV.y > 0.0f) velV.y -= PLAYER_ACC;
+	if (accV.y == 0.0f and velV.y < 0.0f) velV.y += PLAYER_ACC;
 
-	//ecs.velocities[0].deltaV.x = 0.0f;
-	//ecs.velocities[0].deltaV.y = 0.0f;
-
-	if (IsKeyDown(KEY_W)) vec->y = -PLAYER_SPEED;
-	if (IsKeyDown(KEY_A)) vec->x = -PLAYER_SPEED;
-	if (IsKeyDown(KEY_S)) vec->y = +PLAYER_SPEED;
-	if (IsKeyDown(KEY_D)) vec->x = +PLAYER_SPEED;
+	if (velV.x > player.max_speed) velV.x = player.max_speed; 
+	if (velV.y > player.max_speed) velV.y = player.max_speed; 
+	if (velV.x < -player.max_speed) velV.x = -player.max_speed; 
+	if (velV.y < -player.max_speed) velV.y = -player.max_speed; 
 }
 
 
@@ -131,14 +152,14 @@ int main()
 	// usage: if (flags & SOME_FLAG), note the bitwise and
 	// perhaps it's possible to bundle this bitset with the enum in a struct?
 	uint8_t flags;
-	Camera2D camera = {(Vector2){WINDOW_W / 2,WINDOW_H / 2}, (Vector2){0.0f, 0.0f}, 0.0f, 2.0f};
+	Camera2D camera = {(Vector2){WINDOW_W / 2,WINDOW_H / 2}, (Vector2){0.0f, 0.0f}, 0.0f, 1.0f};
 	TileMap test_map = generate_dungeon(WORLD_W / TILE_SIZE, WORLD_H/ TILE_SIZE, 10);
-	ECS ecs;
+	ECS ecs; //calls default constructor
 	Quadtree quadtree = Quadtree(0, (Rectangle){0, 0, WORLD_W, WORLD_H});
 	vector<pair<Entity, Entity>> collisions;
-	
-	init(flags, ecs);
-	init_player(ecs);
+
+	init(flags);
+	Player player = init_player(ecs, test_map);
 	
 	gen_test_entities(ecs, quadtree, test_map);
 
@@ -161,7 +182,7 @@ int main()
 		}
 
 		// INPUT
-		move_player(ecs);
+		move_player(ecs, player);
 		
 		// UPDATE
 		//NOTE: could be optimized in such a way as to not having to regenerate the
@@ -189,9 +210,9 @@ int main()
 	
 		debug_draw_dungeon(test_map, TILE_SIZE);
 		//debug_render_quadtree(&quadtree);
-		debug_draw_hitboxes(ecs);
-		//render_sprites(ecs);
-		debug_render_collisions(collisions, ecs);
+		//debug_draw_hitboxes(ecs);
+		render_sprites(ecs);
+		//debug_render_collisions(collisions, ecs);
 
 		EndMode2D();
 		// Draw things that are relative to screen coordinates, and not world

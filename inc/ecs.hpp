@@ -22,6 +22,7 @@ enum ComponentType
 	BOX_COLLIDER 	= 1 << 2,
 };
 
+
 struct BoxCollider 
 {
 	Rectangle hitbox;
