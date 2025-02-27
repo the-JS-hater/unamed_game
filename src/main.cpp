@@ -79,7 +79,7 @@ void init(int& flags)
 	SetTargetFPS(60); 
 
 	flags |= FPS_VISIBLE;
-	//flags |= DEBUG_CAMERA;
+	flags |= DEBUG_CAMERA;
 	//flags |= FULLSCREEN;
 }
 	

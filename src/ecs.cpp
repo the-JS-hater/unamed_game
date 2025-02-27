@@ -7,24 +7,40 @@
 /* ECS STRUCT STUFF */
 
 ECS::ECS() : 
-	entity_count {0}, entities(MAX_ENTITIES, -1), flag_sets(MAX_ENTITIES, 0)
+	entity_count {0}, 
+	entities(MAX_ENTITIES, -1), 
+	flag_sets(MAX_ENTITIES, 0)
 {
 	sprites.reserve(MAX_ENTITIES);
 	velocities.reserve(MAX_ENTITIES);
 	box_colliders.reserve(MAX_ENTITIES);
+	deallocated.reserve(MAX_ENTITIES);
 }
 
-// Need to figure out a way to recycle deallocated entities
 Entity ECS::allocate_entity() 
 {
-	if (entity_count >= MAX_ENTITIES) return -1;
-	else entities[entity_count] = entity_count; 
-	return entity_count++;
+	if (deallocated.size() > 0)
+	{	
+		Entity id = deallocated.back(); 
+		deallocated.pop_back();
+		entities[id] = id;
+		return id;
+	} 
+	else if (entity_count < MAX_ENTITIES)
+	{
+		entities[entity_count] = entity_count;
+		return entity_count++;
+	} 
+	else 
+	{
+		return -1; 
+	} 
 }
 
 void ECS::deallocate_entity(Entity id) 
-{
+{	
 	entities[id] = -1;
+	deallocated.push_back(id);
 }
 
 void ECS::set_flag(Entity id, ComponentType flag) 

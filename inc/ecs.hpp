@@ -47,7 +47,8 @@ struct VelocityComponent
 
 struct ECS {
 	long long entity_count;
-	vector<Entity> entities; 
+	vector<Entity> entities;
+	vector<Entity> deallocated;
 	vector<unsigned> flag_sets;
 	vector<SpriteComponent> sprites;
 	vector<VelocityComponent> velocities;
