@@ -1,6 +1,6 @@
 CC=g++
 CFLAGS=-I$(IDIR) 
-DEGUB_FLAGS=-Wall -Wextra -g
+DEGUB_FLAGS=-Wall -Wextra -O3 -g -std=c++23
 
 SDIR=src
 ODIR=obj
@@ -8,10 +8,10 @@ IDIR =inc
 
 LIBS=-lraylib
 
-_DEPS = ecs.hpp dungeonGen.hpp quadtree.hpp vecUtils.hpp collisionSystem.hpp tileMap.hpp
+_DEPS = ecs.hpp dungeonGen.hpp quadtree.hpp vecUtils.hpp collisionSystem.hpp tileMap.hpp ai.hpp
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o ecs.o dungeonGen.o quadtree.o vecUtils.o collisionSystem.o tileMap.o
+_OBJ = main.o ecs.o dungeonGen.o quadtree.o vecUtils.o collisionSystem.o tileMap.o ai.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: $(SDIR)/%.cpp $(DEPS)

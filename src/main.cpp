@@ -79,8 +79,8 @@ void init(int& flags)
 	SetTargetFPS(60); 
 
 	flags |= FPS_VISIBLE;
-	flags |= DEBUG_CAMERA;
-	//flags |= FULLSCREEN;
+	//flags |= DEBUG_CAMERA;
+	flags |= FULLSCREEN;
 }
 	
 	
@@ -227,9 +227,8 @@ int main()
 	Texture2D cursor_tex = LoadTexture("resources/sprites/Crosshair.png");
 	Texture2D bullet_tex = LoadTexture("resources/sprites/Bullet.png");
 
-	//gen_test_entities(ecs, quadtree, test_map);
+	gen_test_entities(ecs, quadtree, test_map);
 	
-	if (flags & FULLSCREEN) ToggleFullscreen();
 	HideCursor();
 	
 	while (not WindowShouldClose())
@@ -237,6 +236,10 @@ int main()
 		// believe it or not... it works
 		// XOR compound assignment
 		if (IsKeyPressed(KEY_P)) flags ^= PAUSED;
+		if (IsKeyPressed(KEY_F)) flags ^= FULLSCREEN;
+			
+		if ((flags & FULLSCREEN) and !IsWindowFullscreen()) ToggleFullscreen();
+		if (!(flags & FULLSCREEN) and IsWindowFullscreen()) ToggleFullscreen();
 		
 		while (flags & PAUSED)
 		{
