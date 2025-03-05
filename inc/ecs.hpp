@@ -17,8 +17,8 @@ enum ComponentType
 	SPRITE 				= 1 << 0,
 	VELOCITY 			= 1 << 1,
 	BOX_COLLIDER 	= 1 << 2,
+	ACCELERATION 	= 1 << 3,
 };
-
 
 struct BoxCollider 
 {
@@ -38,8 +38,17 @@ struct SpriteComponent
 struct VelocityComponent
 {
 	Vector2 deltaV;
+	float max_speed;
 	
-	VelocityComponent(Vector2);
+	VelocityComponent(Vector2, float);
+};
+
+struct AccelerationComponent
+{
+	Vector2 accV;
+	float retarding_factor; //trust me, retarding is the real term
+
+	AccelerationComponent(Vector2, float);
 };
 
 struct ECS {
@@ -49,6 +58,7 @@ struct ECS {
 	vector<unsigned> flag_sets;
 	vector<SpriteComponent> sprites;
 	vector<VelocityComponent> velocities;
+	vector<AccelerationComponent> accelerations;
 	vector<BoxCollider> box_colliders;
 
 	ECS();
@@ -63,7 +73,9 @@ struct ECS {
 										 	
 	void set_sprite(Entity, Texture2D, Color);
 	
-	void set_velocity(Entity, Vector2);
+	void set_velocity(Entity, Vector2, float);
+
+	void set_acceleration(Entity, Vector2, float);
 	
 	void set_boxCollider(Entity, Rectangle);
 };
@@ -72,6 +84,8 @@ struct ECS {
 void render_sprites(ECS const&);
 
 void update_box_colliders(ECS&);
+
+void update_velocities(ECS&);
 
 void debug_draw_hitboxes(ECS const&);
 

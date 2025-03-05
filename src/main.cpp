@@ -24,6 +24,7 @@ using std::rand;
 #define WORLD_H 1000
 #define NR_OF_TEST_ENTITIES 2
 #define PLAYER_ACC 1.0f
+#define PLAYER_RET 0.8f
 #define PLAYER_SPEED 6.0f
 #define BULLET_SPEED 12.0f
 #define TILE_SIZE 32
@@ -45,11 +46,8 @@ enum GameFlags
 struct Player
 {
 	Entity id;
-	float max_speed;
-	Vector2 acc_vec;
 
-	Player(Entity id, float x)
-		: id{id}, max_speed{x}, acc_vec{(Vector2){0.0f, 0.0f}} {};
+	Player(Entity id): id{id} {};
 };
 
 
@@ -92,9 +90,10 @@ Player init_player(ECS& ecs, TileMap const& tile_map)
 	ecs.set_sprite(player_id, player_tex, WHITE);
 	Vector2 pos = get_random_spawn_location(tile_map);
 	ecs.set_boxCollider(player_id, (Rectangle){pos.x * TILE_SIZE, pos.y * TILE_SIZE, 32.0f, 32.0f});
-	ecs.set_velocity(player_id, (Vector2){0.0f, 0.0f});
+	ecs.set_velocity(player_id, (Vector2){0.0f, 0.0f}, PLAYER_SPEED);
+	ecs.set_acceleration(player_id, (Vector2){0.0f, 0.0f}, PLAYER_RET);
 
-	return Player(player_id, PLAYER_SPEED);
+	return Player(player_id);
 }
 	
 	
@@ -111,7 +110,8 @@ void gen_test_entities(ECS& ecs, Quadtree& quadtree, TileMap const& tile_map)
 		
 		float rand_vx = rand()%20 - 10;
 		float rand_vy = rand()%20 - 10;
-		ecs.set_velocity(id, (Vector2){rand_vx, rand_vy});
+		ecs.set_velocity(id, (Vector2){rand_vx, rand_vy}, 5.0f);
+		ecs.set_acceleration(id, (Vector2){0.0f, 0.0f}, 0.95f);
 	}
 }
 
@@ -119,7 +119,7 @@ void gen_test_entities(ECS& ecs, Quadtree& quadtree, TileMap const& tile_map)
 void move_player(ECS& ecs, Player& player)
 {
 	Vector2& velV = ecs.velocities[player.id].deltaV; 
-	Vector2& accV = player.acc_vec;
+	Vector2& accV = ecs.accelerations[player.id].accV;
 	
 	accV = {0.0f, 0.0f};
 	
@@ -127,26 +127,6 @@ void move_player(ECS& ecs, Player& player)
 	if (IsKeyDown(KEY_A)) accV.x = -PLAYER_ACC;
 	if (IsKeyDown(KEY_S)) accV.y = +PLAYER_ACC;
 	if (IsKeyDown(KEY_D)) accV.x = +PLAYER_ACC;
-	
-	velV.x += accV.x;
-	velV.y += accV.y;
-	
-	if (accV.x == 0.0f and velV.x > 0.0f) velV.x -= PLAYER_ACC;
-	if (accV.x == 0.0f and velV.x < 0.0f) velV.x += PLAYER_ACC;
-	if (accV.y == 0.0f and velV.y > 0.0f) velV.y -= PLAYER_ACC;
-	if (accV.y == 0.0f and velV.y < 0.0f) velV.y += PLAYER_ACC;
-	
-	// Stop if your slow as fuck
-	if (0.0f <= velV.x and velV.x <= 0.9f) velV.x = 0.0f;
-	if (0.0f <= velV.y and velV.y <= 0.9f) velV.y = 0.0f;
-	if (0.0f >= velV.x and velV.x >= -0.9f) velV.x = 0.0f;
-	if (0.0f >= velV.y and velV.y >= -0.9f) velV.y = 0.0f;
-		
-	// woah, slow down there buckaroo
-	if (velV.x > player.max_speed) velV.x = player.max_speed; 
-	if (velV.y > player.max_speed) velV.y = player.max_speed; 
-	if (velV.x < -player.max_speed) velV.x = -player.max_speed; 
-	if (velV.y < -player.max_speed) velV.y = -player.max_speed;
 }
 
 
@@ -184,7 +164,7 @@ void fire_gun(ECS& ecs, Texture2D& tex, Player& player)
 	
 	Entity id = ecs.allocate_entity();
 	ecs.set_sprite(id, tex, WHITE);
-	ecs.set_velocity(id, target_dir);
+	ecs.set_velocity(id, target_dir, 3.0f);
 	ecs.set_boxCollider(id, (Rectangle){
 		spawn_pos.x + target_dir.x * 3.0f, 
 		spawn_pos.y + target_dir.y * 3.0f, 
@@ -279,6 +259,7 @@ int main()
 		handle_wall_collisions(ecs, test_map);
 		
 		update_box_colliders(ecs);
+		update_velocities(ecs);
 		
 		if (!(flags & DEBUG_CAMERA)) update_camera(camera, ecs);
 

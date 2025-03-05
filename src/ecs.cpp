@@ -13,6 +13,7 @@ ECS::ECS() :
 {
 	sprites.reserve(MAX_ENTITIES);
 	velocities.reserve(MAX_ENTITIES);
+	accelerations.reserve(MAX_ENTITIES);
 	box_colliders.reserve(MAX_ENTITIES);
 	deallocated.reserve(MAX_ENTITIES);
 }
@@ -59,10 +60,16 @@ void ECS::set_sprite(Entity id, Texture2D tex, Color tint)
 	set_flag(id, SPRITE);
 }
 
-void ECS::set_velocity(Entity id, Vector2 vec) 
+void ECS::set_velocity(Entity id, Vector2 vec, float max_speed) 
 {
-	velocities[id] = VelocityComponent(vec);
+	velocities[id] = VelocityComponent(vec, max_speed);
 	set_flag(id, VELOCITY);
+}
+
+void ECS::set_acceleration(Entity id, Vector2 vec, float retarding_factor) 
+{
+	accelerations[id] = AccelerationComponent(vec, retarding_factor);
+	set_flag(id, ACCELERATION);
 }
 
 void ECS::set_boxCollider(Entity id, Rectangle rec) 
@@ -103,15 +110,54 @@ void update_box_colliders(ECS& ecs)
 	}
 }
 
+void update_velocities(ECS& ecs)
+{
+
+	for (Entity id: ecs.entities)
+	{
+		if (ecs.entities[id] == -1) continue;
+		if ((ecs.flag_sets[id] & (ACCELERATION | VELOCITY)) != (ACCELERATION | VELOCITY)) continue;
+		
+		Vector2& velV = ecs.velocities[id].deltaV; 
+		float const max_speed = ecs.velocities[id].max_speed;
+		Vector2& accV = ecs.accelerations[id].accV;
+		float const retarding_factor = ecs.accelerations[id].retarding_factor;
+		
+		velV.x += accV.x;
+		velV.y += accV.y;
+
+		if (accV.x == 0.0f and velV.x > 0.0f) velV.x *= retarding_factor; 
+		if (accV.x == 0.0f and velV.x < 0.0f) velV.x *= retarding_factor; 
+		if (accV.y == 0.0f and velV.y > 0.0f) velV.y *= retarding_factor; 
+		if (accV.y == 0.0f and velV.y < 0.0f) velV.y *= retarding_factor; 
+	
+		// Stop if your slow as fuck
+		if (0.0f <= velV.x and velV.x <= 0.9f) velV.x = 0.0f;
+		if (0.0f <= velV.y and velV.y <= 0.9f) velV.y = 0.0f;
+		if (0.0f >= velV.x and velV.x >= -0.9f) velV.x = 0.0f;
+		if (0.0f >= velV.y and velV.y >= -0.9f) velV.y = 0.0f;
+			
+		// woah, slow down there buckaroo
+		if (velV.x > max_speed) velV.x = max_speed; 
+		if (velV.y > max_speed) velV.y = max_speed; 
+		if (velV.x < -max_speed) velV.x = -max_speed; 
+		if (velV.y < -max_speed) velV.y = -max_speed;
+	}
+}
+
 
 /* COMPONENTS */
 
 SpriteComponent::SpriteComponent(Texture2D tex, Color tint) : 
 		texture {tex}, tint {tint} {};
 
-VelocityComponent::VelocityComponent(Vector2 v) : deltaV {v} {};
+VelocityComponent::VelocityComponent(Vector2 v, float max) 
+	: deltaV {v}, max_speed{max} {};
 
-BoxCollider::BoxCollider(Rectangle rec) : hitbox {rec} {};
+AccelerationComponent::AccelerationComponent(Vector2 v, float r) 
+	: accV{v}, retarding_factor{r} {};
+
+BoxCollider::BoxCollider(Rectangle rec): hitbox {rec} {};
 
 
 /* DEBUG FUNCTIONS */

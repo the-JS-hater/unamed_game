@@ -8,8 +8,6 @@
 #include <utility>
 #include "tileMap.hpp"
 
-using std::min;
-using std::max;
 using std::abs;
 using std::reverse;
 using std::pair;
