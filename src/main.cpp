@@ -12,17 +12,19 @@
 #include "../inc/collisionSystem.hpp"
 #include "../inc/tileMap.hpp"
 #include "../inc/vecUtils.hpp"
+#include "../inc/ai.hpp"
 
 
 using std::vector;
 using std::rand;
+using std::make_pair;
 
 
 #define WINDOW_W 1280
 #define WINDOW_H 720
-#define WORLD_W 1000
-#define WORLD_H 1000
-#define NR_OF_TEST_ENTITIES 2
+#define WORLD_W 10000
+#define WORLD_H 10000
+#define NR_OF_TEST_ENTITIES 2000
 #define PLAYER_ACC 1.0f
 #define PLAYER_RET 0.8f
 #define PLAYER_SPEED 6.0f
@@ -176,7 +178,40 @@ void fire_gun(ECS& ecs, Texture2D& tex, Player& player)
 
 //This is gonna be retarded as fuck
 //TODO:
-void test_a_star() {return;}
+void test_a_star(Player& player, ECS& ecs, TileMap const& tile_map) 
+{
+	for (Entity id: ecs.entities)
+	{
+		if (id == player.id) continue;
+		vector<Coord> path = a_star(
+			make_pair(
+				(int)ecs.box_colliders[id].hitbox.x / TILE_SIZE,
+				(int)ecs.box_colliders[id].hitbox.y / TILE_SIZE
+			),
+			make_pair(
+				(int)ecs.box_colliders[player.id].hitbox.x / TILE_SIZE,
+				(int)ecs.box_colliders[player.id].hitbox.y / TILE_SIZE
+			),
+			tile_map	
+		);
+		
+		if (path.size() <= 0) return;
+
+		Coord target = path[0]; 
+		
+		Vector2 target_vec = {
+			target.first * TILE_SIZE + TILE_SIZE/2,
+			target.second * TILE_SIZE + TILE_SIZE/2
+		};
+		
+		Vector2 dir = normalize(sub(target_vec, (Vector2){
+			ecs.box_colliders[player.id].hitbox.x,
+			ecs.box_colliders[player.id].hitbox.y
+		}));
+
+		ecs.set_acceleration(id, dir, 0.95f);
+	}
+}
 
 
 int main()
@@ -255,6 +290,8 @@ int main()
 		collisions.clear();
 		find_all_intersections(&quadtree, collisions, ecs);
 		
+		//test_a_star(player, ecs, test_map);
+
 		handle_collisions(collisions, ecs);
 		handle_wall_collisions(ecs, test_map);
 		

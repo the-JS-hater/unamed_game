@@ -16,7 +16,7 @@ using std::vector;
 using std::priority_queue;
 using std::unordered_map;
 
-using Coord = std::pair<int, int>;
+using Coord = pair<int, int>;
 
 float manhattan_distance(Coord const&, Coord const&); 
 
