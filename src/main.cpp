@@ -20,9 +20,9 @@ using std::rand;
 
 #define WINDOW_W 1280
 #define WINDOW_H 720
-#define WORLD_W 10000
-#define WORLD_H 10000
-#define NR_OF_TEST_ENTITIES 2000
+#define WORLD_W 1000
+#define WORLD_H 1000
+#define NR_OF_TEST_ENTITIES 2
 #define PLAYER_ACC 1.0f
 #define PLAYER_SPEED 6.0f
 #define BULLET_SPEED 12.0f
@@ -192,6 +192,11 @@ void fire_gun(ECS& ecs, Texture2D& tex, Player& player)
 		16.0f
 	});
 }
+
+
+//This is gonna be retarded as fuck
+//TODO:
+void test_a_star() {return;}
 
 
 int main()
