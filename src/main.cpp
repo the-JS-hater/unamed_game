@@ -91,7 +91,7 @@ Player init_player(ECS& ecs, TileMap const& tile_map)
 
 	ecs.set_sprite(player_id, player_tex, WHITE);
 	Vector2 pos = get_random_spawn_location(tile_map);
-	ecs.set_boxCollider(player_id, (Rectangle){pos.x * TILE_SIZE, pos.y * TILE_SIZE, 32.0f, 32.0f});
+	ecs.set_boxCollider(player_id, (Rectangle){pos.x, pos.y, 32.0f, 32.0f});
 	ecs.set_velocity(player_id, (Vector2){0.0f, 0.0f}, PLAYER_SPEED);
 	ecs.set_acceleration(player_id, (Vector2){0.0f, 0.0f}, PLAYER_RET);
 
@@ -108,7 +108,7 @@ void gen_test_entities(ECS& ecs, Quadtree& quadtree, TileMap const& tile_map)
 		Vector2 pos = get_random_spawn_location(tile_map);
 
 		ecs.set_sprite(id, test_tex, WHITE);
-		ecs.set_boxCollider(id, (Rectangle){pos.x * TILE_SIZE - 15.9f, pos.y * TILE_SIZE - 15.9f, 32.0f, 32});
+		ecs.set_boxCollider(id, (Rectangle){pos.x, pos.y, 32.0f, 32.0f});
 		
 		float rand_vx = rand()%20 - 10;
 		float rand_vy = rand()%20 - 10;
@@ -289,8 +289,6 @@ int main()
 		//NOTE: O(n) complexity, idk if there's a sensible way to avoid doing it
 		collisions.clear();
 		find_all_intersections(&quadtree, collisions, ecs);
-		
-		//test_a_star(player, ecs, test_map);
 
 		handle_collisions(collisions, ecs);
 		handle_wall_collisions(ecs, test_map);
@@ -305,7 +303,7 @@ int main()
 		(flags & DEBUG_CAMERA) ? BeginMode2D(debug_camera) : BeginMode2D(camera);
 		ClearBackground(WHITE);
 
-		debug_draw_dungeon(test_map, TILE_SIZE);
+		debug_draw_dungeon(test_map);
 		//debug_render_quadtree(&quadtree);
 		//debug_draw_hitboxes(ecs);
 		render_sprites(ecs);

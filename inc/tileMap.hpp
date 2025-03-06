@@ -20,7 +20,7 @@ enum Tiles
 
 struct TileMap
 {
-	int const tile_size = 32;
+	float const tile_size = 32;
 	int height;
 	int width;
 	matrix<Tiles> map;
@@ -30,4 +30,4 @@ struct TileMap
 
 Vector2 get_random_spawn_location(TileMap const&);
 
-void debug_draw_dungeon(TileMap const&, int const);
+void debug_draw_dungeon(TileMap const&);
