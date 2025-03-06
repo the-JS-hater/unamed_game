@@ -1,6 +1,6 @@
 #include "../inc/dungeonGen.hpp"
 
-#define MIN_ROOM_SIZE 15
+#define MIN_ROOM_SIZE 8 
 
 
 BSPnode::BSPnode(int x, int y, int w, int h) :

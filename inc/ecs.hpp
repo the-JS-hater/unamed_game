@@ -18,6 +18,13 @@ enum ComponentType
 	VELOCITY 			= 1 << 1,
 	BOX_COLLIDER 	= 1 << 2,
 	ACCELERATION 	= 1 << 3,
+	AI 						= 1 << 4,
+};
+
+enum AiState
+{
+	IDLE 			= 1 << 0,
+	TRACKING  = 1 << 1,
 };
 
 struct BoxCollider 
@@ -51,6 +58,11 @@ struct AccelerationComponent
 	AccelerationComponent(Vector2, float);
 };
 
+struct AiComponent
+{
+	AiState state = IDLE;
+};
+
 struct ECS {
 	long long entity_count;
 	vector<Entity> entities;
@@ -80,12 +92,13 @@ struct ECS {
 	void set_boxCollider(Entity, Rectangle);
 };
 
-
 void render_sprites(ECS const&);
 
 void update_box_colliders(ECS&);
 
 void update_velocities(ECS&);
+
+//void update_ai_entities(ECS&);
 
 void debug_draw_hitboxes(ECS const&);
 

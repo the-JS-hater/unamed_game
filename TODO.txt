@@ -1,8 +1,8 @@
 ENGINE FEATURES
-- ...
-
-SORT OF IMPORTANT
-- A* to use for path finding in entitites
+- LifeCycle based entities
+- HealthComponent & System
+- pathfinding for AI
+- Audio
 
 OPTIMIZATION STUFF
 - probably ALOT of ways to optimize the quadtree/collision
@@ -12,23 +12,14 @@ OPTIMIZATION STUFF
 GAMEPLAY FEATURES
 - Weapons
 	- grenades
-	- HealthComponent & System
-- A* pathfinding for AI
 - GameOver & Restart
-- Audio
 - Levels with increasing difficulty, somehow
 
 KNOWN BUGS
-- Entities spawned inside walls can never get out
 - Colliding entities sometimes get stuck inside each other
-	- maybe sort of fixed, fingers crossed?
-		- yes that's (surely)fixed, now the only issue is getting stuck in walls...
-			- still a problem
 - vsync/tearing issues? only my machine?
 
 NICE THINGS & TECH DEBT
 - Start Menu
 	- Options Menu?
-- tweak dungeon generation
-- refactor collision code into a sensible (ECS) system
 - music & graphical assets

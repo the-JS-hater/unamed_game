@@ -22,10 +22,14 @@ using std::make_pair;
 
 #define WINDOW_W 1280
 #define WINDOW_H 720
-#define WORLD_W 200
-#define WORLD_H 200
-#define MIN_BSPNODE_SIZE 40
-#define NR_OF_TEST_ENTITIES 2
+#define WORLD_W 100
+#define WORLD_H 100
+
+//WARN: prolly wanna tweak the macro in src/dungeonGen.cpp if your gonna touch
+//this one
+#define MIN_BSPNODE_SIZE 15 
+
+#define NR_OF_TEST_ENTITIES 1000
 #define PLAYER_ACC 1.0f
 #define PLAYER_RET 0.8f
 #define PLAYER_SPEED 6.0f
@@ -80,7 +84,7 @@ void init(int& flags)
 	SetTargetFPS(60); 
 
 	flags |= FPS_VISIBLE;
-	flags |= DEBUG_CAMERA;
+	//flags |= DEBUG_CAMERA;
 	flags |= FULLSCREEN;
 }
 	
