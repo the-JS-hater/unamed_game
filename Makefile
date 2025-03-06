@@ -8,10 +8,10 @@ IDIR =inc
 
 LIBS=-lraylib
 
-_DEPS = ecs.hpp dungeonGen.hpp quadtree.hpp vecUtils.hpp collisionSystem.hpp tileMap.hpp ai.hpp
+_DEPS = ecs.hpp dungeonGen.hpp quadtree.hpp vecUtils.hpp collisionSystem.hpp tileMap.hpp pathfinding.hpp
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o ecs.o dungeonGen.o quadtree.o vecUtils.o collisionSystem.o tileMap.o ai.o
+_OBJ = main.o ecs.o dungeonGen.o quadtree.o vecUtils.o collisionSystem.o tileMap.o pathfinding.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: $(SDIR)/%.cpp $(DEPS)

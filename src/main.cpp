@@ -12,7 +12,7 @@
 #include "../inc/collisionSystem.hpp"
 #include "../inc/tileMap.hpp"
 #include "../inc/vecUtils.hpp"
-#include "../inc/ai.hpp"
+#include "../inc/pathfinding.hpp"
 
 
 using std::vector;
@@ -178,44 +178,6 @@ void fire_gun(ECS& ecs, Texture2D& tex, Player& player)
 		16.0f, 
 		16.0f
 	});
-}
-
-
-//This is gonna be retarded as fuck
-//TODO:
-void test_a_star(Player& player, ECS& ecs, TileMap const& tile_map) 
-{
-	for (Entity id: ecs.entities)
-	{
-		if (id == player.id) continue;
-		vector<Coord> path = a_star(
-			make_pair(
-				(int)ecs.box_colliders[id].hitbox.x / TILE_SIZE,
-				(int)ecs.box_colliders[id].hitbox.y / TILE_SIZE
-			),
-			make_pair(
-				(int)ecs.box_colliders[player.id].hitbox.x / TILE_SIZE,
-				(int)ecs.box_colliders[player.id].hitbox.y / TILE_SIZE
-			),
-			tile_map	
-		);
-		
-		if (path.size() <= 0) return;
-
-		Coord target = path[0]; 
-		
-		Vector2 target_vec = {
-			target.first * TILE_SIZE + TILE_SIZE/2,
-			target.second * TILE_SIZE + TILE_SIZE/2
-		};
-		
-		Vector2 dir = normalize(sub(target_vec, (Vector2){
-			ecs.box_colliders[player.id].hitbox.x,
-			ecs.box_colliders[player.id].hitbox.y
-		}));
-
-		ecs.set_acceleration(id, dir, 0.95f);
-	}
 }
 
 

@@ -1,4 +1,4 @@
-#pragra once
+#pragma once
 
 #include <unordered_set> 
 #include <utility> 
@@ -8,6 +8,8 @@
 
 using std::pair;
 using std::vector;
+using std::hash;
+using std::unordered_set;
 using Coord = pair<int, int>;
 
 
@@ -21,7 +23,7 @@ struct FlowField
 	Vector2& player_pos; 
 	TileMap& world;
 	
-	FlowField(Vector2, TileMap);
+	FlowField(Vector2&, TileMap&);
 
 	void update_cost_field();
 	
