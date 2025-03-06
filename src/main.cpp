@@ -22,9 +22,10 @@ using std::make_pair;
 
 #define WINDOW_W 1280
 #define WINDOW_H 720
-#define WORLD_W 10000
-#define WORLD_H 10000
-#define NR_OF_TEST_ENTITIES 2000
+#define WORLD_W 200
+#define WORLD_H 200
+#define MIN_BSPNODE_SIZE 40
+#define NR_OF_TEST_ENTITIES 2
 #define PLAYER_ACC 1.0f
 #define PLAYER_RET 0.8f
 #define PLAYER_SPEED 6.0f
@@ -79,7 +80,7 @@ void init(int& flags)
 	SetTargetFPS(60); 
 
 	flags |= FPS_VISIBLE;
-	//flags |= DEBUG_CAMERA;
+	flags |= DEBUG_CAMERA;
 	flags |= FULLSCREEN;
 }
 	
@@ -231,13 +232,15 @@ int main()
 	// out
 	Camera2D debug_camera = {
 		(Vector2){WINDOW_W / 2, WINDOW_H / 2}, 
-		(Vector2){WORLD_W / 2, WORLD_H / 2}, 
+		(Vector2){WORLD_W / 2 * TILE_SIZE, WORLD_H / 2 * TILE_SIZE}, 
 		0.0f, 
 		0.1f
 	};
+	
+	TileMap test_map = TileMap(WORLD_W, WORLD_H);
+	generate_dungeon(WORLD_W, WORLD_H, MIN_BSPNODE_SIZE, test_map);
 
-	TileMap test_map = generate_dungeon(WORLD_W / TILE_SIZE, WORLD_H/ TILE_SIZE, 10);
-	ECS ecs; //calls default constructor
+	ECS ecs; //calls default constructor >:{
 	Quadtree quadtree = Quadtree(0, (Rectangle){0, 0, WORLD_W, WORLD_H});
 	vector<pair<Entity, Entity>> collisions;
 

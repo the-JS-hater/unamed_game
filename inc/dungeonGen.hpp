@@ -3,12 +3,17 @@
 #include <vector>
 #include <cstdlib>
 #include <algorithm>
+#include <utility>
 #include <cstdio>
+
+#include <stdio.h>
+
 #include "tileMap.hpp"
 
 using std::vector;
 using std::min;
 using std::max;
+using std::pair;
 
 
 struct BSPnode	
@@ -19,22 +24,21 @@ struct BSPnode
 	int h;
 	BSPnode* left;
 	BSPnode* right;
+	Rectangle room;
 
 	BSPnode(int, int, int, int);
 };
 
-void generate_BSP(BSPnode*, int);
+void generate_BSP(BSPnode*, int const); 
 
-TileMap generate_dungeon(int, int, int);
+void generate_dungeon(int, int, int, TileMap&); 
 
-void generate_dungeon(BSPnode*, TileMap&);
+void generate_dungeon(BSPnode*, TileMap&); 
 
-bool can_split_vert(int, int, int); 
+void create_room(TileMap&, BSPnode*); 
 
-bool can_split_hor(int, int, int);
+void connect_nodes(TileMap&, BSPnode*, BSPnode*); 
 
-void create_cooridor(TileMap&, int, int, int, int); 
+pair<int, int> get_room_center(BSPnode*); 
 
-void create_room(TileMap&, BSPnode*);
-
-
+void create_corridor( TileMap&, int, int, int, int, int); 
