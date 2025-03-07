@@ -5,7 +5,7 @@ FlowField::FlowField(TileMap& world)
 	: world{world} 
 {
 	cost_field = vector(world.height, vector(world.width, INFINITY));
-	flow_field = vector(world.height, vector(world.width, (Vector2){0.0f, 0.0f}));
+	flow_field = vector(world.height, vector(world.width, (Coord){0.0f, 0.0f}));
 };
 
 
@@ -56,7 +56,33 @@ void FlowField::update_cost_field(int player_x, int player_y)
 
 void FlowField::update_flow_field()
 {
+	vector<Coord> const dirs = {{1,0},{-1,0},{0,1},{0,-1}}; // allow diagonal movement?
 	
+	for (int y = 0; y < world.height; ++y)
+	{
+		for (int x = 0; x < world.width; ++x)
+		{
+			float cheapest = INFINITY;
+			Coord best_dir = (Coord){0.0f, 0.0f};
+			for (auto dir : dirs)
+			{
+				auto [dx, dy] = dir;
+				if (
+					x + dx < 0 or
+					y + dy < 0 or
+					x + dx >= world.width or 
+					y + dy >= world.height 
+				) continue;
+
+				if (cost_field[y+dy][x+dx] < cheapest) {
+					cheapest = cost_field[y+dy][x+dx];
+					best_dir = dir;
+				}
+			}
+			
+			flow_field[y][x] = best_dir;
+		}
+	}
 }
 
 
@@ -75,6 +101,29 @@ void debug_render_costfield(FlowField const& flow_field)
 				flow_field.world.tile_size,
 				color	
 			);
+		}
+	}
+}
+
+
+void debug_render_flowfield(FlowField const& flow_field)
+{
+	for (int y = 0; y < flow_field.world.height; ++y)
+	{
+		for (int x = 0; x < flow_field.world.width; ++x)
+		{
+			auto [dx, dy] = flow_field.flow_field[y][x];
+			const int font_size = 45;
+			
+			if (dx == 1) {
+				DrawText(">", x * 32, y * 32, font_size, GREEN);
+			} else if (dx == -1) {
+				DrawText("<", x * 32, y * 32, font_size, GREEN);
+			} else if (dy == 1) {
+				DrawText("v", x * 32, y * 32, font_size, GREEN);
+			} else {
+				DrawText("^", x * 32, y * 32, font_size, GREEN);
+			}
 		}
 	}
 }

@@ -2,7 +2,7 @@
 
 #include <raylib.h>
 #include <vector>
-
+#include <pathfinding.hpp>
 
 using std::vector;
 
@@ -71,6 +71,7 @@ struct ECS {
 	vector<SpriteComponent> sprites;
 	vector<VelocityComponent> velocities;
 	vector<AccelerationComponent> accelerations;
+	vector<AiComponent> ai_comps;
 	vector<BoxCollider> box_colliders;
 
 	ECS();
@@ -90,6 +91,8 @@ struct ECS {
 	void set_acceleration(Entity, Vector2, float);
 	
 	void set_boxCollider(Entity, Rectangle);
+	
+	void set_aiComponent(Entity);
 };
 
 void render_sprites(ECS const&);
@@ -98,7 +101,7 @@ void update_box_colliders(ECS&);
 
 void update_velocities(ECS&);
 
-//void update_ai_entities(ECS&);
+void update_ai_entities(ECS&, TileMap const&, FlowField const&);
 
 void debug_draw_hitboxes(ECS const&);
 

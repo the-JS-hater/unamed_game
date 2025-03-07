@@ -8,10 +8,6 @@
 #include <algorithm> 
 #include <raylib.h> 
 #include "tileMap.hpp"
-#include "player.hpp"
-
-
-#include <stdio.h> 
 
 using std::pair;
 using std::make_pair;
@@ -20,13 +16,14 @@ using std::queue;
 using std::hash;
 using std::min;
 using std::unordered_set;
+
 using Coord = pair<int, int>;
 
 
 struct FlowField
 {
 	matrix<float> cost_field;
-	matrix<Vector2> flow_field;
+	matrix<Coord> flow_field; //Vector2 woul make more sense but i can't be bothered
 	TileMap& world;
 	
 	FlowField(TileMap&);
@@ -38,6 +35,8 @@ struct FlowField
 
 
 void debug_render_costfield(FlowField const&);
+
+void debug_render_flowfield(FlowField const&);
 
 // std::pair hash function taken from:
 // https://www.geeksforgeeks.org/how-to-create-an-unordered_map-of-pairs-in-c/

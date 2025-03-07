@@ -23,14 +23,14 @@ using std::make_pair;
 
 #define WINDOW_W 1280
 #define WINDOW_H 720
-#define WORLD_W 250
-#define WORLD_H 250
-#define DEBUG_CAM_ZOOM 0.1f //Lower -> zoom out
+#define WORLD_W 100
+#define WORLD_H 100
+#define DEBUG_CAM_ZOOM 0.4f //Lower -> zoom out
 //WARN: prolly wanna tweak the macro in src/dungeonGen.cpp if your gonna touch
 //this one
 #define MIN_BSPNODE_SIZE 15 
 
-#define NR_OF_TEST_ENTITIES 100
+#define NR_OF_TEST_ENTITIES 0
 #define TILE_SIZE 32
 
 
@@ -71,8 +71,8 @@ void init(int& flags)
 	SetTargetFPS(60); 
 
 	flags |= FPS_VISIBLE;
-	flags |= DEBUG_CAMERA;
-	//flags |= FULLSCREEN;
+	//flags |= DEBUG_CAMERA;
+	flags |= FULLSCREEN;
 }
 	
 	
@@ -91,6 +91,7 @@ void gen_test_entities(ECS& ecs, Quadtree& quadtree, TileMap const& tile_map)
 		float rand_vy = rand()%20 - 10;
 		ecs.set_velocity(id, (Vector2){rand_vx, rand_vy}, 5.0f);
 		ecs.set_acceleration(id, (Vector2){0.0f, 0.0f}, 0.95f);
+		ecs.set_aiComponent(id);
 	}
 }
 
@@ -187,17 +188,19 @@ int main()
 		handle_collisions(collisions, ecs);
 		handle_wall_collisions(ecs, world_map);
 
-		/* Pathfinding UPDATE */
+		/* Pathfinding/ai UPDATE */
 		
 		int player_x, player_y; //must be grid idx:es
 		player_x = static_cast<int>(ecs.box_colliders[player.id].hitbox.x / TILE_SIZE);
 		player_y = static_cast<int>(ecs.box_colliders[player.id].hitbox.y / TILE_SIZE);
 		flow_field.update_cost_field(player_x, player_y);
+		flow_field.update_flow_field();
+		update_ai_entities(ecs, world_map, flow_field);
 
 		/* other UPDATE */
 		
-		update_box_colliders(ecs);
 		update_velocities(ecs);
+		update_box_colliders(ecs);
 		
 		if (!(flags & DEBUG_CAMERA)) update_player_camera(camera, ecs, player);
 
@@ -206,8 +209,9 @@ int main()
 		BeginDrawing();
 		(flags & DEBUG_CAMERA) ? BeginMode2D(debug_camera) : BeginMode2D(camera);
 		ClearBackground(WHITE);
-
+		
 		debug_render_costfield(flow_field);
+		debug_render_flowfield(flow_field);
 		debug_draw_dungeon(world_map);
 		//debug_render_quadtree(&quadtree);
 		//debug_draw_hitboxes(ecs);

@@ -15,6 +15,7 @@ ECS::ECS() :
 	velocities.reserve(MAX_ENTITIES);
 	accelerations.reserve(MAX_ENTITIES);
 	box_colliders.reserve(MAX_ENTITIES);
+	ai_comps.reserve(MAX_ENTITIES);
 	deallocated.reserve(MAX_ENTITIES);
 }
 
@@ -77,6 +78,13 @@ void ECS::set_boxCollider(Entity id, Rectangle rec)
 	box_colliders[id] = BoxCollider(rec);
 	set_flag(id, BOX_COLLIDER);
 }
+
+void ECS::set_aiComponent(Entity id)
+{
+	ai_comps[id] = AiComponent();
+	set_flag(id, AI);
+}
+
 
 /* SYSTEMS */
 
@@ -145,6 +153,23 @@ void update_velocities(ECS& ecs)
 	}
 }
 
+void update_ai_entities(ECS& ecs, TileMap const& world, FlowField const& flow_field)
+{
+	//NOTE: for now i'm not considering AI state
+	for (Entity id: ecs.entities)
+	{
+		if (ecs.entities[id] == -1) continue;
+		if ((ecs.flag_sets[id] & (ACCELERATION | AI)) != (ACCELERATION | AI)) continue;
+		
+		auto [x,y,unused_h,unused_w] = ecs.box_colliders[id].hitbox;
+		
+		int idx_x = static_cast<int>(x / world.tile_size);
+		int idx_y = static_cast<int>(y / world.tile_size);
+	
+		auto [dx, dy] = flow_field.flow_field[idx_y][idx_x];
+		ecs.accelerations[id].accV = (Vector2){dx, dy};
+	}
+}
 
 /* COMPONENTS */
 
