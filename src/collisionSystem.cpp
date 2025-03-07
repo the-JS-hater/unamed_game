@@ -54,7 +54,7 @@ void handle_wall_collisions(ECS& ecs, TileMap const& world_map)
 		{
 			//collider.hitbox.x -= velocity.deltaV.x;
 			//velocity.deltaV.x *= -1;
-			velocity.deltaV.x *= 0;
+			velocity.deltaV.x = 0;
 		}
 
     Rectangle moved_y = {
@@ -68,7 +68,7 @@ void handle_wall_collisions(ECS& ecs, TileMap const& world_map)
 		{
 			//collider.hitbox.y -= velocity.deltaV.y;
 			//velocity.deltaV.y *= -1;
-			velocity.deltaV.y *= 0;
+			velocity.deltaV.y = 0;
 		}
   }
 }

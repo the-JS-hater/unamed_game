@@ -30,7 +30,7 @@ using std::make_pair;
 //this one
 #define MIN_BSPNODE_SIZE 15 
 
-#define NR_OF_TEST_ENTITIES 0
+#define NR_OF_TEST_ENTITIES 10
 #define TILE_SIZE 32
 
 
@@ -171,7 +171,13 @@ int main()
 		
 		// UPDATE
 
-		/* Collision UPDATE */
+		int player_x, player_y; //must be grid idx:es
+		player_x = static_cast<int>(ecs.box_colliders[player.id].hitbox.x / TILE_SIZE);
+		player_y = static_cast<int>(ecs.box_colliders[player.id].hitbox.y / TILE_SIZE);
+		flow_field.update_cost_field(player_x, player_y);
+		flow_field.update_flow_field();
+		update_ai_entities(ecs, world_map, flow_field);
+
 		
 		//NOTE: could be optimized in such a way as to not having to regenerate the
 		//whole quadtree every update
@@ -185,21 +191,11 @@ int main()
 		collisions.clear();
 		find_all_intersections(&quadtree, collisions, ecs);
 
+		update_velocities(ecs);
+		
 		handle_collisions(collisions, ecs);
 		handle_wall_collisions(ecs, world_map);
-
-		/* Pathfinding/ai UPDATE */
 		
-		int player_x, player_y; //must be grid idx:es
-		player_x = static_cast<int>(ecs.box_colliders[player.id].hitbox.x / TILE_SIZE);
-		player_y = static_cast<int>(ecs.box_colliders[player.id].hitbox.y / TILE_SIZE);
-		flow_field.update_cost_field(player_x, player_y);
-		flow_field.update_flow_field();
-		update_ai_entities(ecs, world_map, flow_field);
-
-		/* other UPDATE */
-		
-		update_velocities(ecs);
 		update_box_colliders(ecs);
 		
 		if (!(flags & DEBUG_CAMERA)) update_player_camera(camera, ecs, player);
