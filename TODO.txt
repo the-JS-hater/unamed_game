@@ -5,9 +5,13 @@ ENGINE FEATURES
 - Audio
 
 OPTIMIZATION STUFF
+- probably ALOT of ways to optimize the ECS overall
 - probably ALOT of ways to optimize the quadtree/collision
 - 'cache' relevant entities on a per-system:s basis
 - find a way to not regenerate the quadtree each tick
+- Partial updates for the cost_field
+- limit cost_field range, and basically only make enemies whitin a certain
+	simulation range have ai behavior
 
 GAMEPLAY FEATURES
 - Weapons

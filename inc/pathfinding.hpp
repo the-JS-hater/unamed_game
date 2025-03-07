@@ -3,14 +3,22 @@
 #include <unordered_set> 
 #include <utility> 
 #include <vector> 
+#include <queue> 
 #include <cmath> 
+#include <algorithm> 
 #include <raylib.h> 
 #include "tileMap.hpp"
 #include "player.hpp"
 
+
+#include <stdio.h> 
+
 using std::pair;
+using std::make_pair;
 using std::vector;
+using std::queue;
 using std::hash;
+using std::min;
 using std::unordered_set;
 using Coord = pair<int, int>;
 

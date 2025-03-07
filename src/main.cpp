@@ -23,9 +23,9 @@ using std::make_pair;
 
 #define WINDOW_W 1280
 #define WINDOW_H 720
-#define WORLD_W 100
-#define WORLD_H 100
-
+#define WORLD_W 250
+#define WORLD_H 250
+#define DEBUG_CAM_ZOOM 0.1f //Lower -> zoom out
 //WARN: prolly wanna tweak the macro in src/dungeonGen.cpp if your gonna touch
 //this one
 #define MIN_BSPNODE_SIZE 15 
@@ -72,7 +72,7 @@ void init(int& flags)
 
 	flags |= FPS_VISIBLE;
 	flags |= DEBUG_CAMERA;
-	flags |= FULLSCREEN;
+	//flags |= FULLSCREEN;
 }
 	
 	
@@ -121,7 +121,7 @@ int main()
 		(Vector2){WINDOW_W / 2, WINDOW_H / 2}, 
 		(Vector2){WORLD_W / 2 * TILE_SIZE, WORLD_H / 2 * TILE_SIZE}, 
 		0.0f, 
-		0.1f
+		DEBUG_CAM_ZOOM
 	};
 	
 	TileMap world_map = TileMap(WORLD_W, WORLD_H);
