@@ -30,7 +30,7 @@ using std::make_pair;
 //this one
 #define MIN_BSPNODE_SIZE 15 
 
-#define NR_OF_TEST_ENTITIES 1000
+#define NR_OF_TEST_ENTITIES 100
 #define TILE_SIZE 32
 
 
@@ -71,7 +71,7 @@ void init(int& flags)
 	SetTargetFPS(60); 
 
 	flags |= FPS_VISIBLE;
-	//flags |= DEBUG_CAMERA;
+	flags |= DEBUG_CAMERA;
 	flags |= FULLSCREEN;
 }
 	
@@ -124,8 +124,8 @@ int main()
 		0.1f
 	};
 	
-	TileMap test_map = TileMap(WORLD_W, WORLD_H);
-	generate_dungeon(WORLD_W, WORLD_H, MIN_BSPNODE_SIZE, test_map);
+	TileMap world_map = TileMap(WORLD_W, WORLD_H);
+	generate_dungeon(WORLD_W, WORLD_H, MIN_BSPNODE_SIZE, world_map);
 
 	ECS ecs; //calls default constructor >:{
 	Quadtree quadtree = Quadtree(0, (Rectangle){0, 0, WORLD_W, WORLD_H});
@@ -133,11 +133,12 @@ int main()
 
 	init(flags);
 	
-	Player player = init_player(ecs, test_map);
+	Player player = init_player(ecs, world_map);
 	Texture2D cursor_tex = LoadTexture("resources/sprites/Crosshair.png");
 	Texture2D bullet_tex = LoadTexture("resources/sprites/Bullet.png");
 
-	gen_test_entities(ecs, quadtree, test_map);
+	FlowField flow_field = FlowField(world_map);
+	gen_test_entities(ecs, quadtree, world_map);
 	
 	HideCursor();
 	
@@ -168,6 +169,9 @@ int main()
 		fire_gun(ecs, bullet_tex, player);
 		
 		// UPDATE
+
+		/* Collision UPDATE */
+		
 		//NOTE: could be optimized in such a way as to not having to regenerate the
 		//whole quadtree every update
 		quadtree.clear();
@@ -181,7 +185,16 @@ int main()
 		find_all_intersections(&quadtree, collisions, ecs);
 
 		handle_collisions(collisions, ecs);
-		handle_wall_collisions(ecs, test_map);
+		handle_wall_collisions(ecs, world_map);
+
+		/* Pathfinding UPDATE */
+		
+		int player_x, player_y; //must be grid idx:es
+		player_x = static_cast<int>(ecs.box_colliders[player.id].hitbox.x / TILE_SIZE);
+		player_y = static_cast<int>(ecs.box_colliders[player.id].hitbox.y / TILE_SIZE);
+		flow_field.update_cost_field(player_x, player_y);
+
+		/* other UPDATE */
 		
 		update_box_colliders(ecs);
 		update_velocities(ecs);
@@ -189,11 +202,13 @@ int main()
 		if (!(flags & DEBUG_CAMERA)) update_player_camera(camera, ecs, player);
 
 		// RENDER
+		// i need to refactor this as soon as possible, fuck this shit
 		BeginDrawing();
 		(flags & DEBUG_CAMERA) ? BeginMode2D(debug_camera) : BeginMode2D(camera);
 		ClearBackground(WHITE);
 
-		debug_draw_dungeon(test_map);
+		debug_render_costfield(flow_field);
+		debug_draw_dungeon(world_map);
 		//debug_render_quadtree(&quadtree);
 		//debug_draw_hitboxes(ecs);
 		render_sprites(ecs);

@@ -1,7 +1,7 @@
 #include "../inc/ecs.hpp"
 
 
-#define MAX_ENTITIES 100000
+#define MAX_ENTITIES 10000 
 
 
 /* ECS STRUCT STUFF */

@@ -4,7 +4,9 @@
 #include <utility> 
 #include <vector> 
 #include <cmath> 
+#include <raylib.h> 
 #include "tileMap.hpp"
+#include "player.hpp"
 
 using std::pair;
 using std::vector;
@@ -17,19 +19,17 @@ struct FlowField
 {
 	matrix<float> cost_field;
 	matrix<Vector2> flow_field;
-	//Probably refactor to player struct once thats *a
-	//thing*.... 
-	//NOTE: has to be in map coordinates...
-	Vector2& player_pos; 
 	TileMap& world;
 	
-	FlowField(Vector2&, TileMap&);
+	FlowField(TileMap&);
 
-	void update_cost_field();
+	void update_cost_field(int, int);
 	
 	void update_flow_field();
 };
 
+
+void debug_render_costfield(FlowField const&);
 
 // std::pair hash function taken from:
 // https://www.geeksforgeeks.org/how-to-create-an-unordered_map-of-pairs-in-c/
