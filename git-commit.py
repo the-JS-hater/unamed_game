@@ -3,6 +3,14 @@ import argparse
 
 
 def run_git_commands(commit_message):
+    """
+    Automates the process of typing out:
+
+    git add -A && git commit -m "some message" && git pull --rebase && git push
+
+    Usage: python3 git-commit.py -"some message"
+    
+    """
     try:
         # Stage all changes
         subprocess.run(['git', 'add', '-A'], check=True)
