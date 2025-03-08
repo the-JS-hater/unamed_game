@@ -3,7 +3,7 @@
 #define PLAYER_ACC 1.0f
 #define PLAYER_RET 0.8f
 #define PLAYER_SPEED 6.0f
-#define BULLET_SPEED 12.0f
+#define BULLET_SPEED 20.0f
 #define CORSHAIR_SCALE 150.0f
 
 Player::Player(Entity id): id{id} {};
@@ -19,6 +19,7 @@ Player init_player(ECS& ecs, TileMap const& tile_map)
 	ecs.set_boxCollider(player_id, (Rectangle){pos.x, pos.y, 32.0f, 32.0f});
 	ecs.set_velocity(player_id, (Vector2){0.0f, 0.0f}, PLAYER_SPEED);
 	ecs.set_acceleration(player_id, (Vector2){0.0f, 0.0f}, PLAYER_RET);
+	ecs.set_mass(player_id, 1000.0f);
 
 	return Player(player_id);
 }
@@ -64,6 +65,7 @@ void fire_gun(ECS& ecs, Texture2D& tex, Player& player)
 		16.0f
 	});
 	ecs.set_lifecycle(id, 600);
+	ecs.set_mass(id, 200.0f);
 }
 
 
@@ -77,7 +79,7 @@ void update_player_camera(Camera2D& cam, ECS const& ecs, Player const& player)
 	Vector2 cursor_vec = get_cursor_dir();
 	float vec_len = min(length(cursor_vec), CORSHAIR_SCALE);
 	
-	cam.offset = sub(mid_point, scale(normalize(cursor_vec), vec_len));
+	cam.offset = sub(mid_point, scale(normalize(cursor_vec), 0.5f * vec_len));
 }
 
 
@@ -93,16 +95,28 @@ Vector2 get_cursor_dir()
 
 void render_corshair(Texture2D& tex)
 {
-	Vector2 mid_point = (Vector2){GetScreenWidth()/2, GetScreenHeight()/2};
-	Vector2 cursor_vec = get_cursor_dir();
-	float vec_len = min(length(cursor_vec), CORSHAIR_SCALE);
+	//Vector2 mid_point = (Vector2){GetScreenWidth()/2, GetScreenHeight()/2};
+	//Vector2 cursor_vec = get_cursor_dir();
+	//float vec_len = min(length(cursor_vec), CORSHAIR_SCALE);
+	//
+	//Vector2 pos = add(mid_point, scale(normalize(cursor_vec), vec_len));
+	//
+	//DrawTextureV(
+	//	tex,
+	//	pos,
+	//	WHITE
+	//);
 	
-	Vector2 pos = add(mid_point, scale(normalize(cursor_vec), vec_len));
-	
+	auto [x, y] = GetMousePosition();
+	Vector2 pos = (Vector2){
+		static_cast<int>(x - 16.0f),
+		static_cast<int>(y - 16.0f)
+	};
 	DrawTextureV(
 		tex,
 		pos,
 		WHITE
 	);
+	//SetMousePosition(pos.x, pos.y);
 }
 

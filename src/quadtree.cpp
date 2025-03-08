@@ -162,10 +162,10 @@ void handle_collisions(
 	for (auto collision : collisions)
 	{
 		elastic_collision(
-			1000.0f, 
+			ecs.masses[collision.first].weight,
 			ecs.velocities[collision.first].deltaV,
 			ecs.box_colliders[collision.first].hitbox,
-			1000.0f, 
+			ecs.masses[collision.second].weight,
 			ecs.velocities[collision.second].deltaV,
 			ecs.box_colliders[collision.second].hitbox
 		);

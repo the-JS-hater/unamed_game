@@ -17,6 +17,7 @@ ECS::ECS() :
 	box_colliders.reserve(MAX_ENTITIES);
 	ai_comps.reserve(MAX_ENTITIES);
 	lifecycles.reserve(MAX_ENTITIES);
+	masses.reserve(MAX_ENTITIES);
 	deallocated.reserve(MAX_ENTITIES);
 }
 
@@ -91,6 +92,13 @@ void ECS::set_lifecycle(Entity id, int timer)
 {
 	lifecycles[id] = LifecycleComponent(timer); 
 	set_flag(id, LIFECYCLE);
+}
+
+
+void ECS::set_mass(Entity id, float weight)
+{
+	masses[id] = MassComponent(weight);
+	set_flag(id, MASS);
 }
 
 
@@ -207,6 +215,8 @@ AccelerationComponent::AccelerationComponent(Vector2 v, float r)
 BoxCollider::BoxCollider(Rectangle rec): hitbox {rec} {};
 
 LifecycleComponent::LifecycleComponent(int n) : countdown(n) {};
+
+MassComponent::MassComponent(float w) : weight{weight} {};
 
 /* DEBUG FUNCTIONS */
 

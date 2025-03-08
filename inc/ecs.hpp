@@ -20,6 +20,7 @@ enum ComponentType
 	ACCELERATION 	= 1 << 3,
 	AI 						= 1 << 4,
 	LIFECYCLE 		= 1 << 5,
+	MASS 					= 1 << 6,
 };
 
 enum AiState
@@ -71,6 +72,13 @@ struct LifecycleComponent
 	LifecycleComponent(int);
 };
 
+struct MassComponent
+{
+	float weight;
+
+	MassComponent(float);
+};
+
 struct ECS {
 	long long entity_count;
 	vector<Entity> entities;
@@ -82,6 +90,7 @@ struct ECS {
 	vector<AiComponent> ai_comps;
 	vector<BoxCollider> box_colliders;
 	vector<LifecycleComponent> lifecycles;
+	vector<MassComponent> masses;
 
 	ECS();
 
@@ -104,6 +113,8 @@ struct ECS {
 	void set_aiComponent(Entity);
 	
 	void set_lifecycle(Entity, int);
+
+	void set_mass(Entity, float);
 };
 
 void render_sprites(ECS const&);
