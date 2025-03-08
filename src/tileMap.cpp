@@ -5,8 +5,17 @@ TileMap::TileMap(int w, int h)
 	: height{h}, width{w}
 {
 	this -> map = matrix<Tiles>(h, vector<Tiles>(w, WALL));
-};
+}
 	
+
+void TileMap::init_map_textures()
+{
+	Texture2D floor_tex = LoadTexture("resources/sprites/Wood.png");
+	Texture2D wall_tex = LoadTexture("resources/sprites/UglyBrick.png");
+
+	tex_map.insert({EMPTY, floor_tex});
+	tex_map.insert({WALL, wall_tex});
+}
 
 Vector2 get_random_spawn_location(TileMap const& tile_map)
 {
@@ -32,12 +41,11 @@ void debug_draw_dungeon(TileMap const& tile_map)
 	{
 		for (int x = 0; x < tile_map.width; x++)
 		{
-			if (tile_map.map[y][x] == WALL) DrawRectangle(
+			DrawTexture(
+			 	tile_map.tex_map.find(tile_map.map[y][x])->second,
 				x * tile_map.tile_size,
 				y * tile_map.tile_size,
-				tile_map.tile_size,
-				tile_map.tile_size,
-				BLACK
+				WHITE	
 			);
 		}
 	}

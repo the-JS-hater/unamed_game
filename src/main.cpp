@@ -131,6 +131,7 @@ int main()
 	};
 	
 	TileMap world_map = TileMap(WORLD_W, WORLD_H);
+	world_map.init_map_textures();
 	generate_dungeon(WORLD_W, WORLD_H, MIN_BSPNODE_SIZE, world_map);
 
 	ECS ecs; //calls default constructor >:{
@@ -146,6 +147,7 @@ int main()
 	
 	HideCursor();
 	
+	/* GAME LOOP */
 	while (not WindowShouldClose())
 	{
 		// believe it or not... it works
