@@ -16,6 +16,7 @@ ECS::ECS() :
 	accelerations.reserve(MAX_ENTITIES);
 	box_colliders.reserve(MAX_ENTITIES);
 	ai_comps.reserve(MAX_ENTITIES);
+	lifecycles.reserve(MAX_ENTITIES);
 	deallocated.reserve(MAX_ENTITIES);
 }
 
@@ -83,6 +84,13 @@ void ECS::set_aiComponent(Entity id)
 {
 	ai_comps[id] = AiComponent();
 	set_flag(id, AI);
+}
+
+
+void ECS::set_lifecycle(Entity id, int timer)
+{
+	lifecycles[id] = LifecycleComponent(timer); 
+	set_flag(id, LIFECYCLE);
 }
 
 
@@ -161,15 +169,29 @@ void update_ai_entities(ECS& ecs, TileMap const& world, FlowField const& flow_fi
 		if (ecs.entities[id] == -1) continue;
 		if ((ecs.flag_sets[id] & (ACCELERATION | AI)) != (ACCELERATION | AI)) continue;
 		
-		auto [x,y,unused_h,unused_w] = ecs.box_colliders[id].hitbox;
-		
-		int idx_x = static_cast<int>(x / world.tile_size);
-		int idx_y = static_cast<int>(y / world.tile_size);
+		auto [x,y,h,w] = ecs.box_colliders[id].hitbox;
+
+		int idx_x = static_cast<int>((x + w / 2.0f) / world.tile_size);
+		int idx_y = static_cast<int>((y + h / 2.0f) / world.tile_size);
 	
 		auto [dx, dy] = flow_field.flow_field[idx_y][idx_x];
 		ecs.accelerations[id].accV = (Vector2){dx, dy};
 	}
 }
+
+
+void update_lifecycles(ECS& ecs)
+{
+	for (Entity id: ecs.entities)
+	{
+		if (ecs.entities[id] == -1) continue;
+		if ((ecs.flag_sets[id] & (LIFECYCLE)) != (LIFECYCLE)) continue;
+		
+		ecs.lifecycles[id].countdown -= 1;
+		if (ecs.lifecycles[id].countdown <= 0) ecs.deallocate_entity(id);
+	}
+}
+
 
 /* COMPONENTS */
 
@@ -184,6 +206,7 @@ AccelerationComponent::AccelerationComponent(Vector2 v, float r)
 
 BoxCollider::BoxCollider(Rectangle rec): hitbox {rec} {};
 
+LifecycleComponent::LifecycleComponent(int n) : countdown(n) {};
 
 /* DEBUG FUNCTIONS */
 

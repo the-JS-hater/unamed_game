@@ -1,7 +1,6 @@
 ENGINE FEATURES
 - LifeCycle based entities
 - HealthComponent & System
-- pathfinding for AI
 - Audio
 
 OPTIMIZATION STUFF
@@ -22,7 +21,7 @@ GAMEPLAY FEATURES
 KNOWN BUGS
 - Colliding entities sometimes get stuck inside each other
 - vsync/tearing issues? only my machine?
-- Pathfinding AI:s sometimes get stuck on walls
+- Pathfinding AI:s sometimes(rarely) get stuck on walls
 
 NICE THINGS & TECH DEBT
 - Start Menu

@@ -15,7 +15,7 @@ FlowField::FlowField(TileMap& world)
 // - Only do partial updates
 void FlowField::update_cost_field(int player_x, int player_y)
 {	
-	vector<Coord> const dirs = {{1,0},{-1,0},{0,1},{0,-1}}; // allow diagonal movement?
+	vector<Coord> const dirs = {{1,0},{-1,0},{0,1},{0,-1},{1,1},{1,-1},{-1,1},{-1,-1}}; 
 	Coord player_pos = make_pair(player_x, player_y);
 	
 	unordered_set<Coord, hash_pair> visited;
@@ -56,7 +56,7 @@ void FlowField::update_cost_field(int player_x, int player_y)
 
 void FlowField::update_flow_field()
 {
-	vector<Coord> const dirs = {{1,0},{-1,0},{0,1},{0,-1}}; // allow diagonal movement?
+	vector<Coord> const dirs = {{1,0},{-1,0},{0,1},{0,-1},{1,1},{1,-1},{-1,1},{-1,-1}}; // allow diagonal movement?
 	
 	for (int y = 0; y < world.height; ++y)
 	{
@@ -127,4 +127,3 @@ void debug_render_flowfield(FlowField const& flow_field)
 		}
 	}
 }
-

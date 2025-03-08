@@ -63,6 +63,7 @@ void fire_gun(ECS& ecs, Texture2D& tex, Player& player)
 		16.0f, 
 		16.0f
 	});
+	ecs.set_lifecycle(id, 600);
 }
 
 

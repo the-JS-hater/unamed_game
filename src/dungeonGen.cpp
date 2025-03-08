@@ -104,7 +104,7 @@ void connect_nodes(TileMap& tile_map, BSPnode* left, BSPnode* right)
   auto [x1, y1] = get_room_center(left);
   auto [x2, y2] = get_room_center(right);
 	
-  int width = 3 + rand() % 3;
+  int width = 2 + rand() % 2; //controlls range of possible corridor withs
   create_corridor(tile_map, x1, y1, x2, y2, width);
 }
 

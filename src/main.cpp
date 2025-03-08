@@ -19,18 +19,20 @@
 using std::vector;
 using std::rand;
 using std::make_pair;
+using std::srand;
+using std::time;
 
 
 #define WINDOW_W 1280
 #define WINDOW_H 720
 #define WORLD_W 100
 #define WORLD_H 100
-#define DEBUG_CAM_ZOOM 0.4f //Lower -> zoom out
+#define DEBUG_CAM_ZOOM 0.1f //Lower -> zoom out
 //WARN: prolly wanna tweak the macro in src/dungeonGen.cpp if your gonna touch
 //this one
 #define MIN_BSPNODE_SIZE 15 
 
-#define NR_OF_TEST_ENTITIES 10
+#define NR_OF_TEST_ENTITIES 0
 #define TILE_SIZE 32
 
 
@@ -69,10 +71,12 @@ void init(int& flags)
 	InitWindow(WINDOW_W, WINDOW_H, "GAME");
 	//won't have to think about delta-time unless we do advances physics
 	SetTargetFPS(60); 
+	
+	srand(time(nullptr));
 
 	flags |= FPS_VISIBLE;
 	//flags |= DEBUG_CAMERA;
-	flags |= FULLSCREEN;
+	//flags |= FULLSCREEN;
 }
 	
 	
@@ -107,6 +111,7 @@ int main()
 {
 	// usage: if (flags & SOME_FLAG), note the bitwise and
 	int flags;
+	init(flags);
 
 	// Regular player following camera
 	Camera2D camera = {
@@ -131,8 +136,6 @@ int main()
 	ECS ecs; //calls default constructor >:{
 	Quadtree quadtree = Quadtree(0, (Rectangle){0, 0, WORLD_W, WORLD_H});
 	vector<pair<Entity, Entity>> collisions;
-
-	init(flags);
 	
 	Player player = init_player(ecs, world_map);
 	Texture2D cursor_tex = LoadTexture("resources/sprites/Crosshair.png");
@@ -170,6 +173,8 @@ int main()
 		fire_gun(ecs, bullet_tex, player);
 		
 		// UPDATE
+		
+		update_lifecycles(ecs);
 
 		int player_x, player_y; //must be grid idx:es
 		player_x = static_cast<int>(ecs.box_colliders[player.id].hitbox.x / TILE_SIZE);
@@ -206,8 +211,8 @@ int main()
 		(flags & DEBUG_CAMERA) ? BeginMode2D(debug_camera) : BeginMode2D(camera);
 		ClearBackground(WHITE);
 		
-		debug_render_costfield(flow_field);
-		debug_render_flowfield(flow_field);
+		//debug_render_costfield(flow_field);
+		//debug_render_flowfield(flow_field);
 		debug_draw_dungeon(world_map);
 		//debug_render_quadtree(&quadtree);
 		//debug_draw_hitboxes(ecs);

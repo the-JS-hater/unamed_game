@@ -19,6 +19,7 @@ enum ComponentType
 	BOX_COLLIDER 	= 1 << 2,
 	ACCELERATION 	= 1 << 3,
 	AI 						= 1 << 4,
+	LIFECYCLE 		= 1 << 5,
 };
 
 enum AiState
@@ -63,6 +64,13 @@ struct AiComponent
 	AiState state = IDLE;
 };
 
+struct LifecycleComponent
+{
+	int countdown;
+
+	LifecycleComponent(int);
+};
+
 struct ECS {
 	long long entity_count;
 	vector<Entity> entities;
@@ -73,6 +81,7 @@ struct ECS {
 	vector<AccelerationComponent> accelerations;
 	vector<AiComponent> ai_comps;
 	vector<BoxCollider> box_colliders;
+	vector<LifecycleComponent> lifecycles;
 
 	ECS();
 
@@ -93,6 +102,8 @@ struct ECS {
 	void set_boxCollider(Entity, Rectangle);
 	
 	void set_aiComponent(Entity);
+	
+	void set_lifecycle(Entity, int);
 };
 
 void render_sprites(ECS const&);
@@ -102,6 +113,8 @@ void update_box_colliders(ECS&);
 void update_velocities(ECS&);
 
 void update_ai_entities(ECS&, TileMap const&, FlowField const&);
+
+void update_lifecycles(ECS&);
 
 void debug_draw_hitboxes(ECS const&);
 
