@@ -1,5 +1,4 @@
 ENGINE FEATURES
-- LifeCycle based entities
 - HealthComponent & System
 - Audio
 
@@ -27,3 +26,5 @@ NICE THINGS & TECH DEBT
 - Start Menu
 	- Options Menu?
 - music & graphical assets
+- further improved croshair feel
+- dogde rolling
