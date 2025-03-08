@@ -4,6 +4,7 @@
 #define PLAYER_RET 0.8f
 #define PLAYER_SPEED 6.0f
 #define BULLET_SPEED 20.0f
+#define BULLET_WEIGHT 1200.0f
 #define CORSHAIR_SCALE 150.0f
 
 Player::Player(Entity id): id{id} {};
@@ -65,7 +66,7 @@ void fire_gun(ECS& ecs, Texture2D& tex, Player& player)
 		16.0f
 	});
 	ecs.set_lifecycle(id, 600);
-	ecs.set_mass(id, 200.0f);
+	ecs.set_mass(id, BULLET_WEIGHT);
 }
 
 

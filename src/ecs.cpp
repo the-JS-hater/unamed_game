@@ -216,7 +216,7 @@ BoxCollider::BoxCollider(Rectangle rec): hitbox {rec} {};
 
 LifecycleComponent::LifecycleComponent(int n) : countdown(n) {};
 
-MassComponent::MassComponent(float w) : weight{weight} {};
+MassComponent::MassComponent(float w) : weight{w} {};
 
 /* DEBUG FUNCTIONS */
 

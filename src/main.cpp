@@ -83,7 +83,9 @@ void init(int& flags)
 void gen_test_entities(ECS& ecs, Quadtree& quadtree, TileMap const& tile_map)
 {	
 	Texture2D test_tex = LoadTexture("resources/sprites/Spam.png");
-	for (int i {0}; i < NR_OF_TEST_ENTITIES; i++) {
+	
+	for (int i {0}; i < NR_OF_TEST_ENTITIES; i++) 
+	{
 		Entity id = ecs.allocate_entity();
 			
 		Vector2 pos = get_random_spawn_location(tile_map);
