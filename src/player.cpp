@@ -4,7 +4,7 @@
 #define PLAYER_RET 0.8f
 #define PLAYER_SPEED 6.0f
 #define BULLET_SPEED 12.0f
-
+#define CORSHAIR_SCALE 150.0f
 
 Player::Player(Entity id): id{id} {};
 
@@ -46,7 +46,7 @@ void fire_gun(ECS& ecs, Texture2D& tex, Player& player)
   float pos_x = static_cast<float>(GetScreenWidth() / 2);
   float pos_y = static_cast<float>(GetScreenHeight() / 2);
 	Vector2 pos = {pos_x, pos_y};
-	Vector2 target_dir = scale(normalize(sub(target_pos, pos)), BULLET_SPEED);
+	Vector2 target_dir = scale(normalize(get_cursor_dir()), BULLET_SPEED);
 
 	// Player position is in world coordinates, pos is in screen coordinates
 	Vector2 spawn_pos = {
@@ -73,4 +73,36 @@ void update_player_camera(Camera2D& cam, ECS const& ecs, Player const& player)
 		ecs.box_colliders[player.id].hitbox.x,
 		ecs.box_colliders[player.id].hitbox.y
 	};
+	Vector2 mid_point = (Vector2){GetScreenWidth()/2, GetScreenHeight()/2};
+	Vector2 cursor_vec = get_cursor_dir();
+	float vec_len = min(length(cursor_vec), CORSHAIR_SCALE);
+	
+	cam.offset = sub(mid_point, scale(normalize(cursor_vec), vec_len));
 }
+
+
+Vector2 get_cursor_dir()
+{
+	Vector2 target_pos = GetMousePosition();
+  float pos_x = static_cast<float>(GetScreenWidth() / 2);
+  float pos_y = static_cast<float>(GetScreenHeight() / 2);
+	Vector2 pos = {pos_x, pos_y};
+	Vector2 target_dir = sub(target_pos, pos);
+}
+
+
+void render_corshair(Texture2D& tex)
+{
+	Vector2 mid_point = (Vector2){GetScreenWidth()/2, GetScreenHeight()/2};
+	Vector2 cursor_vec = get_cursor_dir();
+	float vec_len = min(length(cursor_vec), CORSHAIR_SCALE);
+	
+	Vector2 pos = add(mid_point, scale(normalize(cursor_vec), vec_len));
+	
+	DrawTextureV(
+		tex,
+		pos,
+		WHITE
+	);
+}
+

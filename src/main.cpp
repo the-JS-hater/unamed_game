@@ -100,13 +100,6 @@ void gen_test_entities(ECS& ecs, Quadtree& quadtree, TileMap const& tile_map)
 }
 
 
-void render_cursor(Texture2D& tex)
-{
-	Vector2 pos = GetMousePosition();
-	DrawTextureV(tex, pos, WHITE);
-}
-
-
 int main()
 {
 	// usage: if (flags & SOME_FLAG), note the bitwise and
@@ -211,20 +204,21 @@ int main()
 		// i need to refactor this as soon as possible, fuck this shit
 		BeginDrawing();
 		(flags & DEBUG_CAMERA) ? BeginMode2D(debug_camera) : BeginMode2D(camera);
-		ClearBackground(WHITE);
+		ClearBackground(BLACK);
 		
 		//debug_render_costfield(flow_field);
 		//debug_render_flowfield(flow_field);
-		debug_draw_dungeon(world_map);
 		//debug_render_quadtree(&quadtree);
 		//debug_draw_hitboxes(ecs);
+		debug_draw_dungeon(world_map);
 		render_sprites(ecs);
 		//debug_render_collisions(collisions, ecs);
 
 		EndMode2D();
 		// Draw things that are relative to screen coordinates, and not world
 		// coordinates i.e GUI stuff
-		render_cursor(cursor_tex);
+		render_corshair(cursor_tex);
+		
 		if (flags & FPS_VISIBLE) DrawFPS(10, 10);
 
 		EndDrawing();
