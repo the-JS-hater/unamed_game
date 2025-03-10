@@ -18,6 +18,7 @@ ECS::ECS() :
 	ai_comps.reserve(MAX_ENTITIES);
 	lifecycles.reserve(MAX_ENTITIES);
 	masses.reserve(MAX_ENTITIES);
+	health_components.reserve(MAX_ENTITIES);
 	deallocated.reserve(MAX_ENTITIES);
 }
 
@@ -101,6 +102,11 @@ void ECS::set_mass(Entity id, float weight)
 	set_flag(id, MASS);
 }
 
+void ECS::set_health(Entity id, float val)
+{
+	health_components[id] = HealthComponent(val);
+	set_flag(id, HEALTH);
+}
 
 /* SYSTEMS */
 
@@ -201,6 +207,18 @@ void update_lifecycles(ECS& ecs)
 }
 
 
+void update_health(ECS& ecs)
+{
+	for (Entity id: ecs.entities)
+	{
+		if (ecs.entities[id] == -1) continue;
+		if ((ecs.flag_sets[id] & (HEALTH)) != (HEALTH)) continue;
+		/* Kill dead things */
+		if (ecs.health_components[id].health <= 0.0f) ecs.deallocate_entity(id);
+	}
+}
+
+
 /* COMPONENTS */
 
 SpriteComponent::SpriteComponent(Texture2D tex, Color tint) : 
@@ -217,6 +235,8 @@ BoxCollider::BoxCollider(Rectangle rec): hitbox {rec} {};
 LifecycleComponent::LifecycleComponent(int n) : countdown(n) {};
 
 MassComponent::MassComponent(float w) : weight{w} {};
+
+HealthComponent::HealthComponent(float h) : health{h} {};
 
 /* DEBUG FUNCTIONS */
 

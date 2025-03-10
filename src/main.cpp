@@ -99,6 +99,7 @@ void gen_test_entities(ECS& ecs, Quadtree& quadtree, TileMap const& tile_map)
 		ecs.set_acceleration(id, (Vector2){0.0f, 0.0f}, 0.95f);
 		ecs.set_aiComponent(id);
 		ecs.set_mass(id, 1000.0f);
+		ecs.set_health(id, 1.0f);
 	}
 }
 

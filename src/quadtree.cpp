@@ -153,24 +153,6 @@ void find_all_intersections(
     }
   }
 }
-	
-
-void handle_collisions(
-	vector<pair<Entity, Entity>> const& collisions, ECS& ecs
-)
-{
-	for (auto collision : collisions)
-	{
-		elastic_collision(
-			ecs.masses[collision.first].weight,
-			ecs.velocities[collision.first].deltaV,
-			ecs.box_colliders[collision.first].hitbox,
-			ecs.masses[collision.second].weight,
-			ecs.velocities[collision.second].deltaV,
-			ecs.box_colliders[collision.second].hitbox
-		);
-	}
-}
 
 
 /* DEBUG FUNCTIONS */

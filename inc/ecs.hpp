@@ -21,6 +21,7 @@ enum ComponentType
 	AI 						= 1 << 4,
 	LIFECYCLE 		= 1 << 5,
 	MASS 					= 1 << 6,
+	HEALTH 				= 1 << 7,
 };
 
 enum AiState
@@ -79,6 +80,13 @@ struct MassComponent
 	MassComponent(float);
 };
 
+struct HealthComponent
+{
+	float health;
+
+	HealthComponent(float);
+};
+
 struct ECS {
 	long long entity_count;
 	vector<Entity> entities;
@@ -91,6 +99,7 @@ struct ECS {
 	vector<BoxCollider> box_colliders;
 	vector<LifecycleComponent> lifecycles;
 	vector<MassComponent> masses;
+	vector<HealthComponent> health_components;
 
 	ECS();
 
@@ -115,6 +124,8 @@ struct ECS {
 	void set_lifecycle(Entity, int);
 
 	void set_mass(Entity, float);
+	
+	void set_health(Entity, float);
 };
 
 void render_sprites(ECS const&);
@@ -126,6 +137,8 @@ void update_velocities(ECS&);
 void update_ai_entities(ECS&, TileMap const&, FlowField const&);
 
 void update_lifecycles(ECS&);
+
+void update_health(ECS&); 
 
 void debug_draw_hitboxes(ECS const&);
 

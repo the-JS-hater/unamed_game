@@ -1,5 +1,23 @@
 #include "../inc/collisionSystem.hpp"
 
+	
+void handle_collisions(
+	vector<pair<Entity, Entity>> const& collisions, ECS& ecs
+)
+{
+	for (auto collision : collisions)
+	{
+		elastic_collision(
+			ecs.masses[collision.first].weight,
+			ecs.velocities[collision.first].deltaV,
+			ecs.box_colliders[collision.first].hitbox,
+			ecs.masses[collision.second].weight,
+			ecs.velocities[collision.second].deltaV,
+			ecs.box_colliders[collision.second].hitbox
+		);
+	}
+}
+
 
 void elastic_collision(
 	float m1, Vector2& v1, Rectangle& r1, float m2, Vector2& v2, Rectangle& r2
