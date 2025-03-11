@@ -1,5 +1,4 @@
 ENGINE FEATURES
-- HealthComponent & System
 - Audio
 - Splitscreen Co-op
 
@@ -13,10 +12,14 @@ OPTIMIZATION STUFF
 	simulation range have ai behavior
 
 GAMEPLAY FEATURES
+- reload time
 - Weapons
 	- grenades
 - GameOver & Restart
 - Levels with increasing difficulty, somehow
+
+GUI
+- Health bars
 
 KNOWN BUGS
 - Colliding entities sometimes get stuck inside each other
@@ -26,6 +29,7 @@ KNOWN BUGS
 NICE THINGS & TECH DEBT
 - Start Menu
 	- Options Menu?
+	- better pause menu
 - music & graphical assets
 - further improved croshair feel
 - dogde rolling

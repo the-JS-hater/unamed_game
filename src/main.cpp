@@ -36,8 +36,6 @@ using std::time;
 #define TILE_SIZE 32
 
 
-// Will we ever had more here? WHO KNOWS!?
-// prolly would be neat with some debug features idk
 enum GameFlags 
 {
 	PAUSED 				= 1 << 0,
