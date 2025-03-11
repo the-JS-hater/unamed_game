@@ -96,6 +96,8 @@ Vector2 get_cursor_dir()
   float pos_y = static_cast<float>(GetScreenHeight() / 2);
 	Vector2 pos = {pos_x, pos_y};
 	Vector2 target_dir = sub(target_pos, pos);
+
+	return target_dir;
 }
 
 
