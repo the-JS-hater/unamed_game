@@ -32,7 +32,7 @@ using std::time;
 //this one
 #define MIN_BSPNODE_SIZE 15 
 
-#define NR_OF_TEST_ENTITIES 0 
+#define NR_OF_TEST_ENTITIES 10 
 #define TILE_SIZE 32
 
 
@@ -214,7 +214,7 @@ int main()
 		//debug_render_costfield(flow_field);
 		//debug_render_flowfield(flow_field);
 		//debug_render_quadtree(&quadtree);
-		//debug_draw_hitboxes(ecs);
+		debug_draw_hitboxes(ecs);
 		debug_draw_dungeon(world_map);
 		render_sprites(ecs);
 		//debug_render_collisions(collisions, ecs);

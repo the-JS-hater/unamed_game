@@ -8,9 +8,31 @@ void handle_collisions(
 	for (auto collision : collisions)
 	{
 		auto [entity1, entity2] = collision;
+		if (
+			ecs.entities[entity1] == -1 or
+			ecs.entities[entity2] == -1
+		) continue;
+
+
+		//TODO: refactor ugly ass code. Also like... make it work
 		
-		//if ((ecs.flag_sets[entity1] & (HEALTH)) == (HEALTH)) ecs.health_components[entity1].health -= 0.5f;
-		//if ((ecs.flag_sets[entity2] & (HEALTH)) == (HEALTH)) ecs.health_components[entity2].health -= 0.5f;
+		//if (
+		//	((ecs.flag_sets[entity1] & (HEALTH)) == HEALTH) and
+		//	((ecs.flag_sets[entity2] & (DAMAGE)) == DAMAGE)
+		//) 
+		//{
+		//	ecs.health_components[entity1].health -= 
+		//	ecs.damage_components[entity2].damage;
+		//};
+
+		//if (
+		//	((ecs.flag_sets[entity2] & (HEALTH)) == HEALTH) and
+		//	((ecs.flag_sets[entity1] & (DAMAGE)) == DAMAGE)
+		//)
+		//{
+		//	ecs.health_components[entity2].health -= 
+		//	ecs.damage_components[entity1].damage;
+		//};
 
 		elastic_collision(
 			ecs.masses[collision.first].weight,

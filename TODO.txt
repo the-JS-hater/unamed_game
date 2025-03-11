@@ -1,6 +1,7 @@
 ENGINE FEATURES
 - HealthComponent & System
 - Audio
+- Splitscreen Co-op
 
 OPTIMIZATION STUFF
 - probably ALOT of ways to optimize the ECS overall
