@@ -13,9 +13,8 @@ void handle_collisions(
 			ecs.entities[entity2] == -1
 		) continue;
 
-
-		//TODO: refactor ugly ass code. Also like... make it work
-		
+		//TODO: refactor ugly ass code. Also, damaging entities shouldnt always
+		//deallocate
 		if (
 			((ecs.flag_sets[entity1] & (HEALTH)) == HEALTH) and
 			((ecs.flag_sets[entity2] & (DAMAGE)) == DAMAGE)

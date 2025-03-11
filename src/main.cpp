@@ -25,9 +25,9 @@ using std::time;
 
 #define WINDOW_W 1280
 #define WINDOW_H 720
-#define WORLD_W 100
-#define WORLD_H 100
-#define DEBUG_CAM_ZOOM 0.1f //Lower -> zoom out
+#define WORLD_W 150
+#define WORLD_H 150
+#define DEBUG_CAM_ZOOM 0.2f //Lower -> zoom out
 //WARN: prolly wanna tweak the macro in src/dungeonGen.cpp if your gonna touch
 //this one
 #define MIN_BSPNODE_SIZE 15 
@@ -212,7 +212,7 @@ int main()
 		//debug_render_costfield(flow_field);
 		//debug_render_flowfield(flow_field);
 		//debug_render_quadtree(&quadtree);
-		debug_draw_hitboxes(ecs);
+		//debug_draw_hitboxes(ecs);
 		debug_draw_dungeon(world_map);
 		render_sprites(ecs);
 		//debug_render_collisions(collisions, ecs);
@@ -229,4 +229,3 @@ int main()
 
 	CloseWindow();
 }
-

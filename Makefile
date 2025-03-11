@@ -15,7 +15,7 @@ _OBJ = main.o ecs.o dungeonGen.o quadtree.o vecUtils.o collisionSystem.o tileMap
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: $(SDIR)/%.cpp $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c -o $@ $< $(CFLAGS)$(DEGUB_FLAGS)
 
 game.exe: $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
