@@ -16,23 +16,25 @@ void handle_collisions(
 
 		//TODO: refactor ugly ass code. Also like... make it work
 		
-		//if (
-		//	((ecs.flag_sets[entity1] & (HEALTH)) == HEALTH) and
-		//	((ecs.flag_sets[entity2] & (DAMAGE)) == DAMAGE)
-		//) 
-		//{
-		//	ecs.health_components[entity1].health -= 
-		//	ecs.damage_components[entity2].damage;
-		//};
+		if (
+			((ecs.flag_sets[entity1] & (HEALTH)) == HEALTH) and
+			((ecs.flag_sets[entity2] & (DAMAGE)) == DAMAGE)
+		) 
+		{
+			ecs.health_components[entity1].health -= 
+			ecs.damage_components[entity2].damage;
+			ecs.deallocate_entity(entity2);
+		};
 
-		//if (
-		//	((ecs.flag_sets[entity2] & (HEALTH)) == HEALTH) and
-		//	((ecs.flag_sets[entity1] & (DAMAGE)) == DAMAGE)
-		//)
-		//{
-		//	ecs.health_components[entity2].health -= 
-		//	ecs.damage_components[entity1].damage;
-		//};
+		if (
+			((ecs.flag_sets[entity2] & (HEALTH)) == HEALTH) and
+			((ecs.flag_sets[entity1] & (DAMAGE)) == DAMAGE)
+		)
+		{
+			ecs.health_components[entity2].health -= 
+			ecs.damage_components[entity1].damage;
+			ecs.deallocate_entity(entity1);
+		};
 
 		elastic_collision(
 			ecs.masses[collision.first].weight,

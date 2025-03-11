@@ -46,6 +46,7 @@ Entity ECS::allocate_entity()
 void ECS::deallocate_entity(Entity id) 
 {	
 	entities[id] = -1;
+	flag_sets[id] = 0;
 	deallocated.push_back(id);
 }
 

@@ -112,4 +112,3 @@ void render_corshair(Texture2D& tex)
 		WHITE
 	);
 }
-
