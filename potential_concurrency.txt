@@ -1,0 +1,23 @@
+as of writing, in main update loop, we have the following dependencies:
+
+
+[update_health] -> [update_lifecycles] -> [[update_ai]->[update_velocity], find_all_intersections] -> [handle_collisions] -> [handle_wall_collisions] -> [update_box_providers]
+
+Basically;
+
+- update_health, and update_lifecycles can both potentially deallocate entities
+
+- cost/flow_field updates are needed to update ai pathfinding. Ai pathfinding
+	affects acceleration, which affects velocity. Find_all_intersections should
+	be fine to occur concurrently
+
+- velocities must be updated before collisions, and all collision systems may
+	affect velocity so must be sequential.
+
+- velocities affects update_box_collider.
+
+
+Conclusion: there may be performence gains to making ai_updates, followed by
+velocity updates, concurrent with collision querying
+
+
