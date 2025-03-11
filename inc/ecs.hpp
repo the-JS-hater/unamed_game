@@ -22,6 +22,7 @@ enum ComponentType
 	LIFECYCLE 		= 1 << 5,
 	MASS 					= 1 << 6,
 	HEALTH 				= 1 << 7,
+	DAMAGE 				= 1 << 8,
 };
 
 enum AiState
@@ -87,6 +88,13 @@ struct HealthComponent
 	HealthComponent(float);
 };
 
+struct DamageComponent 
+{
+	float damage;
+
+	DamageComponent(float);
+};
+
 struct ECS {
 	long long entity_count;
 	vector<Entity> entities;
@@ -100,6 +108,7 @@ struct ECS {
 	vector<LifecycleComponent> lifecycles;
 	vector<MassComponent> masses;
 	vector<HealthComponent> health_components;
+	vector<DamageComponent> damage_components;
 
 	ECS();
 
@@ -126,6 +135,8 @@ struct ECS {
 	void set_mass(Entity, float);
 	
 	void set_health(Entity, float);
+
+	void set_damage(Entity, float);
 };
 
 void render_sprites(ECS const&);

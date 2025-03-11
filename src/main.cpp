@@ -32,7 +32,7 @@ using std::time;
 //this one
 #define MIN_BSPNODE_SIZE 15 
 
-#define NR_OF_TEST_ENTITIES 10
+#define NR_OF_TEST_ENTITIES 0 
 #define TILE_SIZE 32
 
 
@@ -169,7 +169,7 @@ int main()
 
 		// INPUT
 		move_player(ecs, player);
-		fire_gun(ecs, bullet_tex, player);
+		fire_gun(ecs, bullet_tex, player, world_map);
 		
 		// UPDATE
 		
@@ -200,6 +200,7 @@ int main()
 		handle_collisions(collisions, ecs);
 		handle_wall_collisions(ecs, world_map);
 		
+		update_health(ecs);
 		update_box_colliders(ecs);
 		
 		if (!(flags & DEBUG_CAMERA)) update_player_camera(camera, ecs, player);
@@ -230,3 +231,4 @@ int main()
 
 	CloseWindow();
 }
+

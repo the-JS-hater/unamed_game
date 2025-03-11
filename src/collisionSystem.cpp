@@ -7,6 +7,11 @@ void handle_collisions(
 {
 	for (auto collision : collisions)
 	{
+		auto [entity1, entity2] = collision;
+		
+		//if ((ecs.flag_sets[entity1] & (HEALTH)) == (HEALTH)) ecs.health_components[entity1].health -= 0.5f;
+		//if ((ecs.flag_sets[entity2] & (HEALTH)) == (HEALTH)) ecs.health_components[entity2].health -= 0.5f;
+
 		elastic_collision(
 			ecs.masses[collision.first].weight,
 			ecs.velocities[collision.first].deltaV,

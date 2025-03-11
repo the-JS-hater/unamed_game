@@ -40,7 +40,7 @@ void move_player(ECS& ecs, Player& player)
 }
 	
 
-void fire_gun(ECS& ecs, Texture2D& tex, Player& player)
+void fire_gun(ECS& ecs, Texture2D& tex, Player& player, TileMap const& world)
 {	
 	if (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) return;
 	
@@ -55,18 +55,23 @@ void fire_gun(ECS& ecs, Texture2D& tex, Player& player)
 		ecs.box_colliders[player.id].hitbox.x,
 		ecs.box_colliders[player.id].hitbox.y
 	};
-	
+
+	Rectangle aabb = (Rectangle){
+		spawn_pos.x + target_dir.x * 2.2f, 
+		spawn_pos.y + target_dir.y * 2.2f, 
+		16.0f, 
+		16.0f
+	};
+
+	if (has_wall_collision(aabb, world)) return;
+
 	Entity id = ecs.allocate_entity();
 	ecs.set_sprite(id, tex, WHITE);
 	ecs.set_velocity(id, target_dir, 3.0f);
-	ecs.set_boxCollider(id, (Rectangle){
-		spawn_pos.x + target_dir.x * 3.0f, 
-		spawn_pos.y + target_dir.y * 3.0f, 
-		16.0f, 
-		16.0f
-	});
+	ecs.set_boxCollider(id, aabb);
 	ecs.set_lifecycle(id, 600);
 	ecs.set_mass(id, BULLET_WEIGHT);
+	ecs.set_damage(id, 0.5f);
 }
 
 
@@ -96,18 +101,6 @@ Vector2 get_cursor_dir()
 
 void render_corshair(Texture2D& tex)
 {
-	//Vector2 mid_point = (Vector2){GetScreenWidth()/2, GetScreenHeight()/2};
-	//Vector2 cursor_vec = get_cursor_dir();
-	//float vec_len = min(length(cursor_vec), CORSHAIR_SCALE);
-	//
-	//Vector2 pos = add(mid_point, scale(normalize(cursor_vec), vec_len));
-	//
-	//DrawTextureV(
-	//	tex,
-	//	pos,
-	//	WHITE
-	//);
-	
 	auto [x, y] = GetMousePosition();
 	Vector2 pos = (Vector2){
 		static_cast<int>(x - 16.0f),
@@ -118,6 +111,5 @@ void render_corshair(Texture2D& tex)
 		pos,
 		WHITE
 	);
-	//SetMousePosition(pos.x, pos.y);
 }
 

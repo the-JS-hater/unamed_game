@@ -1,7 +1,7 @@
 #include "../inc/ecs.hpp"
 
 
-#define MAX_ENTITIES 10000 
+#define MAX_ENTITIES 10000
 
 
 /* ECS STRUCT STUFF */
@@ -19,6 +19,7 @@ ECS::ECS() :
 	lifecycles.reserve(MAX_ENTITIES);
 	masses.reserve(MAX_ENTITIES);
 	health_components.reserve(MAX_ENTITIES);
+	damage_components.reserve(MAX_ENTITIES);
 	deallocated.reserve(MAX_ENTITIES);
 }
 
@@ -106,6 +107,12 @@ void ECS::set_health(Entity id, float val)
 {
 	health_components[id] = HealthComponent(val);
 	set_flag(id, HEALTH);
+}
+
+void ECS::set_damage(Entity id, float val)
+{
+	damage_components[id] = DamageComponent(val);
+	set_flag(id, DAMAGE);
 }
 
 /* SYSTEMS */
@@ -213,7 +220,7 @@ void update_health(ECS& ecs)
 	{
 		if (ecs.entities[id] == -1) continue;
 		if ((ecs.flag_sets[id] & (HEALTH)) != (HEALTH)) continue;
-		/* Kill dead things */
+		
 		if (ecs.health_components[id].health <= 0.0f) ecs.deallocate_entity(id);
 	}
 }
@@ -237,6 +244,8 @@ LifecycleComponent::LifecycleComponent(int n) : countdown(n) {};
 MassComponent::MassComponent(float w) : weight{w} {};
 
 HealthComponent::HealthComponent(float h) : health{h} {};
+
+DamageComponent::DamageComponent(float d) : damage{d} {};
 
 /* DEBUG FUNCTIONS */
 
