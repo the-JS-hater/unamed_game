@@ -1,7 +1,7 @@
 #include "../inc/ecs.hpp"
 
 
-#define MAX_ENTITIES 10000
+#define MAX_ENTITIES 5000
 
 
 /* ECS STRUCT STUFF */
@@ -20,6 +20,7 @@ ECS::ECS() :
 	masses.reserve(MAX_ENTITIES);
 	health_components.reserve(MAX_ENTITIES);
 	damage_components.reserve(MAX_ENTITIES);
+	positions.reserve(MAX_ENTITIES);
 	on_death_callbacks.reserve(MAX_ENTITIES);
 	deallocated.reserve(MAX_ENTITIES);
 }
@@ -91,13 +92,11 @@ void ECS::set_aiComponent(Entity id)
 	set_flag(id, AI);
 }
 
-
 void ECS::set_lifecycle(Entity id, int timer)
 {
 	lifecycles[id] = LifecycleComponent(timer); 
 	set_flag(id, LIFECYCLE);
 }
-
 
 void ECS::set_mass(Entity id, float weight)
 {
@@ -117,6 +116,12 @@ void ECS::set_damage(Entity id, float val)
 	set_flag(id, DAMAGE);
 }
 
+void ECS::set_position(Entity id , float x, float y)
+{
+	positions[id] = PositionComponent(x, y);
+	set_flag(id, POSITION);
+}
+
 void ECS::register_on_death(Entity id, function<void(Entity, ECS&)> foo)
 {
 	on_death_callbacks[id] = foo;
@@ -130,16 +135,28 @@ void render_sprites(ECS const& ecs)
 	for (Entity id: ecs.entities)
 	{
 		if (ecs.entities[id] == -1) continue;
-		if ((ecs.flag_sets[id] & (BOX_COLLIDER | SPRITE)) != (BOX_COLLIDER | SPRITE)) continue;
+		if ((ecs.flag_sets[id] & (POSITION|SPRITE)) != (POSITION|SPRITE)) continue;
 			
 		DrawTextureV(
 			ecs.sprites[id].texture,
 			(Vector2){
-				ecs.box_colliders[id].hitbox.x,
-				ecs.box_colliders[id].hitbox.y
+				ecs.positions[id].x,
+				ecs.positions[id].y
 			},
 			ecs.sprites[id].tint
 		);
+	}
+}
+
+void update_positions(ECS& ecs)
+{
+	for (Entity id: ecs.entities)
+	{
+		if (ecs.entities[id] == -1) continue;
+		if ((ecs.flag_sets[id] & (POSITION|VELOCITY)) != (POSITION|VELOCITY)) continue;
+
+		ecs.positions[id].x += ecs.velocities[id].deltaV.x;
+		ecs.positions[id].y += ecs.velocities[id].deltaV.y;
 	}
 }
 
@@ -148,10 +165,10 @@ void update_box_colliders(ECS& ecs)
 	for (Entity id: ecs.entities)
 	{
 		if (ecs.entities[id] == -1) continue;
-		if ((ecs.flag_sets[id] & (BOX_COLLIDER | VELOCITY)) != (BOX_COLLIDER | VELOCITY)) continue;
-		
-		ecs.box_colliders[id].hitbox.x += ecs.velocities[id].deltaV.x;
-		ecs.box_colliders[id].hitbox.y += ecs.velocities[id].deltaV.y;
+		if ((ecs.flag_sets[id] & (POSITION|BOX_COLLIDER)) != (POSITION|BOX_COLLIDER)) continue;
+
+		ecs.box_colliders[id].hitbox.x = ecs.positions[id].x;
+		ecs.box_colliders[id].hitbox.y = ecs.positions[id].y;
 	}
 }
 
@@ -161,7 +178,7 @@ void update_velocities(ECS& ecs)
 	for (Entity id: ecs.entities)
 	{
 		if (ecs.entities[id] == -1) continue;
-		if ((ecs.flag_sets[id] & (ACCELERATION | VELOCITY)) != (ACCELERATION | VELOCITY)) continue;
+		if ((ecs.flag_sets[id] & (ACCELERATION|VELOCITY)) != (ACCELERATION|VELOCITY)) continue;
 		
 		Vector2& velV = ecs.velocities[id].deltaV; 
 		float const max_speed = ecs.velocities[id].max_speed;
@@ -196,7 +213,7 @@ void update_ai_entities(ECS& ecs, TileMap const& world, FlowField const& flow_fi
 	for (Entity id: ecs.entities)
 	{
 		if (ecs.entities[id] == -1) continue;
-		if ((ecs.flag_sets[id] & (ACCELERATION | AI)) != (ACCELERATION | AI)) continue;
+		if ((ecs.flag_sets[id] & (ACCELERATION|AI|BOX_COLLIDER)) != (ACCELERATION|AI|BOX_COLLIDER)) continue;
 		
 		auto [x,y,h,w] = ecs.box_colliders[id].hitbox;
 
@@ -258,6 +275,9 @@ MassComponent::MassComponent(float w) : weight{w} {};
 HealthComponent::HealthComponent(float h) : health{h} {};
 
 DamageComponent::DamageComponent(float d) : damage{d} {};
+
+PositionComponent::PositionComponent(float x, float y) 
+	: x{x}, y{y} {};
 	
 /* HELPER FUNCTIONS */
 

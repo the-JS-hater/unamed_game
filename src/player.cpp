@@ -2,7 +2,7 @@
 
 #define PLAYER_ACC 1.0f
 #define PLAYER_RET 0.8f
-#define PLAYER_SPEED 6.0f
+#define PLAYER_SPEED 12.0f
 #define BULLET_SPEED 20.0f
 #define BULLET_WEIGHT 1200.0f
 #define CORSHAIR_SCALE 150.0f
@@ -17,10 +17,11 @@ Player init_player(ECS& ecs, TileMap const& tile_map)
 
 	ecs.set_sprite(player_id, player_tex, WHITE);
 	Vector2 pos = get_random_spawn_location(tile_map);
+	ecs.set_position(player_id, pos.x, pos.y);
 	ecs.set_boxCollider(player_id, (Rectangle){pos.x, pos.y, 32.0f, 32.0f});
 	ecs.set_velocity(player_id, (Vector2){0.0f, 0.0f}, PLAYER_SPEED);
 	ecs.set_acceleration(player_id, (Vector2){0.0f, 0.0f}, PLAYER_RET);
-	ecs.set_mass(player_id, 1000.0f);
+	ecs.set_mass(player_id, 10000.0f);
 
 	return Player(player_id);
 }
@@ -47,8 +48,8 @@ void fire_gun(ECS& ecs, Texture2D& tex, Player& player, TileMap const& world)
 
 	// Player position is in world coordinates, pos is in screen coordinates
 	Vector2 spawn_pos = {
-		ecs.box_colliders[player.id].hitbox.x,
-		ecs.box_colliders[player.id].hitbox.y
+		ecs.positions[player.id].x,
+		ecs.positions[player.id].y
 	};
 
 	Rectangle aabb = (Rectangle){
@@ -63,6 +64,7 @@ void fire_gun(ECS& ecs, Texture2D& tex, Player& player, TileMap const& world)
 	Entity id = ecs.allocate_entity();
 	ecs.set_sprite(id, tex, WHITE);
 	ecs.set_velocity(id, target_dir, 3.0f);
+	ecs.set_position(id, aabb.x, aabb.y);
 	ecs.set_boxCollider(id, aabb);
 	ecs.set_lifecycle(id, 600);
 	ecs.set_mass(id, BULLET_WEIGHT);
@@ -73,8 +75,8 @@ void fire_gun(ECS& ecs, Texture2D& tex, Player& player, TileMap const& world)
 void update_player_camera(Camera2D& cam, ECS const& ecs, Player const& player)
 {
 	cam.target = (Vector2){
-		ecs.box_colliders[player.id].hitbox.x,
-		ecs.box_colliders[player.id].hitbox.y
+		ecs.positions[player.id].x,
+		ecs.positions[player.id].y
 	};
 	Vector2 mid_point = (Vector2){GetScreenWidth()/2, GetScreenHeight()/2};
 	Vector2 cursor_vec = get_cursor_dir();

@@ -4,7 +4,7 @@
 TileMap::TileMap(int w, int h) 
 	: height{h}, width{w}
 {
-	this -> map = matrix<Tiles>(h, vector<Tiles>(w, WALL));
+	map = matrix<Tiles>(h, vector<Tiles>(w, WALL));
 }
 	
 
@@ -28,8 +28,8 @@ Vector2 get_random_spawn_location(TileMap const& tile_map)
 		float size = tile_map.tile_size;
 
 		return (Vector2){
-			idx_x * size, //+ (size * 0.95f) / 2.0f, 
-			idx_y * size //+ (size * 0.95f) / 2.0f 
+			idx_x * size, 
+			idx_y * size 
 		};
 	}
 }

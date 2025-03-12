@@ -38,3 +38,4 @@ NICE THINGS & TECH DEBT
 - music & graphical assets
 - further improved croshair feel
 - refactor collision so entities can have collision callback functions?
+- probably put callback functions in a hashmap

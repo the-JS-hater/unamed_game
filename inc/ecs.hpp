@@ -26,6 +26,7 @@ enum ComponentType
 	HEALTH 						= 1 << 7,
 	DAMAGE 						= 1 << 8,
 	ON_DEATH_CALLBACK	= 1 << 9,
+	POSITION 					= 1 << 10,
 };
 
 enum AiState
@@ -98,6 +99,18 @@ struct DamageComponent
 	DamageComponent(float);
 };
 
+//NOTE: i initially refactored this away since it lead to replicated data in
+//the boxcollider, but i need to add it back again for particles. Perhaps it'd
+//be a good idea to spend some time thinking about how to refactor collision
+//top to bottom once and for all since it's essentially the biggest culprit in
+//the accumulation of technical debt
+struct PositionComponent
+{
+	float x, y;
+
+	PositionComponent(float, float);
+};
+
 struct ECS {
 	long long entity_count;
 	vector<Entity> entities;
@@ -112,6 +125,7 @@ struct ECS {
 	vector<MassComponent> masses;
 	vector<HealthComponent> health_components;
 	vector<DamageComponent> damage_components;
+	vector<PositionComponent> positions;
 	vector<function<void(Entity, ECS&)>> on_death_callbacks;
 
 	ECS();
@@ -142,10 +156,14 @@ struct ECS {
 
 	void set_damage(Entity, float);
 
+	void set_position(Entity, float, float);
+
 	void register_on_death(Entity, function<void(Entity, ECS&)>);
 };
 
 void render_sprites(ECS const&);
+
+void update_positions(ECS&);
 
 void update_box_colliders(ECS&);
 

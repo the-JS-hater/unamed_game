@@ -23,18 +23,17 @@ using std::make_pair;
 using std::srand;
 using std::time;
 
-
 #define WINDOW_W 1280
 #define WINDOW_H 720
-#define WORLD_W 150
-#define WORLD_H 150
+#define WORLD_W 100
+#define WORLD_H 100
 #define DEBUG_CAM_ZOOM 0.2f //Lower -> zoom out
+#define NR_OF_TEST_ENTITIES 100 
+#define TILE_SIZE 32
+
 //WARN: prolly wanna tweak the macro in src/dungeonGen.cpp if your gonna touch
 //this one
 #define MIN_BSPNODE_SIZE 15 
-
-#define NR_OF_TEST_ENTITIES 1000 
-#define TILE_SIZE 32
 
 
 enum GameFlags 
@@ -88,8 +87,9 @@ void gen_test_entities(ECS& ecs, TileMap const& tile_map)
 		Entity id = ecs.allocate_entity();
 			
 		Vector2 pos = get_random_spawn_location(tile_map);
-
+		printf("Random pos x: %f, y: %f\n", pos.x, pos.y);
 		ecs.set_sprite(id, test_tex, WHITE);
+		ecs.set_position(id, pos.x, pos.y);
 		ecs.set_boxCollider(id, (Rectangle){pos.x, pos.y, 32.0f, 32.0f});
 		
 		float rand_vx = rand()%20 - 10;
@@ -173,11 +173,12 @@ int main()
 		
 		// UPDATE
 		
+		update_health(ecs);
 		update_lifecycles(ecs);
 
 		int player_x, player_y; //must be grid idx:es
-		player_x = static_cast<int>(ecs.box_colliders[player.id].hitbox.x / TILE_SIZE);
-		player_y = static_cast<int>(ecs.box_colliders[player.id].hitbox.y / TILE_SIZE);
+		player_x = static_cast<int>(ecs.positions[player.id].x / TILE_SIZE);
+		player_y = static_cast<int>(ecs.positions[player.id].y / TILE_SIZE);
 		flow_field.update_cost_field(player_x, player_y);
 		flow_field.update_flow_field();
 		update_ai_entities(ecs, world_map, flow_field);
@@ -200,7 +201,7 @@ int main()
 		handle_collisions(collisions, ecs);
 		handle_wall_collisions(ecs, world_map);
 		
-		update_health(ecs);
+		update_positions(ecs);
 		update_box_colliders(ecs);
 		
 		if (!(flags & DEBUG_CAMERA)) update_player_camera(camera, ecs, player);
