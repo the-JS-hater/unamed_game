@@ -2,9 +2,11 @@
 
 #include <raylib.h>
 #include <vector>
+#include <functional>
 #include <pathfinding.hpp>
 
 using std::vector;
+using std::function;
 
 //entities are merely ID:s used to access associated components(actual data,
 //separate from any logic). It's then the components that are fed into
@@ -14,15 +16,16 @@ using Entity = long long;
 
 enum ComponentType 
 {
-	SPRITE 				= 1 << 0,
-	VELOCITY 			= 1 << 1,
-	BOX_COLLIDER 	= 1 << 2,
-	ACCELERATION 	= 1 << 3,
-	AI 						= 1 << 4,
-	LIFECYCLE 		= 1 << 5,
-	MASS 					= 1 << 6,
-	HEALTH 				= 1 << 7,
-	DAMAGE 				= 1 << 8,
+	SPRITE 						= 1 << 0,
+	VELOCITY 					= 1 << 1,
+	BOX_COLLIDER 			= 1 << 2,
+	ACCELERATION 			= 1 << 3,
+	AI 								= 1 << 4,
+	LIFECYCLE 				= 1 << 5,
+	MASS 							= 1 << 6,
+	HEALTH 						= 1 << 7,
+	DAMAGE 						= 1 << 8,
+	ON_DEATH_CALLBACK	= 1 << 9,
 };
 
 enum AiState
@@ -109,6 +112,7 @@ struct ECS {
 	vector<MassComponent> masses;
 	vector<HealthComponent> health_components;
 	vector<DamageComponent> damage_components;
+	vector<function<void(Entity, ECS&)>> on_death_callbacks;
 
 	ECS();
 
@@ -137,6 +141,8 @@ struct ECS {
 	void set_health(Entity, float);
 
 	void set_damage(Entity, float);
+
+	void register_on_death(Entity, function<void(Entity, ECS&)>);
 };
 
 void render_sprites(ECS const&);
@@ -150,6 +156,8 @@ void update_ai_entities(ECS&, TileMap const&, FlowField const&);
 void update_lifecycles(ECS&);
 
 void update_health(ECS&); 
+
+void trigger_on_death(Entity, ECS&);
 
 void debug_draw_hitboxes(ECS const&);
 

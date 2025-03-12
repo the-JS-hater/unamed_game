@@ -20,6 +20,7 @@ ECS::ECS() :
 	masses.reserve(MAX_ENTITIES);
 	health_components.reserve(MAX_ENTITIES);
 	damage_components.reserve(MAX_ENTITIES);
+	on_death_callbacks.reserve(MAX_ENTITIES);
 	deallocated.reserve(MAX_ENTITIES);
 }
 
@@ -116,6 +117,12 @@ void ECS::set_damage(Entity id, float val)
 	set_flag(id, DAMAGE);
 }
 
+void ECS::register_on_death(Entity id, function<void(Entity, ECS&)> foo)
+{
+	on_death_callbacks[id] = foo;
+	set_flag(id, ON_DEATH_CALLBACK);
+}
+
 /* SYSTEMS */
 
 void render_sprites(ECS const& ecs)
@@ -210,7 +217,10 @@ void update_lifecycles(ECS& ecs)
 		if ((ecs.flag_sets[id] & (LIFECYCLE)) != (LIFECYCLE)) continue;
 		
 		ecs.lifecycles[id].countdown -= 1;
-		if (ecs.lifecycles[id].countdown <= 0) ecs.deallocate_entity(id);
+		if (ecs.lifecycles[id].countdown > 0) continue; 
+		
+		trigger_on_death(id, ecs);
+		ecs.deallocate_entity(id);
 	}
 }
 
@@ -221,11 +231,12 @@ void update_health(ECS& ecs)
 	{
 		if (ecs.entities[id] == -1) continue;
 		if ((ecs.flag_sets[id] & (HEALTH)) != (HEALTH)) continue;
+		if (ecs.health_components[id].health > 0.0f) continue;
 		
-		if (ecs.health_components[id].health <= 0.0f) ecs.deallocate_entity(id);
+		trigger_on_death(id, ecs);
+		ecs.deallocate_entity(id);
 	}
 }
-
 
 /* COMPONENTS */
 
@@ -247,6 +258,16 @@ MassComponent::MassComponent(float w) : weight{w} {};
 HealthComponent::HealthComponent(float h) : health{h} {};
 
 DamageComponent::DamageComponent(float d) : damage{d} {};
+	
+/* HELPER FUNCTIONS */
+
+void trigger_on_death(Entity id, ECS& ecs)
+{
+	if ((ecs.flag_sets[id] & (ON_DEATH_CALLBACK)) == (ON_DEATH_CALLBACK))
+	{
+		ecs.on_death_callbacks[id](id, ecs);
+	}
+}
 
 /* DEBUG FUNCTIONS */
 

@@ -15,6 +15,7 @@
 #include "../inc/pathfinding.hpp"
 #include "../inc/player.hpp"
 
+#include <stdio.h>
 
 using std::vector;
 using std::rand;
@@ -98,6 +99,7 @@ void gen_test_entities(ECS& ecs, Quadtree& quadtree, TileMap const& tile_map)
 		ecs.set_aiComponent(id);
 		ecs.set_mass(id, 1000.0f);
 		ecs.set_health(id, 1.0f);
+		ecs.register_on_death(id, [](Entity, ECS&){printf("Hello World\n");});
 	}
 }
 
