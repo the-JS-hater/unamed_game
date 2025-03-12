@@ -28,7 +28,6 @@ Player init_player(ECS& ecs, TileMap const& tile_map)
 
 void move_player(ECS& ecs, Player& player)
 {
-	Vector2& velV = ecs.velocities[player.id].deltaV; 
 	Vector2& accV = ecs.accelerations[player.id].accV;
 	
 	accV = {0.0f, 0.0f};
@@ -44,10 +43,6 @@ void fire_gun(ECS& ecs, Texture2D& tex, Player& player, TileMap const& world)
 {	
 	if (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) return;
 	
-	Vector2 target_pos = GetMousePosition();
-  float pos_x = static_cast<float>(GetScreenWidth() / 2);
-  float pos_y = static_cast<float>(GetScreenHeight() / 2);
-	Vector2 pos = {pos_x, pos_y};
 	Vector2 target_dir = scale(normalize(get_cursor_dir()), BULLET_SPEED);
 
 	// Player position is in world coordinates, pos is in screen coordinates
