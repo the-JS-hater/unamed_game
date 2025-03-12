@@ -79,7 +79,7 @@ void init(int& flags)
 }
 	
 	
-void gen_test_entities(ECS& ecs, Quadtree& quadtree, TileMap const& tile_map)
+void gen_test_entities(ECS& ecs, TileMap const& tile_map)
 {	
 	Texture2D test_tex = LoadTexture("resources/sprites/Spam.png");
 	
@@ -140,7 +140,7 @@ int main()
 	Texture2D bullet_tex = LoadTexture("resources/sprites/Bullet.png");
 
 	FlowField flow_field = FlowField(world_map);
-	gen_test_entities(ecs, quadtree, world_map);
+	gen_test_entities(ecs, world_map);
 	
 	HideCursor();
 	

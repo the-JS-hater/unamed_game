@@ -276,7 +276,7 @@ void debug_draw_hitboxes(ECS const& ecs)
 	for (Entity id: ecs.entities)
 	{
 		if (ecs.entities[id] == -1) continue;
-		if (ecs.flag_sets[id] & BOX_COLLIDER != BOX_COLLIDER) continue;
+		if ((ecs.flag_sets[id] & BOX_COLLIDER) != (BOX_COLLIDER)) continue;
 		
 		DrawRectangleRec(ecs.box_colliders[id].hitbox, RED);
 	}
