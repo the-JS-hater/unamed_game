@@ -1,29 +1,29 @@
 #include "../inc/ecs.hpp"
 
 
-#define MAX_ENTITIES 5000
-
+#define MAX_ENTITIES 10000
 
 /* ECS STRUCT STUFF */
 
 ECS::ECS() : 
 	entity_count {0}, 
 	entities(MAX_ENTITIES, -1), 
-	flag_sets(MAX_ENTITIES, 0)
+	flag_sets(MAX_ENTITIES, 0),
+	on_death_callbacks(MAX_ENTITIES, nullptr)
 {
-	sprites.reserve(MAX_ENTITIES);
-	velocities.reserve(MAX_ENTITIES);
-	accelerations.reserve(MAX_ENTITIES);
-	box_colliders.reserve(MAX_ENTITIES);
-	ai_comps.reserve(MAX_ENTITIES);
-	lifecycles.reserve(MAX_ENTITIES);
-	masses.reserve(MAX_ENTITIES);
-	health_components.reserve(MAX_ENTITIES);
-	damage_components.reserve(MAX_ENTITIES);
-	positions.reserve(MAX_ENTITIES);
-	on_death_callbacks.reserve(MAX_ENTITIES);
+	sprites.resize(MAX_ENTITIES);
+	velocities.resize(MAX_ENTITIES);
+	accelerations.resize(MAX_ENTITIES);
+	box_colliders.resize(MAX_ENTITIES);
+	ai_comps.resize(MAX_ENTITIES);
+	lifecycles.resize(MAX_ENTITIES);
+	masses.resize(MAX_ENTITIES);
+	health_components.resize(MAX_ENTITIES);
+	damage_components.resize(MAX_ENTITIES);
+	positions.resize(MAX_ENTITIES);
 	deallocated.reserve(MAX_ENTITIES);
 }
+
 
 Entity ECS::allocate_entity() 
 {
@@ -68,15 +68,15 @@ void ECS::set_sprite(Entity id, Texture2D tex, Color tint)
 	set_flag(id, SPRITE);
 }
 
-void ECS::set_velocity(Entity id, Vector2 vec, float max_speed) 
+void ECS::set_velocity(Entity id, Vector2 vec, float max_speed, float retarding_factor) 
 {
-	velocities[id] = VelocityComponent(vec, max_speed);
+	velocities[id] = VelocityComponent(vec, max_speed, retarding_factor);
 	set_flag(id, VELOCITY);
 }
 
-void ECS::set_acceleration(Entity id, Vector2 vec, float retarding_factor) 
+void ECS::set_acceleration(Entity id, Vector2 vec) 
 {
-	accelerations[id] = AccelerationComponent(vec, retarding_factor);
+	accelerations[id] = AccelerationComponent(vec);
 	set_flag(id, ACCELERATION);
 }
 
@@ -180,10 +180,10 @@ void update_velocities(ECS& ecs)
 		if (ecs.entities[id] == -1) continue;
 		if ((ecs.flag_sets[id] & (ACCELERATION|VELOCITY)) != (ACCELERATION|VELOCITY)) continue;
 		
+		Vector2& accV = ecs.accelerations[id].accV;
 		Vector2& velV = ecs.velocities[id].deltaV; 
 		float const max_speed = ecs.velocities[id].max_speed;
-		Vector2& accV = ecs.accelerations[id].accV;
-		float const retarding_factor = ecs.accelerations[id].retarding_factor;
+		float const retarding_factor = ecs.velocities[id].retarding_factor;
 		
 		velV.x += accV.x;
 		velV.y += accV.y;
@@ -260,11 +260,11 @@ void update_health(ECS& ecs)
 SpriteComponent::SpriteComponent(Texture2D tex, Color tint) : 
 		texture {tex}, tint {tint} {};
 
-VelocityComponent::VelocityComponent(Vector2 v, float max) 
-	: deltaV {v}, max_speed{max} {};
+VelocityComponent::VelocityComponent(Vector2 v, float max, float r) 
+	: deltaV {v}, max_speed{max}, retarding_factor{r} {};
 
-AccelerationComponent::AccelerationComponent(Vector2 v, float r) 
-	: accV{v}, retarding_factor{r} {};
+AccelerationComponent::AccelerationComponent(Vector2 v) 
+	: accV{v} {};
 
 BoxCollider::BoxCollider(Rectangle rec): hitbox {rec} {};
 
@@ -278,7 +278,30 @@ DamageComponent::DamageComponent(float d) : damage{d} {};
 
 PositionComponent::PositionComponent(float x, float y) 
 	: x{x}, y{y} {};
-	
+		
+/* DEFAULT CONSTRUCTORS BECAUSE C++ SUCKS */
+
+SpriteComponent::SpriteComponent() : 
+		texture {(Texture2D){0,0,0,0,0}}, tint {WHITE} {};
+
+VelocityComponent::VelocityComponent() 
+	: deltaV {(Vector2){0.0f,0.0f}}, max_speed{0.0}, retarding_factor{0.0f} {};
+
+AccelerationComponent::AccelerationComponent() 
+	: accV{(Vector2){0.0f, 0.0f}} {};
+
+BoxCollider::BoxCollider() : hitbox {(Rectangle){0.0f,0.0f,0.0f,0.0f}} {};
+
+LifecycleComponent::LifecycleComponent(){}
+
+MassComponent::MassComponent(){}
+
+HealthComponent::HealthComponent(){}
+
+DamageComponent::DamageComponent(){}
+
+PositionComponent::PositionComponent(){}
+
 /* HELPER FUNCTIONS */
 
 void trigger_on_death(Entity id, ECS& ecs)

@@ -21,10 +21,10 @@ Player init_player(ECS&, TileMap const&);
 
 void move_player(ECS&, Player&);
 
-void fire_gun(ECS&, Texture2D&, Player&, TileMap const&);
+void fire_gun(ECS&, Texture2D const&, Player&, TileMap const&);
 
 void update_player_camera(Camera2D&, ECS const&, Player const&);
 
 Vector2 get_cursor_dir();
 
-void render_corshair(Texture2D&);
+void render_corshair(Texture2D const&);

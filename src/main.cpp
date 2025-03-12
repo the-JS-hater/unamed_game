@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <vector>
 #include <utility>
+#include <functional>
 #include "../inc/ecs.hpp"
 #include "../inc/dungeonGen.hpp"
 #include "../inc/quadtree.hpp"
@@ -22,20 +23,28 @@ using std::rand;
 using std::make_pair;
 using std::srand;
 using std::time;
+using std::function;
 
 #define WINDOW_W 1280
 #define WINDOW_H 720
 #define WORLD_W 100
-#define WORLD_H 100
-#define DEBUG_CAM_ZOOM 0.2f //Lower -> zoom out
-#define NR_OF_TEST_ENTITIES 100 
+#define WORLD_H 100 
+#define DEBUG_CAM_ZOOM 0.1f //Lower -> zoom out
+#define NR_OF_TEST_ENTITIES 10 
 #define TILE_SIZE 32
 
 //WARN: prolly wanna tweak the macro in src/dungeonGen.cpp if your gonna touch
 //this one
 #define MIN_BSPNODE_SIZE 15 
 
+Texture2D cursor_tex;  
+Texture2D bullet_tex;
+Texture2D spam_tex;
+Texture2D duckhead_tex;
+Texture2D duckbody_tex;
+Texture2D explosion_tex;
 
+	
 enum GameFlags 
 {
 	PAUSED 				= 1 << 0,
@@ -67,8 +76,14 @@ void init(int& flags)
 	// TraceLogLevel enum in raylib.h
 	SetTraceLogLevel(LOG_NONE);
 	InitWindow(WINDOW_W, WINDOW_H, "GAME");
-	//won't have to think about delta-time unless we do advances physics
 	SetTargetFPS(60); 
+	
+	cursor_tex 		= LoadTexture("resources/sprites/Crosshair.png");
+	bullet_tex 		= LoadTexture("resources/sprites/Bullet.png");
+	spam_tex 			= LoadTexture("resources/sprites/Spam.png");
+ 	duckhead_tex	= LoadTexture("resources/sprites/DuckHead.png");
+ 	duckbody_tex	= LoadTexture("resources/sprites/DuckBody.png");
+ 	explosion_tex	= LoadTexture("resources/sprites/Explosion.png");
 	
 	srand(time(nullptr));
 
@@ -77,29 +92,70 @@ void init(int& flags)
 	//flags |= FULLSCREEN;
 }
 	
+
 	
 void gen_test_entities(ECS& ecs, TileMap const& tile_map)
 {	
-	Texture2D test_tex = LoadTexture("resources/sprites/Spam.png");
+	function<void(Entity, ECS&)> awesome_callback(
+		[&explosion_tex, &duckhead_tex, &duckbody_tex](Entity id, ECS& ecs)
+		{
+			Entity explosion_id = ecs.allocate_entity();
+			Entity head_id = ecs.allocate_entity();
+			Entity body_id = ecs.allocate_entity();
+
+			ecs.set_lifecycle(explosion_id, 30);
+			ecs.set_lifecycle(head_id, 60*4);
+			ecs.set_lifecycle(body_id, 60*40);
+			
+			float x = ecs.positions[id].x;
+			float y = ecs.positions[id].y;
+			ecs.set_position(explosion_id, x, y);
+			ecs.set_position(head_id, x, y);
+			ecs.set_position(body_id, x, y);
 	
+			float dx1 = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+			float dx2 = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+			float dy1 = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+			float dy2 = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+
+			ecs.set_velocity(
+				head_id,
+				(Vector2){dx1, dy1},
+				9.0f,
+				0.97f
+			);
+			ecs.set_velocity(
+				body_id,
+				(Vector2){dx2, dy2},
+				9.0f,
+				0.97f
+			);
+			ecs.set_sprite(explosion_id, explosion_tex, WHITE);
+			ecs.set_sprite(head_id, duckhead_tex, WHITE);
+			ecs.set_sprite(body_id, duckbody_tex, WHITE);
+		}
+	); 
+
+	function<void(Entity, ECS&)> test_callback([](Entity, ECS&){printf("Goodbye cruel world!\n");});
+
 	for (int i {0}; i < NR_OF_TEST_ENTITIES; i++) 
 	{
 		Entity id = ecs.allocate_entity();
 			
 		Vector2 pos = get_random_spawn_location(tile_map);
-		printf("Random pos x: %f, y: %f\n", pos.x, pos.y);
-		ecs.set_sprite(id, test_tex, WHITE);
+		ecs.set_sprite(id, spam_tex, WHITE);
 		ecs.set_position(id, pos.x, pos.y);
 		ecs.set_boxCollider(id, (Rectangle){pos.x, pos.y, 32.0f, 32.0f});
 		
 		float rand_vx = rand()%20 - 10;
 		float rand_vy = rand()%20 - 10;
-		ecs.set_velocity(id, (Vector2){rand_vx, rand_vy}, 5.0f);
-		ecs.set_acceleration(id, (Vector2){0.0f, 0.0f}, 0.95f);
+		ecs.set_velocity(id, (Vector2){rand_vx, rand_vy}, 5.0f, 0.95f);
+		ecs.set_acceleration(id, (Vector2){0.0f, 0.0f});
 		ecs.set_aiComponent(id);
 		ecs.set_mass(id, 1000.0f);
 		ecs.set_health(id, 1.0f);
-		ecs.register_on_death(id, [](Entity, ECS&){printf("Hello World\n");});
+		ecs.register_on_death(id, awesome_callback);
+		//ecs.register_on_death(id, test_callback);
 	}
 }
 
@@ -136,8 +192,6 @@ int main()
 	vector<pair<Entity, Entity>> collisions;
 	
 	Player player = init_player(ecs, world_map);
-	Texture2D cursor_tex = LoadTexture("resources/sprites/Crosshair.png");
-	Texture2D bullet_tex = LoadTexture("resources/sprites/Bullet.png");
 
 	FlowField flow_field = FlowField(world_map);
 	gen_test_entities(ecs, world_map);

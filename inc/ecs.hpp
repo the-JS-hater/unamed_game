@@ -3,7 +3,9 @@
 #include <raylib.h>
 #include <vector>
 #include <functional>
-#include <pathfinding.hpp>
+#include "pathfinding.hpp"
+
+#include <stdio.h>
 
 using std::vector;
 using std::function;
@@ -40,6 +42,7 @@ struct BoxCollider
 	Rectangle hitbox;
 	
 	BoxCollider(Rectangle);
+	BoxCollider();
 };
 
 struct SpriteComponent 
@@ -48,22 +51,25 @@ struct SpriteComponent
 	Color tint;
 
 	SpriteComponent(Texture2D, Color); 
+	SpriteComponent(); 
 };
 
 struct VelocityComponent
 {
 	Vector2 deltaV;
 	float max_speed;
+	float retarding_factor; //trust me, retarding is the real term
 	
-	VelocityComponent(Vector2, float);
+	VelocityComponent(Vector2, float, float);
+	VelocityComponent();
 };
 
 struct AccelerationComponent
 {
 	Vector2 accV;
-	float retarding_factor; //trust me, retarding is the real term
 
-	AccelerationComponent(Vector2, float);
+	AccelerationComponent(Vector2);
+	AccelerationComponent();
 };
 
 struct AiComponent
@@ -76,6 +82,7 @@ struct LifecycleComponent
 	int countdown;
 
 	LifecycleComponent(int);
+	LifecycleComponent();
 };
 
 struct MassComponent
@@ -83,6 +90,7 @@ struct MassComponent
 	float weight;
 
 	MassComponent(float);
+	MassComponent();
 };
 
 struct HealthComponent
@@ -90,6 +98,7 @@ struct HealthComponent
 	float health;
 
 	HealthComponent(float);
+	HealthComponent();
 };
 
 struct DamageComponent 
@@ -97,6 +106,7 @@ struct DamageComponent
 	float damage;
 
 	DamageComponent(float);
+	DamageComponent();
 };
 
 //NOTE: i initially refactored this away since it lead to replicated data in
@@ -109,6 +119,7 @@ struct PositionComponent
 	float x, y;
 
 	PositionComponent(float, float);
+	PositionComponent();
 };
 
 struct ECS {
@@ -140,9 +151,9 @@ struct ECS {
 										 	
 	void set_sprite(Entity, Texture2D, Color);
 	
-	void set_velocity(Entity, Vector2, float);
+	void set_velocity(Entity, Vector2, float, float);
 
-	void set_acceleration(Entity, Vector2, float);
+	void set_acceleration(Entity, Vector2);
 	
 	void set_boxCollider(Entity, Rectangle);
 	

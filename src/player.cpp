@@ -19,8 +19,8 @@ Player init_player(ECS& ecs, TileMap const& tile_map)
 	Vector2 pos = get_random_spawn_location(tile_map);
 	ecs.set_position(player_id, pos.x, pos.y);
 	ecs.set_boxCollider(player_id, (Rectangle){pos.x, pos.y, 32.0f, 32.0f});
-	ecs.set_velocity(player_id, (Vector2){0.0f, 0.0f}, PLAYER_SPEED);
-	ecs.set_acceleration(player_id, (Vector2){0.0f, 0.0f}, PLAYER_RET);
+	ecs.set_velocity(player_id, (Vector2){0.0f, 0.0f}, PLAYER_SPEED, PLAYER_RET);
+	ecs.set_acceleration(player_id, (Vector2){0.0f, 0.0f});
 	ecs.set_mass(player_id, 10000.0f);
 
 	return Player(player_id);
@@ -40,7 +40,7 @@ void move_player(ECS& ecs, Player& player)
 }
 	
 
-void fire_gun(ECS& ecs, Texture2D& tex, Player& player, TileMap const& world)
+void fire_gun(ECS& ecs, Texture2D const& tex, Player& player, TileMap const& world)
 {	
 	if (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) return;
 	
@@ -63,7 +63,7 @@ void fire_gun(ECS& ecs, Texture2D& tex, Player& player, TileMap const& world)
 
 	Entity id = ecs.allocate_entity();
 	ecs.set_sprite(id, tex, WHITE);
-	ecs.set_velocity(id, target_dir, 3.0f);
+	ecs.set_velocity(id, target_dir, 3.0f, 1.0f);
 	ecs.set_position(id, aabb.x, aabb.y);
 	ecs.set_boxCollider(id, aabb);
 	ecs.set_lifecycle(id, 600);
@@ -98,7 +98,7 @@ Vector2 get_cursor_dir()
 }
 
 
-void render_corshair(Texture2D& tex)
+void render_corshair(Texture2D const& tex)
 {
 	auto [x, y] = GetMousePosition();
 	Vector2 pos = (Vector2){
