@@ -2,7 +2,6 @@ ENGINE FEATURES
 - Audio
 - Splitscreen Co-op
 - Particle effects
-	- requires Position component to be separate from hitbox
 
 OPTIMIZATION STUFF
 - probably ALOT of ways to optimize the ECS overall

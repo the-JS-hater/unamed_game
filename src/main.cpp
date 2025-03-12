@@ -30,7 +30,7 @@ using std::function;
 #define WORLD_W 100
 #define WORLD_H 100 
 #define DEBUG_CAM_ZOOM 0.1f //Lower -> zoom out
-#define NR_OF_TEST_ENTITIES 10 
+#define NR_OF_TEST_ENTITIES 100 
 #define TILE_SIZE 32
 
 //WARN: prolly wanna tweak the macro in src/dungeonGen.cpp if your gonna touch
@@ -104,8 +104,8 @@ void gen_test_entities(ECS& ecs, TileMap const& tile_map)
 			Entity body_id = ecs.allocate_entity();
 
 			ecs.set_lifecycle(explosion_id, 30);
-			ecs.set_lifecycle(head_id, 60*4);
-			ecs.set_lifecycle(body_id, 60*40);
+			ecs.set_lifecycle(head_id, 120);
+			ecs.set_lifecycle(body_id, 120);
 			
 			float x = ecs.positions[id].x;
 			float y = ecs.positions[id].y;
@@ -122,13 +122,13 @@ void gen_test_entities(ECS& ecs, TileMap const& tile_map)
 				head_id,
 				(Vector2){dx1, dy1},
 				9.0f,
-				0.97f
+				0.1f
 			);
 			ecs.set_velocity(
 				body_id,
 				(Vector2){dx2, dy2},
 				9.0f,
-				0.97f
+				0.1f
 			);
 			ecs.set_sprite(explosion_id, explosion_tex, WHITE);
 			ecs.set_sprite(head_id, duckhead_tex, WHITE);
