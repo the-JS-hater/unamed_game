@@ -33,7 +33,7 @@ using std::time;
 //this one
 #define MIN_BSPNODE_SIZE 15 
 
-#define NR_OF_TEST_ENTITIES 10 
+#define NR_OF_TEST_ENTITIES 1000 
 #define TILE_SIZE 32
 
 

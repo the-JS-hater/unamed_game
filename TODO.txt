@@ -19,6 +19,7 @@ GAMEPLAY FEATURES
 	- grenades
 - GameOver & Restart
 - Levels with increasing difficulty, somehow
+- dogde rolling
 
 GUI
 - Health bars
@@ -27,6 +28,8 @@ KNOWN BUGS
 - Colliding entities sometimes get stuck inside each other
 - vsync/tearing issues? only my machine?
 - Pathfinding AI:s sometimes(rarely) get stuck on walls
+- Sometimes game starts in fullscreen, debug_camera and/or paused even when not
+	set? some kind of UB bug idfk
 
 NICE THINGS & TECH DEBT
 - Start Menu
@@ -34,4 +37,4 @@ NICE THINGS & TECH DEBT
 	- better pause menu
 - music & graphical assets
 - further improved croshair feel
-- dogde rolling
+- refactor collision so entities can have collision callback functions?
